@@ -81,10 +81,6 @@ public class PluginManager {
     }
 
     public boolean dispatchCommand(String commandLine) {
-        return dispatchCommand(commandLine, null);
-    }
-
-    public boolean dispatchCommand(String commandLine, List<String> tabResults) {
         String[] split = commandLine.split(" ", -1);
         // Check for chat that only contains " "
         if (split.length == 0 || split[0].isEmpty()) {
@@ -98,13 +94,7 @@ public class PluginManager {
 
         String[] args = Arrays.copyOfRange(split, 1, split.length);
         try {
-            if (tabResults == null) {
-                command.execute(args);
-            } else if (commandLine.contains(" ") && command instanceof TabExecutor) {
-                for (String s : ((TabExecutor) command).onTabComplete(args)) {
-                    tabResults.add(s);
-                }
-            }
+            command.execute(args);
         } catch (Exception ex) {
             log.error("Error in dispatching command", ex);
         }
@@ -123,7 +113,7 @@ public class PluginManager {
         Map<PluginDescription, Boolean> pluginStatuses = new HashMap<>();
         for (Map.Entry<String, PluginDescription> entry : toLoad.entrySet()) {
             PluginDescription plugin = entry.getValue();
-            if (!enablePlugin(pluginStatuses, new Stack<PluginDescription>(), plugin)) {
+            if (!enablePlugin(pluginStatuses, new Stack<>(), plugin)) {
                 log.warn("Failed to enable {}", entry.getKey());
             }
         }
