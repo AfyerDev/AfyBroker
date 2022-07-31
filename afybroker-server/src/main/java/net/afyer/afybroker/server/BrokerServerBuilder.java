@@ -60,7 +60,7 @@ public class BrokerServerBuilder {
             bizThread = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
                     60L, TimeUnit.SECONDS,
                     new SynchronousQueue<>(),
-                    new ThreadFactoryBuilder().setNameFormat("BrokerServer Pool Thread %d").build());
+                    new ThreadFactoryBuilder().setNameFormat("Broker-BizThread-%d").build());
         }
 
         BrokerServer brokerServer = new BrokerServer();
