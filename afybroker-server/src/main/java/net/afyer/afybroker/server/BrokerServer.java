@@ -2,12 +2,13 @@ package net.afyer.afybroker.server;
 
 import com.alipay.remoting.rpc.RpcServer;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import net.afyer.afybroker.server.command.CommandList;
+import net.afyer.afybroker.server.command.CommandListPlayer;
 import net.afyer.afybroker.server.command.CommandStop;
 import net.afyer.afybroker.server.plugin.Plugin;
 import net.afyer.afybroker.server.plugin.PluginManager;
@@ -19,9 +20,6 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Nipuru
@@ -39,6 +37,8 @@ public class BrokerServer {
     int port;
     /** broker 运行状态 */
     boolean start;
+    /** 事务线程池 */
+    ExecutorService bizThread;
 
     final PluginManager pluginManager;
     final BrokerScheduler scheduler;
@@ -48,20 +48,17 @@ public class BrokerServer {
     final BrokerClientProxyManager brokerClientProxyManager;
     /** 玩家代理 管理器  */
     final BrokerPlayerManager brokerPlayerManager;
-    final ExecutorService bizThread;
 
-    public BrokerServer() {
+
+    BrokerServer() {
         this.pluginManager = new PluginManager(this);
         this.scheduler = new BrokerScheduler(this);
         this.pluginsFolder = new File("plugins");
         this.brokerClientProxyManager = new BrokerClientProxyManager();
         this.brokerPlayerManager = new BrokerPlayerManager();
-        this.bizThread = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
-                60L, TimeUnit.SECONDS,
-                new SynchronousQueue<>(),
-                new ThreadFactoryBuilder().setNameFormat("BrokerServer Pool Thread %d").build());
-
         this.pluginManager.registerCommand(null, new CommandStop(this));
+        this.pluginManager.registerCommand(null, new CommandList(this));
+        this.pluginManager.registerCommand(null, new CommandListPlayer(this));
     }
 
     void initServer() {

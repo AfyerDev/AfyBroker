@@ -10,6 +10,8 @@ import net.afyer.afybroker.core.BrokerClientInfoMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 
+import java.util.concurrent.Executor;
+
 /**
  * @author Nipuru
  * @since 2022/7/30 17:24
@@ -37,5 +39,10 @@ public class RegisterBrokerClientInfoBrokerProcessor extends AsyncUserProcessor<
     @Override
     public String interest() {
         return BrokerClientInfoMessage.class.getName();
+    }
+
+    @Override
+    public Executor getExecutor() {
+        return server.getBizThread();
     }
 }

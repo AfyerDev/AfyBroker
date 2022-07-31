@@ -9,6 +9,9 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class BrokerGlobalConfig {
 
+    /** broker 默认地址 */
+    public String brokerHost = "localhost";
+
     /** broker 默认端口 */
     public int brokerPort = 11200;
 

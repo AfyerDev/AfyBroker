@@ -3,6 +3,7 @@ dependencies {
     implementation(project(":afybroker-client")) {
         exclude(group = "io.netty", module = "netty-all")
         exclude(group = "org.slf4j", module = "slf4j-api")
+        exclude(group = "com.google.guava", module = "guava")
     }
 }
 

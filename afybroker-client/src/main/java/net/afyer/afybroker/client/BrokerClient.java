@@ -10,37 +10,34 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import net.afyer.afybroker.core.BrokerClientType;
+import lombok.extern.slf4j.Slf4j;
+import net.afyer.afybroker.core.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author Nipuru
  * @since 2022/7/30 19:15
  */
+@Slf4j
 @Getter
-@Setter
+@Setter(AccessLevel.PACKAGE)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClient {
 
-    /** 客户端名称(唯一标识) */
-    final String name;
-    /** 客户端标签 */
-    final String tag;
-    /** 客户端类型 */
-    final BrokerClientType type;
-    /** ip:port */
-    final String address;
+    /** 客户端信息 */
+    BrokerClientInfoMessage clientInfo;
+
+    /** 事务线程池 */
+    ExecutorService bizThread;
 
     final RpcClient rpcClient;
 
     /** 消息发送超时时间 */
     final int timeoutMillis = BrokerGlobalConfig.timeoutMillis;
 
-    public BrokerClient(String name, String tag, BrokerClientType type, String address) {
-        this.name = name;
-        this.tag = tag;
-        this.type = type;
-        this.address = address;
+    BrokerClient() {
         this.rpcClient = new RpcClient();
         rpcClient.option(BoltClientOption.CONN_RECONNECT_SWITCH, true);
         rpcClient.option(BoltClientOption.CONN_MONITOR_SWITCH, true);
@@ -48,18 +45,36 @@ public class BrokerClient {
 
     @SuppressWarnings("unchecked")
     public <T> T invokeSync(Object request) throws RemotingException, InterruptedException {
-        return (T) rpcClient.invokeSync(address, request, timeoutMillis);
+        return (T) rpcClient.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
     }
 
     public void oneway(Object request) throws RemotingException, InterruptedException {
-        rpcClient.oneway(address, request);
+        rpcClient.oneway(clientInfo.getAddress(), request);
     }
 
     public void invokeWithCallback(Object request, InvokeCallback invokeCallback) throws RemotingException, InterruptedException {
-        rpcClient.invokeWithCallback(address, request, invokeCallback, timeoutMillis);
+        rpcClient.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
     }
 
     public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) throws RemotingException, InterruptedException {
-        return rpcClient.invokeWithFuture(address, request, invokeContext, timeoutMillis);
+        return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, invokeContext, timeoutMillis);
+    }
+
+    public void startup() {
+        rpcClient.startup();
+    }
+
+    public void shutdown() {
+        rpcClient.shutdown();
+    }
+
+    public void ping() throws RemotingException, InterruptedException {
+        String address = clientInfo.getAddress();
+
+        rpcClient.getConnection(address, timeoutMillis);
+    }
+
+    public static BrokerClientBuilder newBuilder() {
+        return new BrokerClientBuilder();
     }
 }

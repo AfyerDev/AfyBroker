@@ -8,6 +8,8 @@ import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.RequestBrokerClientInfoMessage;
 
+import java.util.concurrent.Executor;
+
 /**
  * @author Nipuru
  * @since 2022/7/30 17:22
@@ -23,10 +25,7 @@ public class RequestBrokerClientInfoMessageClientProcessor extends AsyncUserProc
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, RequestBrokerClientInfoMessage request) {
 
-        BrokerClientInfoMessage response = new BrokerClientInfoMessage()
-                .setName(brokerClient.getName())
-                .setTag(brokerClient.getTag())
-                .setType(brokerClient.getType());
+        BrokerClientInfoMessage response = brokerClient.getClientInfo();
 
         try {
             brokerClient.getRpcClient().oneway(bizCtx.getConnection(), response);
@@ -40,4 +39,8 @@ public class RequestBrokerClientInfoMessageClientProcessor extends AsyncUserProc
         return RequestBrokerClientInfoMessage.class.getName();
     }
 
+    @Override
+    public Executor getExecutor() {
+        return brokerClient.getBizThread();
+    }
 }
