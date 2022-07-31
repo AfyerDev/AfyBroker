@@ -1,16 +1,20 @@
 package net.afyer.afybroker.client;
 
+import com.alipay.remoting.ConnectionEventProcessor;
+import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.InvokeContext;
 import com.alipay.remoting.config.BoltClientOption;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.RpcResponseFuture;
+import com.alipay.remoting.rpc.protocol.UserProcessor;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.core.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 
@@ -60,6 +64,15 @@ public class BrokerClient {
         return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, invokeContext, timeoutMillis);
     }
 
+    public void registerUserProcessor(UserProcessor<?> processor){
+        aware(processor);
+        rpcClient.registerUserProcessor(processor);
+    }
+    public void addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {
+        aware(processor);
+        rpcClient.addConnectionEventProcessor(type, processor);
+    }
+
     public void startup() {
         rpcClient.startup();
     }
@@ -72,6 +85,12 @@ public class BrokerClient {
         String address = clientInfo.getAddress();
 
         rpcClient.getConnection(address, timeoutMillis);
+    }
+
+    public void aware(Object object) {
+        if (object instanceof BrokerClientAware brokerClientAware) {
+            brokerClientAware.setBrokerClient(this);
+        }
     }
 
     public static BrokerClientBuilder newBuilder() {

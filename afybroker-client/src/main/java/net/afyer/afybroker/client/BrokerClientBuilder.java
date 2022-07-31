@@ -2,7 +2,6 @@ package net.afyer.afybroker.client;
 
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
-import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.AccessLevel;
@@ -51,9 +50,6 @@ public class BrokerClientBuilder {
     /** broker 服务端端口 */
     int port = BrokerGlobalConfig.brokerPort;
 
-    /** broker */
-    final BrokerClient brokerClient = new BrokerClient();
-
     /** 用户处理器 */
     final List<UserProcessor<?>> processorList = new ArrayList<>();
 
@@ -82,13 +78,13 @@ public class BrokerClientBuilder {
                 .setTag(tag)
                 .setAddress(address.getAddress());
 
+        BrokerClient brokerClient = new BrokerClient();
+
         brokerClient.setBizThread(bizThread);
         brokerClient.setClientInfo(clientInfo);
 
-        RpcClient rpcClient = brokerClient.getRpcClient();
-
-        this.processorList.forEach(rpcClient::registerUserProcessor);
-        this.connectionEventProcessorMap.forEach(rpcClient::addConnectionEventProcessor);
+        this.processorList.forEach(brokerClient::registerUserProcessor);
+        this.connectionEventProcessorMap.forEach(brokerClient::addConnectionEventProcessor);
 
 
         return brokerClient;
@@ -136,7 +132,7 @@ public class BrokerClientBuilder {
                 .addConnectionEventProcessor(ConnectionEventType.EXCEPTION, new ExceptionEventClientProcessor());
 
         this
-                .registerUserProcessor(new RequestBrokerClientInfoMessageClientProcessor(brokerClient));
+                .registerUserProcessor(new RequestBrokerClientInfoMessageClientProcessor());
     }
 
 }

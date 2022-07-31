@@ -4,10 +4,12 @@ import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.AccessLevel;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientInfoMessage;
 import net.afyer.afybroker.server.BrokerServer;
+import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 
 import java.util.concurrent.Executor;
@@ -18,20 +20,17 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RegisterBrokerClientInfoBrokerProcessor extends AsyncUserProcessor<BrokerClientInfoMessage> {
+public class RegisterBrokerClientInfoBrokerProcessor extends AsyncUserProcessor<BrokerClientInfoMessage> implements BrokerServerAware {
 
-    final BrokerServer server;
-
-    public RegisterBrokerClientInfoBrokerProcessor(BrokerServer server) {
-        this.server = server;
-    }
+    @Setter
+    BrokerServer brokerServer;
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, BrokerClientInfoMessage request) {
         request.setAddress(bizCtx.getRemoteAddress());
 
-        BrokerClientProxy brokerClientProxy = new BrokerClientProxy(request, server.getRpcServer());
-        server.getBrokerClientProxyManager().register(brokerClientProxy);
+        BrokerClientProxy brokerClientProxy = new BrokerClientProxy(request, brokerServer.getRpcServer());
+        brokerServer.getBrokerClientProxyManager().register(brokerClientProxy);
 
         log.info("BrokerClient remoteAddress : {} successfully registered", bizCtx.getRemoteAddress());
     }
@@ -43,6 +42,6 @@ public class RegisterBrokerClientInfoBrokerProcessor extends AsyncUserProcessor<
 
     @Override
     public Executor getExecutor() {
-        return server.getBizThread();
+        return brokerServer.getBizThread();
     }
 }

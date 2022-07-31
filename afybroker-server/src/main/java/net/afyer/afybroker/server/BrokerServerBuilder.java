@@ -3,7 +3,6 @@ package net.afyer.afybroker.server;
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.config.Configs;
-import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.AccessLevel;
@@ -39,9 +38,6 @@ public class BrokerServerBuilder {
     /** 事务线程池 */
     ExecutorService bizThread;
 
-    /** broker */
-    final BrokerServer brokerServer = new BrokerServer();
-
     /** 用户处理器 */
     final List<UserProcessor<?>> processorList = new ArrayList<>();
 
@@ -67,15 +63,15 @@ public class BrokerServerBuilder {
                     new ThreadFactoryBuilder().setNameFormat("BrokerServer Pool Thread %d").build());
         }
 
+        BrokerServer brokerServer = new BrokerServer();
+
         brokerServer.setPort(port);
         brokerServer.setBizThread(bizThread);
 
         brokerServer.initServer();
 
-        RpcServer rpcServer = brokerServer.getRpcServer();
-
-        this.processorList.forEach(rpcServer::registerUserProcessor);
-        this.connectionEventProcessorMap.forEach(rpcServer::addConnectionEventProcessor);
+        this.processorList.forEach(brokerServer::registerUserProcessor);
+        this.connectionEventProcessorMap.forEach(brokerServer::addConnectionEventProcessor);
 
         return brokerServer;
     }
@@ -122,11 +118,11 @@ public class BrokerServerBuilder {
 
     private void defaultProcessor() {
         this
-                .addConnectionEventProcessor(ConnectionEventType.CONNECT, new ConnectEventBrokerProcessor(brokerServer))
-                .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBrokerProcessor(brokerServer));
+                .addConnectionEventProcessor(ConnectionEventType.CONNECT, new ConnectEventBrokerProcessor())
+                .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBrokerProcessor());
 
         this
-                .registerUserProcessor(new RegisterBrokerClientInfoBrokerProcessor(brokerServer));
+                .registerUserProcessor(new RegisterBrokerClientInfoBrokerProcessor());
 
     }
 

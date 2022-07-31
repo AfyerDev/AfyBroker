@@ -1,12 +1,16 @@
 package net.afyer.afybroker.server;
 
+import com.alipay.remoting.ConnectionEventProcessor;
+import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.rpc.RpcServer;
+import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.google.common.collect.Lists;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.command.CommandList;
 import net.afyer.afybroker.server.command.CommandListPlayer;
 import net.afyer.afybroker.server.command.CommandStop;
@@ -61,19 +65,29 @@ public class BrokerServer {
         this.pluginManager.registerCommand(null, new CommandListPlayer(this));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     void initServer() {
         this.rpcServer = new RpcServer(port, true);
         pluginsFolder.mkdirs();
     }
 
+    public void registerUserProcessor(UserProcessor<?> processor){
+        aware(processor);
+        rpcServer.registerUserProcessor(processor);
+    }
+    public void addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {
+        aware(processor);
+        rpcServer.addConnectionEventProcessor(type, processor);
+    }
+
     public void startup() {
         synchronized (this) {
             if (start) {
-                log.info("BrokerServer 已经启动");
+                log.info("BrokerServer already started!");
                 return;
             }
             this.start = true;
-            log.info("BrokerServer port: [{}] 正在启动", this.port);
+            log.info("BrokerServer port: [{}], Starting", this.port);
             long start = System.currentTimeMillis();
             // 启动 bolt rpc
             this.rpcServer.startup();
@@ -82,22 +96,23 @@ public class BrokerServer {
             pluginManager.loadPlugins();
             pluginManager.enablePlugins();
 
-            log.info("BrokerServer 已启动, 耗时: {}ms", System.currentTimeMillis() - start);
+            log.info("Done ({}ms)", System.currentTimeMillis() - start);
         }
     }
 
     public void shutdown() {
         synchronized (this) {
             if (!start) {
-                log.info("BrokerServer 已经关闭");
+                log.info("BrokerServer already closed");
                 return;
             }
             start = false;
-            log.info("BrokerServer 正在关闭");
+            log.info("Stopping the server");
             new Thread("Shutdown Thread") {
                 @Override
                 public void run() {
-                    log.info("BrokerServer 禁用插件中");
+                    log.info("Stopping server");
+                    log.info("BrokerServer disabling plugins");
                     for (Plugin plugin : Lists.reverse(new ArrayList<>(pluginManager.getPlugins()))) {
                         try {
                             plugin.onDisable();
@@ -109,10 +124,15 @@ public class BrokerServer {
                     }
                     rpcServer.shutdown();
                     bizThread.shutdown();
-                    log.info("BrokerServer 已关闭");
                     System.exit(0);
                 }
             }.start();
+        }
+    }
+
+    public void aware(Object object) {
+        if (object instanceof BrokerServerAware brokerServerAware) {
+            brokerServerAware.setBrokerServer(this);
         }
     }
 
