@@ -1,0 +1,4 @@
+broker:
+  #NONE SPAWN LOGIN RESOURCE REALM
+  group: NONE
+  name: server

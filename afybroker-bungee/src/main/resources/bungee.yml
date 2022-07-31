@@ -1,0 +1,3 @@
+name: AfyBroker
+version: '${version}'
+main: net.afyer.broker.bungee.AfyBroker
