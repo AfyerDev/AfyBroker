@@ -1,4 +1,4 @@
-package net.afyer.afybroker.core;
+package net.afyer.afybroker.core.message;
 
 import java.io.Serial;
 import java.io.Serializable;

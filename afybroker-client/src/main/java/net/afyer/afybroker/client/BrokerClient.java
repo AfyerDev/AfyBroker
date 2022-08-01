@@ -15,7 +15,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
-import net.afyer.afybroker.core.BrokerClientInfoMessage;
+import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 
 import java.util.concurrent.ExecutorService;
@@ -81,10 +81,14 @@ public class BrokerClient {
         rpcClient.shutdown();
     }
 
-    public void ping() throws RemotingException, InterruptedException {
+    public void ping() {
         String address = clientInfo.getAddress();
 
-        rpcClient.getConnection(address, timeoutMillis);
+        try {
+            rpcClient.getConnection(address, timeoutMillis);
+        } catch (RemotingException | InterruptedException e) {
+            log.info(e.getMessage(), e);
+        }
     }
 
     public void aware(Object object) {

@@ -7,7 +7,7 @@ import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import net.afyer.afybroker.core.BrokerClientInfoMessage;
+import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;

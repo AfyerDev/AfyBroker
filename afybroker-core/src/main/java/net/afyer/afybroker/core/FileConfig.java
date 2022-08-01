@@ -10,10 +10,13 @@ import java.io.File;
  */
 public abstract class FileConfig<T> {
 
-    private final File file;
 
-    public FileConfig(File file) {
+    private final File file;
+    private final String name;
+
+    public FileConfig(File file, String name) {
         this.file = file;
+        this.name = name;
     }
 
     /**
@@ -23,6 +26,10 @@ public abstract class FileConfig<T> {
      */
     public File getFile() {
         return file;
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**

@@ -1,4 +1,4 @@
-package net.afyer.broker.bukkit.listener;
+package net.afyer.afybroker.bukkit.listener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;

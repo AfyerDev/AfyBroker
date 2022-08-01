@@ -32,6 +32,11 @@ public class BrokerClientProxyManager {
         byAddress.remove(address);
     }
 
+    /** 通过地址获取客户端代理 */
+    public BrokerClientProxy getByAddress(String address) {
+        return byAddress.get(address);
+    }
+
     /** 通过名称（唯一标识）获取客户端代理 */
     public BrokerClientProxy getByName(String name) {
         for (BrokerClientProxy brokerClientProxy : byAddress.values()) {

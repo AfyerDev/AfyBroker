@@ -7,10 +7,11 @@ import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
-import net.afyer.afybroker.core.BrokerClientInfoMessage;
-import net.afyer.afybroker.core.RequestBrokerClientInfoMessage;
+import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
+import net.afyer.afybroker.core.message.RequestBrokerClientInfoMessage;
 
 import java.util.concurrent.Executor;
 
@@ -18,6 +19,7 @@ import java.util.concurrent.Executor;
  * @author Nipuru
  * @since 2022/7/30 17:22
  */
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RequestBrokerClientInfoMessageClientProcessor extends AsyncUserProcessor<RequestBrokerClientInfoMessage> implements BrokerClientAware {
 
@@ -26,6 +28,8 @@ public class RequestBrokerClientInfoMessageClientProcessor extends AsyncUserProc
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, RequestBrokerClientInfoMessage request) {
+
+        log.info("Received server request, sending client info");
 
         BrokerClientInfoMessage response = brokerClient.getClientInfo();
 

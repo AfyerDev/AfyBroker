@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.server.processor.BrokerPlayerBungeeProcessor;
 import net.afyer.afybroker.server.processor.RegisterBrokerClientInfoBrokerProcessor;
 import net.afyer.afybroker.server.processor.connection.CloseEventBrokerProcessor;
 import net.afyer.afybroker.server.processor.connection.ConnectEventBrokerProcessor;
@@ -122,7 +123,8 @@ public class BrokerServerBuilder {
                 .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBrokerProcessor());
 
         this
-                .registerUserProcessor(new RegisterBrokerClientInfoBrokerProcessor());
+                .registerUserProcessor(new RegisterBrokerClientInfoBrokerProcessor())
+                .registerUserProcessor(new BrokerPlayerBungeeProcessor());
 
     }
 

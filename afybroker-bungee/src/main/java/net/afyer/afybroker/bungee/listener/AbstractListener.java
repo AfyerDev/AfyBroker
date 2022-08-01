@@ -1,4 +1,4 @@
-package net.afyer.broker.bungee.listener;
+package net.afyer.afybroker.bungee.listener;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;

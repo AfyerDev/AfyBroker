@@ -1,4 +1,5 @@
 broker:
-  #NONE SPAWN LOGIN RESOURCE REALM
-  group: NONE
+  #服务器名称 每个服务器（包括bungee）应该唯一
   name: server
+  #服务器标签 用于对服务器类型进行分组 可不填
+  tag: spawn

@@ -1,2 +1,3 @@
 broker:
+  #服务器名称 每个服务器（包括bukkit）应该唯一
   name: bungee

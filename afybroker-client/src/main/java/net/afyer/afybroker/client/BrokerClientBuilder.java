@@ -13,7 +13,7 @@ import net.afyer.afybroker.client.processor.connection.CloseEventClientProcessor
 import net.afyer.afybroker.client.processor.connection.ConnectEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ConnectFailedEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ExceptionEventClientProcessor;
-import net.afyer.afybroker.core.BrokerClientInfoMessage;
+import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 
