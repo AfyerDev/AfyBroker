@@ -5,9 +5,9 @@ import net.afyer.afybroker.bungee.AfyBroker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.message.BrokerPlayerBungeeMessage;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.event.EventHandler;
 
 /**
@@ -24,19 +24,27 @@ public class PlayerListener extends AbstractListener {
 
     @EventHandler
     public void onConnect(LoginEvent event) {
+        event.registerIntent(plugin);
         BrokerClient brokerClient = plugin.getBrokerClient();
         BrokerClientInfoMessage clientInfo = brokerClient.getClientInfo();
 
         brokerClient.getBizThread().submit(() -> {
-            BrokerPlayerBungeeMessage msg = new BrokerPlayerBungeeMessage()
-                    .setClientName(clientInfo.getName())
-                    .setUid(event.getConnection().getUniqueId())
-                    .setState(BrokerPlayerBungeeMessage.State.CONNECT);
-
             try {
-                brokerClient.oneway(msg);
+                BrokerPlayerBungeeMessage msg = new BrokerPlayerBungeeMessage()
+                        .setClientName(clientInfo.getName())
+                        .setUid(event.getConnection().getUniqueId())
+                        .setName(event.getConnection().getName())
+                        .setState(BrokerPlayerBungeeMessage.State.CONNECT);
+
+                boolean result = plugin.getBrokerClient().invokeSync(msg);
+                if (!result) {
+                    event.setCancelled(true);
+                    event.setCancelReason(new TextComponent("§c此账号已登录"));
+                }
             } catch (RemotingException | InterruptedException e) {
                 e.printStackTrace();
+            } finally {
+                event.completeIntent(plugin);
             }
         });
     }
@@ -50,6 +58,7 @@ public class PlayerListener extends AbstractListener {
             BrokerPlayerBungeeMessage msg = new BrokerPlayerBungeeMessage()
                     .setClientName(clientInfo.getName())
                     .setUid(event.getPlayer().getUniqueId())
+                    .setName(event.getPlayer().getName())
                     .setState(BrokerPlayerBungeeMessage.State.DISCONNECT);
 
             try {

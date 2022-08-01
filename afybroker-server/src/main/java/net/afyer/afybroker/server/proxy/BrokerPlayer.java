@@ -24,14 +24,17 @@ public class BrokerPlayer {
 
     /** 玩家UUID */
     final UUID uid;
+    /** 玩家名字 */
+    final String name;
     /** 玩家所在的Bungeecord名称 */
     String bungeeProxy;
     /** 玩家所在的Bukkit名称 */
     String bukkitServer;
 
-    public BrokerPlayer(BrokerServer server, UUID uid) {
+    public BrokerPlayer(BrokerServer server, UUID uid, String name) {
         this.server = server;
         this.uid = uid;
+        this.name = name;
     }
 
     /** 获取玩家所在的 Bungee BrokerClientProxy */
@@ -68,7 +71,8 @@ public class BrokerPlayer {
     @Override
     public String toString() {
         return "BrokerPlayer{" +
-                "uid=" + uid +
+                ", uid=" + uid +
+                ", name='" + name + '\'' +
                 ", bungeeProxy='" + bungeeProxy + '\'' +
                 ", bukkitServer='" + bukkitServer + '\'' +
                 '}';

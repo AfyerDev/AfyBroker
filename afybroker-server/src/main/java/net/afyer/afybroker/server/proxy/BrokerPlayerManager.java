@@ -29,10 +29,10 @@ public class BrokerPlayerManager {
         return view.values();
     }
 
-    public void addPlayer(BrokerPlayer player) {
+    public BrokerPlayer addPlayer(BrokerPlayer player) {
         UUID uid = player.getUid();
 
-        byUid.put(uid, player);
+        return byUid.putIfAbsent(uid, player);
     }
 
     public void removePlayer(UUID uid) {

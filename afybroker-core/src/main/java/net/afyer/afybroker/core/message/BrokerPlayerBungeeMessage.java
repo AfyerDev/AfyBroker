@@ -27,6 +27,9 @@ public class BrokerPlayerBungeeMessage implements Serializable {
     /** 玩家uid */
     UUID uid;
 
+    /** 玩家名 */
+    String name;
+
     /** 状态 */
     State state;
 

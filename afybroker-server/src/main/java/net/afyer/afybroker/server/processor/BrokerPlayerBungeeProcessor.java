@@ -24,6 +24,9 @@ import java.util.concurrent.Executor;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerPlayerBungeeProcessor extends AsyncUserProcessor<BrokerPlayerBungeeMessage> implements BrokerServerAware {
 
+    private static final boolean SUCCESS = true;
+    private static final boolean FAILED = false;
+
     @Setter
     BrokerServer brokerServer;
 
@@ -31,8 +34,8 @@ public class BrokerPlayerBungeeProcessor extends AsyncUserProcessor<BrokerPlayer
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, BrokerPlayerBungeeMessage request) {
 
         if (BrokerGlobalConfig.openLog) {
-            log.info("Received player message (player:{}, state:{}, clientName:{}",
-                    request.getUid(), request.getState(), request.getClientName());
+            log.info("Received player message (uuid:{}, name:{}, state:{}, clientName:{}",
+                    request.getUid(), request.getName(), request.getState(), request.getClientName());
         }
 
         BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
@@ -45,13 +48,22 @@ public class BrokerPlayerBungeeProcessor extends AsyncUserProcessor<BrokerPlayer
                     return;
                 }
                 brokerPlayer.setBukkitServer(request.getClientName());
+                asyncCtx.sendResponse(SUCCESS);
             }
             case CONNECT -> {
-                BrokerPlayer brokerPlayer = new BrokerPlayer(brokerServer, request.getUid());
+                BrokerPlayer brokerPlayer = new BrokerPlayer(brokerServer, request.getUid(), request.getName());
                 brokerPlayer.setBungeeProxy(request.getClientName());
-                playerManager.addPlayer(brokerPlayer);
+                BrokerPlayer player = playerManager.addPlayer(brokerPlayer);
+                if (player == null) {
+                    asyncCtx.sendResponse(SUCCESS);
+                } else {
+                    asyncCtx.sendResponse(FAILED);
+                }
             }
-            case DISCONNECT -> playerManager.removePlayer(request.getUid());
+            case DISCONNECT -> {
+                playerManager.removePlayer(request.getUid());
+                asyncCtx.sendResponse(SUCCESS);
+            }
         }
     }
 

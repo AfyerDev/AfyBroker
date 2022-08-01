@@ -31,6 +31,7 @@ public class PlayerListener extends AbstractListener {
             BrokerPlayerBungeeMessage msg = new BrokerPlayerBungeeMessage()
                     .setClientName(clientInfo.getName())
                     .setUid(player.getUniqueId())
+                    .setName(player.getName())
                     .setState(BrokerPlayerBungeeMessage.State.JOIN);
 
             try {
