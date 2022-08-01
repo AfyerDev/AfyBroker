@@ -34,35 +34,25 @@ public class BrokerPlayerBungeeProcessor extends AsyncUserProcessor<BrokerPlayer
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, BrokerPlayerBungeeMessage request) {
 
         if (BrokerGlobalConfig.openLog) {
-            log.info("Received player bungee message {}", request);
+            log.info("Received player message (player:{}, state:{}, clientName:{}",
+                    request.getUid(), request.getState(), request.getClientName());
         }
 
         BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
         BrokerClientProxyManager clientProxyManager = brokerServer.getBrokerClientProxyManager();
 
         switch (request.getState()) {
-            case BUNGEE -> {
-                if (request.getData() == null) return;
-
+            case JOIN -> {
+                //TODO 待验证：可能导致加入请求比连接请求更先送达？
                 BrokerPlayer brokerPlayer = playerManager.getPlayer(request.getUid());
                 if (brokerPlayer == null) {
-                    brokerPlayer = new BrokerPlayer(brokerServer, request.getUid());
-                    BrokerClientProxy clientProxy = clientProxyManager.getByAddress(bizCtx.getRemoteAddress());
-
-                    if (clientProxy == null) return;
-                    if (clientProxy.getType() != BrokerClientType.BUNGEE) return;
-
-                    brokerPlayer.setBungeeProxy(clientProxy.getName());
-                    brokerPlayer.setBukkitServer(request.getData());
-                    playerManager.addPlayer(brokerPlayer);
                     return;
                 }
-                brokerPlayer.setBukkitServer(request.getData());
+                brokerPlayer.setBukkitServer(request.getClientName());
             }
             case CONNECT -> {
-                if (request.getData() == null) return;
                 BrokerPlayer brokerPlayer = new BrokerPlayer(brokerServer, request.getUid());
-                brokerPlayer.setBungeeProxy(request.getData());
+                brokerPlayer.setBungeeProxy(request.getClientName());
                 playerManager.addPlayer(brokerPlayer);
             }
             case DISCONNECT -> playerManager.removePlayer(request.getUid());

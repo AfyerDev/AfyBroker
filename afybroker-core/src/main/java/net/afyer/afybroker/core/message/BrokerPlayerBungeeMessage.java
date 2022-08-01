@@ -30,13 +30,10 @@ public class BrokerPlayerBungeeMessage implements Serializable {
     /** 状态 */
     State state;
 
-    /** 服务器名称
-     *  <p>
-     *      当状态为BUNGEE时 此参数为玩家蹦极目标服务器名称
-     *      当状态为CONNECT时 此参数为玩家所在bc服务器名称
-     *  </p>
+    /**
+     * 发送端（客户端）名称
      */
-    String data;
+    String clientName;
 
     public enum State {
 
@@ -46,8 +43,8 @@ public class BrokerPlayerBungeeMessage implements Serializable {
         /** 从bc端离线时 */
         DISCONNECT,
 
-        /** 进行蹦极时 */
-        BUNGEE
+        /** 加入bukkit服务器时 */
+        JOIN
     }
 
 }

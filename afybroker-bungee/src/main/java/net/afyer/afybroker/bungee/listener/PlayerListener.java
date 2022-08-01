@@ -3,6 +3,7 @@ package net.afyer.afybroker.bungee.listener;
 import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.bungee.AfyBroker;
 import net.afyer.afybroker.client.BrokerClient;
+import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.message.BrokerPlayerBungeeMessage;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -22,17 +23,16 @@ public class PlayerListener extends AbstractListener {
     }
 
     @EventHandler
-    public void onLogin(LoginEvent event) {
+    public void onConnect(LoginEvent event) {
         BrokerClient brokerClient = plugin.getBrokerClient();
+        BrokerClientInfoMessage clientInfo = brokerClient.getClientInfo();
 
         brokerClient.getBizThread().submit(() -> {
-            var msg = new BrokerPlayerBungeeMessage()
-                    .setData(brokerClient.getClientInfo().getName())
+            BrokerPlayerBungeeMessage msg = new BrokerPlayerBungeeMessage()
+                    .setClientName(clientInfo.getName())
                     .setUid(event.getConnection().getUniqueId())
                     .setState(BrokerPlayerBungeeMessage.State.CONNECT);
 
-
-
             try {
                 brokerClient.oneway(msg);
             } catch (RemotingException | InterruptedException e) {
@@ -42,31 +42,15 @@ public class PlayerListener extends AbstractListener {
     }
 
     @EventHandler
-    public void onPlayerDisConnect(PlayerDisconnectEvent event) {
+    public void onDisConnect(PlayerDisconnectEvent event) {
         BrokerClient brokerClient = plugin.getBrokerClient();
+        BrokerClientInfoMessage clientInfo = brokerClient.getClientInfo();
 
         brokerClient.getBizThread().submit(() -> {
-            var msg = new BrokerPlayerBungeeMessage()
+            BrokerPlayerBungeeMessage msg = new BrokerPlayerBungeeMessage()
+                    .setClientName(clientInfo.getName())
                     .setUid(event.getPlayer().getUniqueId())
                     .setState(BrokerPlayerBungeeMessage.State.DISCONNECT);
-
-            try {
-                brokerClient.oneway(msg);
-            } catch (RemotingException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    @EventHandler
-    public void onServerConnect(ServerConnectedEvent event) {
-        BrokerClient brokerClient = plugin.getBrokerClient();
-
-        brokerClient.getBizThread().submit(() -> {
-            var msg = new BrokerPlayerBungeeMessage()
-                    .setData(event.getServer().getInfo().getName())
-                    .setUid(event.getPlayer().getUniqueId())
-                    .setState(BrokerPlayerBungeeMessage.State.BUNGEE);
 
             try {
                 brokerClient.oneway(msg);

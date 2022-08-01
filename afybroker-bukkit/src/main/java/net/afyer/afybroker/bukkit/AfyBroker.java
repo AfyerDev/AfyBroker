@@ -3,6 +3,7 @@ package net.afyer.afybroker.bukkit;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import net.afyer.afybroker.bukkit.listener.PlayerListener;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -38,6 +39,7 @@ public class AfyBroker extends JavaPlugin {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
 
+        new PlayerListener(this).register(this);
     }
 
     @Override
