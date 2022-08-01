@@ -1,5 +1,5 @@
 name: AfyBroker
 version: '${version}'
-main: net.afyer.broker.bukkit.AfyBroker
+main: net.afyer.afybroker.bukkit.AfyBroker
 api-version: 1.18
 authors: [ Nipuru ]

@@ -7,13 +7,10 @@ import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerPlayerBungeeMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
-import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 
@@ -39,7 +36,6 @@ public class BrokerPlayerBungeeProcessor extends AsyncUserProcessor<BrokerPlayer
         }
 
         BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
-        BrokerClientProxyManager clientProxyManager = brokerServer.getBrokerClientProxyManager();
 
         switch (request.getState()) {
             case JOIN -> {
