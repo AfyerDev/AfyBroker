@@ -206,11 +206,11 @@ public class PluginManager {
         for (File file : folder.listFiles()) {
             if (file.isFile() && file.getName().endsWith(".jar")) {
                 try (JarFile jar = new JarFile(file)) {
-                    JarEntry pdf = jar.getJarEntry("bungee.yml");
+                    JarEntry pdf = jar.getJarEntry("broker.yml");
                     if (pdf == null) {
                         pdf = jar.getJarEntry("plugin.yml");
                     }
-                    Preconditions.checkNotNull(pdf, "Plugin must have a plugin.yml or bungee.yml");
+                    Preconditions.checkNotNull(pdf, "Plugin must have a plugin.yml or broker.yml");
 
                     try (InputStream in = jar.getInputStream(pdf)) {
                         PluginDescription desc = yaml.loadAs(in, PluginDescription.class);
