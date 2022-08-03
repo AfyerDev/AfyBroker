@@ -21,7 +21,7 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RequestBrokerClientInfoMessageClientProcessor extends AsyncUserProcessor<RequestBrokerClientInfoMessage> implements BrokerClientAware {
+public class RequestBrokerClientInfoClientProcessor extends AsyncUserProcessor<RequestBrokerClientInfoMessage> implements BrokerClientAware {
 
     @Setter
     BrokerClient brokerClient;

@@ -8,7 +8,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
-import net.afyer.afybroker.core.message.BrokerPlayerBungeeMessage;
+import net.afyer.afybroker.core.message.PlayerBungeeMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
@@ -22,7 +22,7 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BrokerPlayerBungeeProcessor extends AsyncUserProcessor<BrokerPlayerBungeeMessage> implements BrokerServerAware {
+public class PlayerBungeeBrokerProcessor extends AsyncUserProcessor<PlayerBungeeMessage> implements BrokerServerAware {
 
     private static final boolean SUCCESS = true;
     private static final boolean FAILED = false;
@@ -31,7 +31,7 @@ public class BrokerPlayerBungeeProcessor extends AsyncUserProcessor<BrokerPlayer
     BrokerServer brokerServer;
 
     @Override
-    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, BrokerPlayerBungeeMessage request) {
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerBungeeMessage request) {
 
         if (BrokerGlobalConfig.openLog) {
             log.info("Received player message (uuid:{}, name:{}, state:{}, clientName:{}",
@@ -69,7 +69,7 @@ public class BrokerPlayerBungeeProcessor extends AsyncUserProcessor<BrokerPlayer
 
     @Override
     public String interest() {
-        return BrokerPlayerBungeeMessage.class.getName();
+        return PlayerBungeeMessage.class.getName();
     }
 
     @Override

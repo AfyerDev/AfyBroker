@@ -20,7 +20,7 @@ import java.util.UUID;
 @ToString
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BrokerPlayerBungeeMessage implements Serializable {
+public class PlayerBungeeMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 1791475059445212432L;
 

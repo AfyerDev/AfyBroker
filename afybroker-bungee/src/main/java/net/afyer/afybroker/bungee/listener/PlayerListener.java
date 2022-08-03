@@ -4,7 +4,7 @@ import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.bungee.AfyBroker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
-import net.afyer.afybroker.core.message.BrokerPlayerBungeeMessage;
+import net.afyer.afybroker.core.message.PlayerBungeeMessage;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -30,11 +30,11 @@ public class PlayerListener extends AbstractListener {
 
         brokerClient.getBizThread().submit(() -> {
             try {
-                BrokerPlayerBungeeMessage msg = new BrokerPlayerBungeeMessage()
+                PlayerBungeeMessage msg = new PlayerBungeeMessage()
                         .setClientName(clientInfo.getName())
                         .setUid(event.getConnection().getUniqueId())
                         .setName(event.getConnection().getName())
-                        .setState(BrokerPlayerBungeeMessage.State.CONNECT);
+                        .setState(PlayerBungeeMessage.State.CONNECT);
 
                 boolean result = plugin.getBrokerClient().invokeSync(msg);
                 if (!result) {
@@ -55,11 +55,11 @@ public class PlayerListener extends AbstractListener {
         BrokerClientInfoMessage clientInfo = brokerClient.getClientInfo();
 
         brokerClient.getBizThread().submit(() -> {
-            BrokerPlayerBungeeMessage msg = new BrokerPlayerBungeeMessage()
+            PlayerBungeeMessage msg = new PlayerBungeeMessage()
                     .setClientName(clientInfo.getName())
                     .setUid(event.getPlayer().getUniqueId())
                     .setName(event.getPlayer().getName())
-                    .setState(BrokerPlayerBungeeMessage.State.DISCONNECT);
+                    .setState(PlayerBungeeMessage.State.DISCONNECT);
 
             try {
                 brokerClient.oneway(msg);

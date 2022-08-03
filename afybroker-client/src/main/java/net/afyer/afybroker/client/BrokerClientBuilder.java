@@ -8,14 +8,14 @@ import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import net.afyer.afybroker.client.processor.RequestBrokerClientInfoMessageClientProcessor;
+import net.afyer.afybroker.client.processor.RequestBrokerClientInfoClientProcessor;
 import net.afyer.afybroker.client.processor.connection.CloseEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ConnectEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ConnectFailedEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ExceptionEventClientProcessor;
-import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -132,7 +132,7 @@ public class BrokerClientBuilder {
                 .addConnectionEventProcessor(ConnectionEventType.EXCEPTION, new ExceptionEventClientProcessor());
 
         this
-                .registerUserProcessor(new RequestBrokerClientInfoMessageClientProcessor());
+                .registerUserProcessor(new RequestBrokerClientInfoClientProcessor());
     }
 
 }
