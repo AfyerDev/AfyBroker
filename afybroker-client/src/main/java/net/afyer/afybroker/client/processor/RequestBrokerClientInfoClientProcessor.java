@@ -3,28 +3,16 @@ package net.afyer.afybroker.client.processor;
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.exception.RemotingException;
-import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
-import lombok.AccessLevel;
-import lombok.Setter;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import net.afyer.afybroker.client.BrokerClient;
-import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.message.RequestBrokerClientInfoMessage;
-
-import java.util.concurrent.Executor;
 
 /**
  * @author Nipuru
  * @since 2022/7/30 17:22
  */
 @Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class RequestBrokerClientInfoClientProcessor extends AsyncUserProcessor<RequestBrokerClientInfoMessage> implements BrokerClientAware {
-
-    @Setter
-    BrokerClient brokerClient;
+public class RequestBrokerClientInfoClientProcessor extends BrokerAsyncUserProcessor<RequestBrokerClientInfoMessage> {
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, RequestBrokerClientInfoMessage request) {
@@ -45,8 +33,4 @@ public class RequestBrokerClientInfoClientProcessor extends AsyncUserProcessor<R
         return RequestBrokerClientInfoMessage.class.getName();
     }
 
-    @Override
-    public Executor getExecutor() {
-        return brokerClient.getBizThread();
-    }
 }

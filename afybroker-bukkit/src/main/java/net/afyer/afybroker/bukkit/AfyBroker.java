@@ -3,7 +3,9 @@ package net.afyer.afybroker.bukkit;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import net.afyer.afybroker.bukkit.command.ConnectCommand;
 import net.afyer.afybroker.bukkit.listener.PlayerListener;
+import net.afyer.afybroker.bukkit.processor.PlayerConnectOtherBukkitProcessor;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,6 +25,8 @@ public class AfyBroker extends JavaPlugin {
         instance = this;
         saveDefaultConfig();
 
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClassLoader());
@@ -31,6 +35,7 @@ public class AfyBroker extends JavaPlugin {
                     .name(getConfig().getString("broker.name"))
                     .tag(getConfig().getString("broker.tag"))
                     .type(BrokerClientType.BUKKIT)
+                    .registerUserProcessor(new PlayerConnectOtherBukkitProcessor(this))
                     .build();
 
             brokerClient.startup();
@@ -39,12 +44,21 @@ public class AfyBroker extends JavaPlugin {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
 
-        new PlayerListener(this).register(this);
+        registerListeners();
+        registerCommands();
     }
 
     @Override
     public void onDisable() {
         brokerClient.shutdown();
+    }
+
+    private void registerListeners() {
+        new PlayerListener(this).register(this);
+    }
+
+    private void registerCommands() {
+        new ConnectCommand().register(this);
     }
 
     @Getter

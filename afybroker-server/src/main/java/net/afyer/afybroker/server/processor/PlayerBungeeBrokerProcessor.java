@@ -2,19 +2,13 @@ package net.afyer.afybroker.server.processor;
 
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
-import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.AccessLevel;
-import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.PlayerBungeeMessage;
-import net.afyer.afybroker.server.BrokerServer;
-import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
-
-import java.util.concurrent.Executor;
 
 /**
  * @author Nipuru
@@ -22,13 +16,10 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerBungeeBrokerProcessor extends AsyncUserProcessor<PlayerBungeeMessage> implements BrokerServerAware {
+public class PlayerBungeeBrokerProcessor extends BrokerAsyncUserProcessor<PlayerBungeeMessage> {
 
     private static final boolean SUCCESS = true;
     private static final boolean FAILED = false;
-
-    @Setter
-    BrokerServer brokerServer;
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerBungeeMessage request) {
@@ -72,8 +63,4 @@ public class PlayerBungeeBrokerProcessor extends AsyncUserProcessor<PlayerBungee
         return PlayerBungeeMessage.class.getName();
     }
 
-    @Override
-    public Executor getExecutor() {
-        return brokerServer.getBizThread();
-    }
 }

@@ -3,9 +3,10 @@ package net.afyer.afybroker.bungee;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import net.afyer.afybroker.bungee.listener.ConnectCommandTabListener;
+import net.afyer.afybroker.bungee.listener.PlayerListener;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
-import net.afyer.afybroker.bungee.listener.PlayerListener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -47,6 +48,7 @@ public class AfyBroker extends Plugin {
         }
 
         new PlayerListener(this).register(this);
+        new ConnectCommandTabListener().register(this);
     }
 
     @Override
