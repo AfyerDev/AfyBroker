@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.bukkit.command.ConnectCommand;
 import net.afyer.afybroker.bukkit.listener.PlayerListener;
 import net.afyer.afybroker.bukkit.processor.PlayerConnectOtherBukkitProcessor;
+import net.afyer.afybroker.bukkit.processor.SendPlayerChatBukkitProcessor;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,6 +37,7 @@ public class AfyBroker extends JavaPlugin {
                     .tag(getConfig().getString("broker.tag"))
                     .type(BrokerClientType.BUKKIT)
                     .registerUserProcessor(new PlayerConnectOtherBukkitProcessor(this))
+                    .registerUserProcessor(new SendPlayerChatBukkitProcessor())
                     .build();
 
             brokerClient.startup();
