@@ -80,7 +80,12 @@ public class PluginManager {
         return getCommandIfEnabled(commandName) != null;
     }
 
+
     public boolean dispatchCommand(String commandLine) {
+        return this.dispatchCommand(commandLine, null);
+    }
+
+    public boolean dispatchCommand(String commandLine, List<String> tabResults) {
         String[] split = commandLine.split(" ", -1);
         // Check for chat that only contains " "
         if (split.length == 0 || split[0].isEmpty()) {
@@ -94,7 +99,13 @@ public class PluginManager {
 
         String[] args = Arrays.copyOfRange(split, 1, split.length);
         try {
-            command.execute(args);
+            if (tabResults == null) {
+                command.execute(args);
+            } else if (commandLine.contains(" ") && command instanceof TabExecutor) {
+                for (String s : ((TabExecutor) command).onTabComplete(args)) {
+                    tabResults.add(s);
+                }
+            }
         } catch (Exception ex) {
             log.error("Error in dispatching command", ex);
         }
@@ -175,7 +186,7 @@ public class PluginManager {
                 status = false;
             }
 
-            dependencyGraph.putEdge( plugin.getName(), dependName );
+            dependencyGraph.putEdge(plugin.getName(), dependName);
             if (!status) {
                 break;
             }
@@ -264,10 +275,10 @@ public class PluginManager {
     }
 
     boolean isTransitiveDepend(PluginDescription plugin, PluginDescription depend) {
-        Preconditions.checkArgument( plugin != null, "plugin" );
-        Preconditions.checkArgument( depend != null, "depend" );
+        Preconditions.checkArgument(plugin != null, "plugin");
+        Preconditions.checkArgument(depend != null, "depend");
 
-        if ( dependencyGraph.nodes().contains( plugin.getName() ) ) {
+        if (dependencyGraph.nodes().contains(plugin.getName())) {
             return Graphs.reachableNodes(dependencyGraph, plugin.getName()).contains(depend.getName());
         }
         return false;

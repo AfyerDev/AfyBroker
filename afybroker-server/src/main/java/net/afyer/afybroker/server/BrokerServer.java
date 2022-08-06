@@ -5,6 +5,7 @@ import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.google.common.collect.Lists;
+import jline.console.ConsoleReader;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.command.CommandList;
 import net.afyer.afybroker.server.command.CommandListPlayer;
 import net.afyer.afybroker.server.command.CommandStop;
+import net.afyer.afybroker.server.command.ConsoleCommandCompleter;
 import net.afyer.afybroker.server.plugin.Plugin;
 import net.afyer.afybroker.server.plugin.PluginManager;
 import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
@@ -22,6 +24,7 @@ import net.afyer.afybroker.server.scheduler.BrokerScheduler;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
@@ -39,22 +42,34 @@ public class BrokerServer {
     RpcServer rpcServer;
     /** broker 端口 */
     int port;
-    /** broker 运行状态 */
+    /**
+     * broker 运行状态
+     */
     boolean start;
-    /** 事务线程池 */
+    /**
+     * 事务线程池
+     */
     ExecutorService bizThread;
 
+    final ConsoleReader consoleReader;
     final PluginManager pluginManager;
     final BrokerScheduler scheduler;
     final File pluginsFolder;
 
-    /** 客户端代理 管理器  */
+    /**
+     * 客户端代理 管理器
+     */
     final BrokerClientProxyManager brokerClientProxyManager;
-    /** 玩家代理 管理器  */
+    /**
+     * 玩家代理 管理器
+     */
     final BrokerPlayerManager brokerPlayerManager;
 
 
-    BrokerServer() {
+    BrokerServer() throws IOException {
+        this.consoleReader = new ConsoleReader();
+        this.consoleReader.setExpandEvents(false);
+        this.consoleReader.addCompleter(new ConsoleCommandCompleter(this));
         this.pluginManager = new PluginManager(this);
         this.scheduler = new BrokerScheduler(this);
         this.pluginsFolder = new File("plugins");

@@ -16,6 +16,7 @@ import net.afyer.afybroker.server.processor.SendPlayerChatBrokerProcessor;
 import net.afyer.afybroker.server.processor.connection.CloseEventBrokerProcessor;
 import net.afyer.afybroker.server.processor.connection.ConnectEventBrokerProcessor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +56,7 @@ public class BrokerServerBuilder {
         System.setProperty(Configs.CONN_RECONNECT_SWITCH, "true");
     }
 
-    public BrokerServer build() {
+    public BrokerServer build() throws IOException {
         this.checked();
 
         if (bizThread == null) {
