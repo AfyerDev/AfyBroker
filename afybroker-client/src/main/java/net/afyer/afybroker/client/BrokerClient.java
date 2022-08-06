@@ -15,8 +15,8 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
-import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 
 import java.util.concurrent.ExecutorService;
 
@@ -79,6 +79,7 @@ public class BrokerClient {
 
     public void shutdown() {
         rpcClient.shutdown();
+        bizThread.shutdown();
     }
 
     public void ping() {
