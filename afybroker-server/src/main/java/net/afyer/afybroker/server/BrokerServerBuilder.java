@@ -4,6 +4,7 @@ import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +21,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Nipuru
@@ -35,10 +40,19 @@ public class BrokerServerBuilder {
      */
     int port = BrokerGlobalConfig.BROKER_PORT;
 
-    /** 用户处理器 */
+    /**
+     * 事务线程池
+     */
+    ExecutorService bizThread;
+
+    /**
+     * 用户处理器
+     */
     final List<UserProcessor<?>> processorList = new ArrayList<>();
 
-    /** bolt 连接器 */
+    /**
+     * bolt 连接器
+     */
     final Map<ConnectionEventType, ConnectionEventProcessor> connectionEventProcessorMap = new HashMap<>();
 
     BrokerServerBuilder() {
@@ -53,9 +67,17 @@ public class BrokerServerBuilder {
     public BrokerServer build() throws IOException {
         this.checked();
 
+        if (bizThread == null) {
+            bizThread = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                    60L, TimeUnit.SECONDS,
+                    new SynchronousQueue<>(),
+                    new ThreadFactoryBuilder().setNameFormat("Broker-BizThread-%d").build());
+        }
+
         BrokerServer brokerServer = new BrokerServer();
 
         brokerServer.setPort(port);
+        brokerServer.setBizThread(bizThread);
 
         brokerServer.initServer();
 
