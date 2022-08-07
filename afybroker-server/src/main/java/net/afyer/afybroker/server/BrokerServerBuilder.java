@@ -30,8 +30,10 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerServerBuilder {
 
-    /** broker 端口 */
-    int port = BrokerGlobalConfig.brokerPort;
+    /**
+     * broker 端口
+     */
+    int port = BrokerGlobalConfig.BROKER_PORT;
 
     /** 用户处理器 */
     final List<UserProcessor<?>> processorList = new ArrayList<>();

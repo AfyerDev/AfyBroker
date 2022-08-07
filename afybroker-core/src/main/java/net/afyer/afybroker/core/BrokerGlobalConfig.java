@@ -9,16 +9,24 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class BrokerGlobalConfig {
 
-    /** broker 默认地址 */
-    public String brokerHost = "localhost";
+    /**
+     * broker 默认地址
+     */
+    public final String BROKER_HOST = "localhost";
 
-    /** broker 默认端口 */
-    public int brokerPort = 11200;
+    /**
+     * broker 默认端口
+     */
+    public final int BROKER_PORT = 11200;
 
-    /** bolt 消息发送超时时间 */
-    public int timeoutMillis = 3000;
+    /**
+     * bolt 消息发送超时时间
+     */
+    public final int TIMEOUT_MILLIS = 3000;
 
-    /** true 开启日志 */
-    public boolean openLog = true;
+    /**
+     * true 开启日志
+     */
+    public final boolean OPEN_LOG = true;
 
 }

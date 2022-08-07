@@ -9,9 +9,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 
 /**
  * 客户端代理
@@ -35,8 +35,10 @@ public class BrokerClientProxy {
 
     final RpcServer rpcServer;
 
-    /** 消息发送超时时间 */
-    final int timeoutMillis = BrokerGlobalConfig.timeoutMillis;
+    /**
+     * 消息发送超时时间
+     */
+    final int timeoutMillis = BrokerGlobalConfig.TIMEOUT_MILLIS;
 
     public BrokerClientProxy(BrokerClientInfoMessage clientInfo, RpcServer rpcServer) {
         this.name = clientInfo.getName();

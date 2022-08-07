@@ -33,8 +33,10 @@ public class BrokerClient {
 
     final RpcClient rpcClient;
 
-    /** 消息发送超时时间 */
-    final int timeoutMillis = BrokerGlobalConfig.timeoutMillis;
+    /**
+     * 消息发送超时时间
+     */
+    final int timeoutMillis = BrokerGlobalConfig.TIMEOUT_MILLIS;
 
     BrokerClient() {
         this.rpcClient = new RpcClient();

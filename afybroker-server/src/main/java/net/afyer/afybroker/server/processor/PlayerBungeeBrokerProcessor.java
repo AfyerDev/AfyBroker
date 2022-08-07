@@ -31,7 +31,7 @@ public class PlayerBungeeBrokerProcessor extends AsyncUserProcessor<PlayerBungee
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerBungeeMessage request) {
 
-        if (BrokerGlobalConfig.openLog) {
+        if (BrokerGlobalConfig.OPEN_LOG) {
             log.info("Received player message (uuid:{}, name:{}, state:{}, clientName:{}",
                     request.getUid(), request.getName(), request.getState(), request.getClientName());
         }

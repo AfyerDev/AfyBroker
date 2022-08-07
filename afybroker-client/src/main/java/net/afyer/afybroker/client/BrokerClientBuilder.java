@@ -36,11 +36,15 @@ public class BrokerClientBuilder {
     /** 客户端标签 */
     String tag;
 
-    /** broker 服务端主机 */
-    String host = BrokerGlobalConfig.brokerHost;
+    /**
+     * broker 服务端主机
+     */
+    String host = BrokerGlobalConfig.BROKER_HOST;
 
-    /** broker 服务端端口 */
-    int port = BrokerGlobalConfig.brokerPort;
+    /**
+     * broker 服务端端口
+     */
+    int port = BrokerGlobalConfig.BROKER_PORT;
 
     /** 用户处理器 */
     final List<UserProcessor<?>> processorList = new ArrayList<>();
