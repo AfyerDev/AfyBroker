@@ -5,6 +5,7 @@ import net.afyer.afybroker.bungee.AfyBroker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.message.PlayerBungeeMessage;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -28,7 +29,7 @@ public class PlayerListener extends AbstractListener {
         BrokerClient brokerClient = plugin.getBrokerClient();
         BrokerClientInfoMessage clientInfo = brokerClient.getClientInfo();
 
-        brokerClient.getBizThread().submit(() -> {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
                 PlayerBungeeMessage msg = new PlayerBungeeMessage()
                         .setClientName(clientInfo.getName())
@@ -54,7 +55,7 @@ public class PlayerListener extends AbstractListener {
         BrokerClient brokerClient = plugin.getBrokerClient();
         BrokerClientInfoMessage clientInfo = brokerClient.getClientInfo();
 
-        brokerClient.getBizThread().submit(() -> {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             PlayerBungeeMessage msg = new PlayerBungeeMessage()
                     .setClientName(clientInfo.getName())
                     .setUid(event.getPlayer().getUniqueId())

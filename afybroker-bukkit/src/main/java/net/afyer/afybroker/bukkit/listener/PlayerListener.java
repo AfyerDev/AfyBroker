@@ -48,7 +48,7 @@ public class PlayerListener extends AbstractListener {
         BrokerClient brokerClient = plugin.getBrokerClient();
         BrokerClientInfoMessage clientInfo = brokerClient.getClientInfo();
 
-        brokerClient.getBizThread().submit(() -> {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             PlayerBungeeMessage msg = new PlayerBungeeMessage()
                     .setClientName(clientInfo.getName())
                     .setUid(player.getUniqueId())

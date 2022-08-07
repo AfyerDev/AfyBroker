@@ -3,7 +3,6 @@ package net.afyer.afybroker.client;
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,10 +17,6 @@ import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Nipuru
@@ -41,9 +36,6 @@ public class BrokerClientBuilder {
     /** 客户端标签 */
     String tag;
 
-    /** 事务线程池 */
-    ExecutorService bizThread;
-
     /** broker 服务端主机 */
     String host = BrokerGlobalConfig.brokerHost;
 
@@ -62,14 +54,6 @@ public class BrokerClientBuilder {
     }
 
     public BrokerClient build() {
-
-        if (bizThread == null) {
-            bizThread = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
-                    60L, TimeUnit.SECONDS,
-                    new SynchronousQueue<>(),
-                    new ThreadFactoryBuilder().setNameFormat("Broker-BizThread-%d").build());
-        }
-
         BrokerAddress address = new BrokerAddress(host, port);
 
         BrokerClientInfoMessage clientInfo = new BrokerClientInfoMessage()
@@ -80,7 +64,6 @@ public class BrokerClientBuilder {
 
         BrokerClient brokerClient = new BrokerClient();
 
-        brokerClient.setBizThread(bizThread);
         brokerClient.setClientInfo(clientInfo);
 
         this.processorList.forEach(brokerClient::registerUserProcessor);

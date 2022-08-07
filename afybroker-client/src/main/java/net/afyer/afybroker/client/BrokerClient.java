@@ -18,8 +18,6 @@ import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 
-import java.util.concurrent.ExecutorService;
-
 /**
  * @author Nipuru
  * @since 2022/7/30 19:15
@@ -32,9 +30,6 @@ public class BrokerClient {
 
     /** 客户端信息 */
     BrokerClientInfoMessage clientInfo;
-
-    /** 事务线程池 */
-    ExecutorService bizThread;
 
     final RpcClient rpcClient;
 
@@ -79,7 +74,6 @@ public class BrokerClient {
 
     public void shutdown() {
         rpcClient.shutdown();
-        bizThread.shutdown();
     }
 
     public void ping() {
