@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.bungee.listener.ConnectCommandTabListener;
 import net.afyer.afybroker.bungee.listener.PlayerListener;
+import net.afyer.afybroker.bungee.processor.BroadcastChatBungeeProcessor;
 import net.afyer.afybroker.bungee.processor.SendPlayerChatBungeeProcessor;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
@@ -30,8 +31,6 @@ public class AfyBroker extends Plugin {
         instance = this;
         Configuration config = new BungeeFileConfig("config.yml", this, YamlConfiguration.class).get();
 
-
-
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -40,6 +39,7 @@ public class AfyBroker extends Plugin {
                     .name(config.getString("broker.name"))
                     .type(BrokerClientType.BUNGEE)
                     .registerUserProcessor(new SendPlayerChatBungeeProcessor())
+                    .registerUserProcessor(new BroadcastChatBungeeProcessor())
                     .build();
 
             brokerClient.startup();

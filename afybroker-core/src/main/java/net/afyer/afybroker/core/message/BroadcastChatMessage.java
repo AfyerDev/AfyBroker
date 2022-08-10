@@ -10,25 +10,19 @@ import net.afyer.afybroker.core.ChatHandlerType;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * @author Nipuru
- * @since 2022/8/5 10:04
+ * @since 2022/8/10 11:23
  */
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SendPlayerChatMessage implements Serializable {
+public class BroadcastChatMessage implements Serializable {
     @Serial
-    private static final long serialVersionUID = -4207075992906096144L;
-
-    /**
-     * 玩家uid
-     */
-    UUID uid;
+    private static final long serialVersionUID = -4901406795508836396L;
 
     /**
      * 消息处理端的类型

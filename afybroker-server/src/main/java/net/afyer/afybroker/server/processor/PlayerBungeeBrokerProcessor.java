@@ -3,9 +3,7 @@ package net.afyer.afybroker.server.processor;
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
-import lombok.AccessLevel;
 import lombok.Setter;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.PlayerBungeeMessage;
@@ -19,7 +17,6 @@ import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
  * @since 2022/8/1 11:41
  */
 @Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerBungeeBrokerProcessor extends AsyncUserProcessor<PlayerBungeeMessage> implements BrokerServerAware {
 
     private static final boolean SUCCESS = true;
