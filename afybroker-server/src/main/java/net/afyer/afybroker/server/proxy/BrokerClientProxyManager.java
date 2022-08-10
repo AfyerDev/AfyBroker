@@ -1,7 +1,9 @@
 package net.afyer.afybroker.server.proxy;
 
+import com.alipay.remoting.exception.RemotingException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
 
 import java.util.*;
@@ -13,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Nipuru
  * @since 2022/7/31 8:00
  */
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClientProxyManager {
 
@@ -73,9 +76,33 @@ public class BrokerClientProxyManager {
         return list;
     }
 
-    /** 获取客户端代理集合 */
+    /**
+     * 获取客户端代理集合
+     */
     public Collection<BrokerClientProxy> list() {
         return view.values();
+    }
+
+    /**
+     * 广播消息给全部客户端
+     */
+    public void broadcast(Object request) {
+        this.broadcast(null, request);
+    }
+
+    /**
+     * 广播消息给指定类型客户端
+     */
+    public void broadcast(BrokerClientType clientType, Object request) {
+        for (BrokerClientProxy brokerClient : new ArrayList<>(list())) {
+            if (clientType == null || brokerClient.getType() == clientType) {
+                try {
+                    brokerClient.oneway(request);
+                } catch (RemotingException | InterruptedException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
     }
 
 }
