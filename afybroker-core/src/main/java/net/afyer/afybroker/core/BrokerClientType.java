@@ -14,7 +14,4 @@ public enum BrokerClientType {
     /** Bukkit客户端 */
     BUKKIT,
 
-    /** 其他类型客户端 */
-    OTHER
-
 }

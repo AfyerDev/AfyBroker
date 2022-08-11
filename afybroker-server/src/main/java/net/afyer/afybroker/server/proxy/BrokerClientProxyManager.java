@@ -83,16 +83,12 @@ public class BrokerClientProxyManager {
         return view.values();
     }
 
-    /**
-     * 广播消息给全部客户端
-     */
+    /** 广播消息给全部客户端 */
     public void broadcast(Object request) {
         this.broadcast(null, request);
     }
 
-    /**
-     * 广播消息给指定类型客户端
-     */
+    /** 广播消息给指定类型客户端 */
     public void broadcast(BrokerClientType clientType, Object request) {
         for (BrokerClientProxy brokerClient : new ArrayList<>(list())) {
             if (clientType == null || brokerClient.getType() == clientType) {

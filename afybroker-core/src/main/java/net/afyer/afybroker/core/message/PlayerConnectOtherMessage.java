@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * @author Nipuru
@@ -24,7 +23,14 @@ public class PlayerConnectOtherMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 6146541679234629563L;
 
-    UUID uid;
+    /**
+     * 玩家名
+     */
+    String player;
+
+    /**
+     * 服务器名
+     */
     String server;
 
 }

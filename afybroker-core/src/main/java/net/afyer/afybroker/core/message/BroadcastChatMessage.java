@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import net.afyer.afybroker.core.ChatHandlerType;
+import net.afyer.afybroker.core.BrokerClientType;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -27,7 +27,7 @@ public class BroadcastChatMessage implements Serializable {
     /**
      * 消息处理端的类型
      */
-    ChatHandlerType type = ChatHandlerType.BUKKIT;
+    BrokerClientType type = BrokerClientType.BUKKIT;
 
     /**
      * 消息

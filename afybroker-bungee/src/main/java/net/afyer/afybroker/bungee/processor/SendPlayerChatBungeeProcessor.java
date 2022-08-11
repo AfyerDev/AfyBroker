@@ -17,7 +17,7 @@ public class SendPlayerChatBungeeProcessor extends AsyncUserProcessor<SendPlayer
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, SendPlayerChatMessage request) {
-        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(request.getUid());
+        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(request.getPlayer());
 
         if (player == null) {
             return;

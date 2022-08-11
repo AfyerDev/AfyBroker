@@ -38,7 +38,7 @@ public class AfyBroker extends JavaPlugin {
                     .name(getConfig().getString("broker.name"))
                     .tag(getConfig().getString("broker.tag"))
                     .type(BrokerClientType.BUKKIT)
-                    .registerUserProcessor(new PlayerConnectOtherBukkitProcessor(this))
+                    .registerUserProcessor(new PlayerConnectOtherBukkitProcessor())
                     .registerUserProcessor(new SendPlayerChatBukkitProcessor())
                     .registerUserProcessor(new BroadcastChatBukkitProcessor())
                     .registerUserProcessor(new SendPlayerTitleBukkitProcessor())

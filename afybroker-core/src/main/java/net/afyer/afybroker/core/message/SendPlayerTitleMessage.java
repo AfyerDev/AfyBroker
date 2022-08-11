@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * @author Nipuru
@@ -25,9 +24,9 @@ public class SendPlayerTitleMessage implements Serializable {
     private static final long serialVersionUID = 2892294285923120071L;
 
     /**
-     * 玩家uid
+     * 玩家名
      */
-    UUID uid;
+    String player;
 
     /**
      * title
@@ -44,13 +43,9 @@ public class SendPlayerTitleMessage implements Serializable {
      */
     int fadein;
 
-    /**
-     * 停留时间
-     */
+    /** 停留时间 */
     int stay;
 
-    /**
-     * 淡出
-     */
+    /** 淡出 */
     int fadeout;
 }

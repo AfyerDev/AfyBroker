@@ -15,7 +15,7 @@ public class SendPlayerTitleBukkitProcessor extends AsyncUserProcessor<SendPlaye
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, SendPlayerTitleMessage request) {
-        Player player = Bukkit.getPlayer(request.getUid());
+        Player player = Bukkit.getPlayer(request.getPlayer());
 
         if (player == null) {
             return;

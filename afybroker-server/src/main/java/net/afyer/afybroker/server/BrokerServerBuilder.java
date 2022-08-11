@@ -133,6 +133,7 @@ public class BrokerServerBuilder {
         this
                 .registerUserProcessor(new RegisterBrokerClientInfoBrokerProcessor())
                 .registerUserProcessor(new PlayerBungeeBrokerProcessor())
+                .registerUserProcessor(new PlayerConnectOtherBrokerProcessor())
                 .registerUserProcessor(new SendPlayerChatBrokerProcessor())
                 .registerUserProcessor(new BroadcastChatBrokerProcessor())
                 .registerUserProcessor(new SendPlayerTitleBrokerProcessor());

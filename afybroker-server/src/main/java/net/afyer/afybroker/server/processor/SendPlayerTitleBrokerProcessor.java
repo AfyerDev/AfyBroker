@@ -6,11 +6,11 @@ import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.message.SendPlayerTitleMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
-import net.afyer.afybroker.server.proxy.BrokerPlayer;
+import net.afyer.afybroker.server.util.Util;
 
 /**
  * @author Nipuru
@@ -24,19 +24,8 @@ public class SendPlayerTitleBrokerProcessor extends AsyncUserProcessor<SendPlaye
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, SendPlayerTitleMessage request) {
-        BrokerPlayer brokerPlayer = brokerServer.getBrokerPlayerManager().getPlayer(request.getUid());
-
-        if (brokerPlayer == null) {
-            return;
-        }
-
-        BrokerClientProxy bukkitClientProxy = brokerPlayer.getBukkitClientProxy();
-        if (bukkitClientProxy == null) {
-            return;
-        }
-
         try {
-            bukkitClientProxy.oneway(request);
+            Util.forward(brokerServer, BrokerClientType.BUKKIT, request.getPlayer(), request);
         } catch (RemotingException | InterruptedException e) {
             log.error(e.getMessage(), e);
         }

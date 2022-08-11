@@ -6,11 +6,10 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import net.afyer.afybroker.core.ChatHandlerType;
+import net.afyer.afybroker.core.BrokerClientType;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * @author Nipuru
@@ -26,14 +25,14 @@ public class SendPlayerChatMessage implements Serializable {
     private static final long serialVersionUID = -4207075992906096144L;
 
     /**
-     * 玩家uid
+     * 玩家名
      */
-    UUID uid;
+    String player;
 
     /**
      * 消息处理端的类型
      */
-    ChatHandlerType type = ChatHandlerType.BUKKIT;
+    BrokerClientType type = BrokerClientType.BUKKIT;
 
     /**
      * 消息

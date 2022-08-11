@@ -27,13 +27,19 @@ import java.util.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClientBuilder {
 
-    /** 客户端名称(唯一标识) */
+    /**
+     * 客户端名称(唯一标识)
+     */
     String name = UUID.randomUUID().toString();
 
-    /** 客户端类型 */
-    BrokerClientType type = BrokerClientType.OTHER;
+    /**
+     * 客户端类型
+     */
+    BrokerClientType type;
 
-    /** 客户端标签 */
+    /**
+     * 客户端标签
+     */
     String tag;
 
     /**
@@ -75,6 +81,12 @@ public class BrokerClientBuilder {
 
 
         return brokerClient;
+    }
+
+    private void check() {
+        if (type == null) {
+            throw new RuntimeException("BrokerClientType cannot be null");
+        }
     }
 
     /**
