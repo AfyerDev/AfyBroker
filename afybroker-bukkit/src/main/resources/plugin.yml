@@ -5,3 +5,4 @@ api-version: 1.18
 authors: [ Nipuru ]
 commands:
   connect:
+  broadcast:
