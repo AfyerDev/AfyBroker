@@ -8,6 +8,7 @@ import net.afyer.afybroker.bukkit.listener.PlayerListener;
 import net.afyer.afybroker.bukkit.processor.BroadcastChatBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.PlayerConnectOtherBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.SendPlayerChatBukkitProcessor;
+import net.afyer.afybroker.bukkit.processor.SendPlayerTitleBukkitProcessor;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,6 +41,7 @@ public class AfyBroker extends JavaPlugin {
                     .registerUserProcessor(new PlayerConnectOtherBukkitProcessor(this))
                     .registerUserProcessor(new SendPlayerChatBukkitProcessor())
                     .registerUserProcessor(new BroadcastChatBukkitProcessor())
+                    .registerUserProcessor(new SendPlayerTitleBukkitProcessor())
                     .build();
 
             brokerClient.startup();

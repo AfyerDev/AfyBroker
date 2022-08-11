@@ -10,10 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
-import net.afyer.afybroker.server.processor.BroadcastChatBrokerProcessor;
-import net.afyer.afybroker.server.processor.PlayerBungeeBrokerProcessor;
-import net.afyer.afybroker.server.processor.RegisterBrokerClientInfoBrokerProcessor;
-import net.afyer.afybroker.server.processor.SendPlayerChatBrokerProcessor;
+import net.afyer.afybroker.server.processor.*;
 import net.afyer.afybroker.server.processor.connection.CloseEventBrokerProcessor;
 import net.afyer.afybroker.server.processor.connection.ConnectEventBrokerProcessor;
 
@@ -137,7 +134,8 @@ public class BrokerServerBuilder {
                 .registerUserProcessor(new RegisterBrokerClientInfoBrokerProcessor())
                 .registerUserProcessor(new PlayerBungeeBrokerProcessor())
                 .registerUserProcessor(new SendPlayerChatBrokerProcessor())
-                .registerUserProcessor(new BroadcastChatBrokerProcessor());
+                .registerUserProcessor(new BroadcastChatBrokerProcessor())
+                .registerUserProcessor(new SendPlayerTitleBrokerProcessor());
 
     }
 

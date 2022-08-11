@@ -6,32 +6,51 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import net.afyer.afybroker.core.ChatHandlerType;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * @author Nipuru
- * @since 2022/8/10 11:23
+ * @since 2022/8/11 8:55
  */
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BroadcastChatMessage implements Serializable {
+public class SendPlayerTitleMessage implements Serializable {
     @Serial
-    private static final long serialVersionUID = -4901406795508836396L;
+    private static final long serialVersionUID = 2892294285923120071L;
 
     /**
-     * 消息处理端的类型
+     * 玩家uid
      */
-    ChatHandlerType type = ChatHandlerType.BUKKIT;
+    UUID uid;
 
     /**
-     * 消息
+     * title
      */
-    String message;
+    String title;
 
+    /**
+     * subtitle
+     */
+    String subtitle;
+
+    /**
+     * 淡入
+     */
+    int fadein;
+
+    /**
+     * 停留时间
+     */
+    int stay;
+
+    /**
+     * 淡出
+     */
+    int fadeout;
 }

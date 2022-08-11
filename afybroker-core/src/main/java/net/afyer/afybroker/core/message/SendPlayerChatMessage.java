@@ -33,7 +33,7 @@ public class SendPlayerChatMessage implements Serializable {
     /**
      * 消息处理端的类型
      */
-    ChatHandlerType type;
+    ChatHandlerType type = ChatHandlerType.BUKKIT;
 
     /**
      * 消息
