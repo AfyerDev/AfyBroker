@@ -19,11 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BrokerPlayerManager {
 
     final Map<UUID, BrokerPlayer> byUid = new ConcurrentHashMap<>();
+    final Map<String, BrokerPlayer> byName = new ConcurrentHashMap<>();
     final Map<UUID, BrokerPlayer> view = Collections.unmodifiableMap(byUid);
-
-    public Map<UUID, BrokerPlayer> getPlayerMap() {
-        return view;
-    }
 
     public Collection<BrokerPlayer> getPlayers() {
         return view.values();
@@ -31,16 +28,26 @@ public class BrokerPlayerManager {
 
     public BrokerPlayer addPlayer(BrokerPlayer player) {
         UUID uid = player.getUid();
-
-        return byUid.putIfAbsent(uid, player);
+        BrokerPlayer absent = byUid.putIfAbsent(uid, player);
+        if (absent == null) {
+            byName.put(player.getName(), player);
+        }
+        return absent;
     }
 
     public void removePlayer(UUID uid) {
-        byUid.remove(uid);
+        BrokerPlayer player = byUid.remove(uid);
+        if (player != null) {
+            byName.remove(player.getName());
+        }
     }
 
     public BrokerPlayer getPlayer(UUID uid) {
         return byUid.get(uid);
+    }
+
+    public BrokerPlayer getPlayer(String name) {
+        return byName.get(name);
     }
 
 }
