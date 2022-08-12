@@ -40,7 +40,7 @@ public class AfyBroker extends JavaPlugin {
                     .registerUserProcessor(new SendPlayerChatBukkitProcessor())
                     .registerUserProcessor(new BroadcastChatBukkitProcessor())
                     .registerUserProcessor(new SendPlayerTitleBukkitProcessor())
-                    .registerUserProcessor(new SudoBukkitProcessor())
+                    .registerUserProcessor(new SudoBukkitProcessor(this))
                     .build();
 
             brokerClient.startup();
