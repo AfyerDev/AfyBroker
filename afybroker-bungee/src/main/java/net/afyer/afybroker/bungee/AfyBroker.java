@@ -7,6 +7,7 @@ import net.afyer.afybroker.bungee.listener.ConnectCommandTabListener;
 import net.afyer.afybroker.bungee.listener.PlayerListener;
 import net.afyer.afybroker.bungee.processor.BroadcastChatBungeeProcessor;
 import net.afyer.afybroker.bungee.processor.SendPlayerChatBungeeProcessor;
+import net.afyer.afybroker.bungee.processor.SudoBungeeProcessor;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -40,6 +41,7 @@ public class AfyBroker extends Plugin {
                     .type(BrokerClientType.BUNGEE)
                     .registerUserProcessor(new SendPlayerChatBungeeProcessor())
                     .registerUserProcessor(new BroadcastChatBungeeProcessor())
+                    .registerUserProcessor(new SudoBungeeProcessor())
                     .build();
 
             brokerClient.startup();

@@ -12,10 +12,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.command.CommandList;
-import net.afyer.afybroker.server.command.CommandListPlayer;
-import net.afyer.afybroker.server.command.CommandStop;
-import net.afyer.afybroker.server.command.ConsoleCommandCompleter;
+import net.afyer.afybroker.server.command.*;
 import net.afyer.afybroker.server.plugin.Plugin;
 import net.afyer.afybroker.server.plugin.PluginManager;
 import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
@@ -78,6 +75,7 @@ public class BrokerServer {
         this.pluginManager.registerCommand(null, new CommandStop(this));
         this.pluginManager.registerCommand(null, new CommandList(this));
         this.pluginManager.registerCommand(null, new CommandListPlayer(this));
+        this.pluginManager.registerCommand(null, new CommandSudo(this));
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

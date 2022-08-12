@@ -136,7 +136,8 @@ public class BrokerServerBuilder {
                 .registerUserProcessor(new PlayerConnectOtherBrokerProcessor())
                 .registerUserProcessor(new SendPlayerChatBrokerProcessor())
                 .registerUserProcessor(new BroadcastChatBrokerProcessor())
-                .registerUserProcessor(new SendPlayerTitleBrokerProcessor());
+                .registerUserProcessor(new SendPlayerTitleBrokerProcessor())
+                .registerUserProcessor(new SudoBrokerProcessor());
 
     }
 
