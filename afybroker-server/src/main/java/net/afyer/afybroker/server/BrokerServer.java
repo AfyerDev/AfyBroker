@@ -64,6 +64,8 @@ public class BrokerServer {
 
 
     BrokerServer() throws IOException {
+        Broker.setServer(this);
+
         this.consoleReader = new ConsoleReader();
         this.consoleReader.setExpandEvents(false);
         this.consoleReader.addCompleter(new ConsoleCommandCompleter(this));
@@ -153,7 +155,7 @@ public class BrokerServer {
         return log;
     }
 
-    public static BrokerServerBuilder newBuilder() {
+    public static BrokerServerBuilder builder() {
         return new BrokerServerBuilder();
     }
 

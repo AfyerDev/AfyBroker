@@ -9,7 +9,7 @@ import java.io.IOException;
 public class BootStrap {
 
     public static void main(String[] args) throws IOException {
-        BrokerServer brokerServer = BrokerServer.newBuilder().build();
+        BrokerServer brokerServer = BrokerServer.builder().build();
         brokerServer.startup();
 
         String line;
