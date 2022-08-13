@@ -9,6 +9,9 @@ import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.PlayerBungeeMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
+import net.afyer.afybroker.server.event.PlayerBukkitFirstJoinEvent;
+import net.afyer.afybroker.server.event.PlayerBungeeLoginEvent;
+import net.afyer.afybroker.server.event.PlayerBungeeLogoutEvent;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 
@@ -37,10 +40,12 @@ public class PlayerBungeeBrokerProcessor extends AsyncUserProcessor<PlayerBungee
 
         switch (request.getState()) {
             case JOIN -> {
-                //TODO 待验证：可能导致加入请求比连接请求更先送达？
                 BrokerPlayer brokerPlayer = playerManager.getPlayer(request.getUid());
                 if (brokerPlayer == null) {
                     return;
+                }
+                if (brokerPlayer.getBukkitServer() == null) {
+                    brokerServer.getPluginManager().callEvent(new PlayerBukkitFirstJoinEvent(request.getClientName(), request.getUid(), request.getName()));
                 }
                 brokerPlayer.setBukkitServer(request.getClientName());
                 asyncCtx.sendResponse(SUCCESS);
@@ -49,6 +54,7 @@ public class PlayerBungeeBrokerProcessor extends AsyncUserProcessor<PlayerBungee
                 BrokerPlayer brokerPlayer = new BrokerPlayer(brokerServer, request.getUid(), request.getName());
                 brokerPlayer.setBungeeProxy(request.getClientName());
                 BrokerPlayer player = playerManager.addPlayer(brokerPlayer);
+                brokerServer.getPluginManager().callEvent(new PlayerBungeeLoginEvent(request.getUid(), request.getName()));
                 if (player == null) {
                     asyncCtx.sendResponse(SUCCESS);
                 } else {
@@ -57,6 +63,7 @@ public class PlayerBungeeBrokerProcessor extends AsyncUserProcessor<PlayerBungee
             }
             case DISCONNECT -> {
                 playerManager.removePlayer(request.getUid());
+                brokerServer.getPluginManager().callEvent(new PlayerBungeeLogoutEvent(request.getUid(), request.getName()));
                 asyncCtx.sendResponse(SUCCESS);
             }
         }
