@@ -9,17 +9,13 @@ public class BrokerClassLoader extends ClassLoader {
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         try {
-            Class<?> result = super.loadClass(name, resolve);
-
-            if (result.getClassLoader() == this) {
-                return result;
-            }
+            return super.loadClass(name, resolve);
         } catch (ClassNotFoundException ignored) {
         }
 
         for (PluginClassloader loader : PluginClassloader.allLoaders) {
             try {
-                return loader.loadClass0(name, resolve, true);
+                return loader.loadClass0(name, resolve, false);
             } catch (ClassNotFoundException ignored) {
             }
         }
