@@ -3,11 +3,16 @@ package net.afyer.afybroker.bukkit.processor;
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import lombok.Setter;
-import net.afyer.afybroker.bukkit.BukkitKit;
+import net.afyer.afybroker.bukkit.api.event.AsyncPlayerConnectOtherEvent;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.core.message.PlayerConnectOtherMessage;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  * @author Nipuru
@@ -18,10 +23,28 @@ public class PlayerConnectOtherBukkitProcessor extends AsyncUserProcessor<Player
     @Setter
     BrokerClient brokerClient;
 
+    final Plugin plugin;
+
+    public PlayerConnectOtherBukkitProcessor(Plugin plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerConnectOtherMessage request) {
+        Player player = Bukkit.getPlayer(request.getPlayer());
 
-        BukkitKit.playerConnectOther(request.getPlayer(), request.getServer());
+        if (player == null) {
+            return;
+        }
+
+        AsyncPlayerConnectOtherEvent event = new AsyncPlayerConnectOtherEvent(player, request.getServer());
+
+        if (event.callEvent()) {
+            ByteArrayDataOutput msg = ByteStreams.newDataOutput();
+            msg.writeUTF("Connect");
+            msg.writeUTF(event.getServer());
+            player.sendPluginMessage(plugin, "BungeeCord", msg.toByteArray());
+        }
 
     }
 

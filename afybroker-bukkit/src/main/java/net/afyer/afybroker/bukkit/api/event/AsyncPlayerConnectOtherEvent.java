@@ -1,5 +1,7 @@
 package net.afyer.afybroker.bukkit.api.event;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -10,19 +12,18 @@ import org.jetbrains.annotations.NotNull;
  * @author Nipuru
  * @since 2022/8/3 18:13
  */
+@Setter
+@Getter
 public class AsyncPlayerConnectOtherEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final String server;
-    private boolean cancel;
+
+    private String server;
+    private boolean cancelled;
 
     public AsyncPlayerConnectOtherEvent(@NotNull Player who, String server) {
         super(who, true);
         this.server = server;
-    }
-
-    public String getServer() {
-        return server;
     }
 
     @NotNull
@@ -33,15 +34,5 @@ public class AsyncPlayerConnectOtherEvent extends PlayerEvent implements Cancell
 
     public static HandlerList getHandlerList() {
         return HANDLERS;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return cancel;
-    }
-
-    @Override
-    public void setCancelled(boolean cancel) {
-        this.cancel = cancel;
     }
 }

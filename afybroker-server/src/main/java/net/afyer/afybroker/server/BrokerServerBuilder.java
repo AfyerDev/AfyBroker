@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.server.plugin.BrokerClassLoader;
 import net.afyer.afybroker.server.processor.*;
 import net.afyer.afybroker.server.processor.connection.CloseEventBrokerProcessor;
 import net.afyer.afybroker.server.processor.connection.ConnectEventBrokerProcessor;
@@ -77,6 +78,8 @@ public class BrokerServerBuilder {
         brokerServer.setPort(port);
         brokerServer.setBizThread(bizThread);
 
+        BrokerClassLoader brokerLoader = new BrokerClassLoader();
+        Thread.currentThread().setContextClassLoader(brokerLoader);
         brokerServer.initServer();
 
         this.processorList.forEach(brokerServer::registerUserProcessor);

@@ -23,7 +23,7 @@ import java.util.jar.Manifest;
  */
 public class PluginClassloader extends URLClassLoader {
 
-    private static final Set<PluginClassloader> allLoaders = new CopyOnWriteArraySet<>();
+    protected static final Set<PluginClassloader> allLoaders = new CopyOnWriteArraySet<>();
 
     private final BrokerServer server;
     private final PluginDescription desc;
@@ -50,10 +50,10 @@ public class PluginClassloader extends URLClassLoader {
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        return loadClass0(name, resolve, true, true);
+        return loadClass0(name, resolve, true);
     }
 
-    private Class<?> loadClass0(String name, boolean resolve, boolean checkOther, boolean checkLibraries) throws ClassNotFoundException {
+    protected Class<?> loadClass0(String name, boolean resolve, boolean checkOther) throws ClassNotFoundException {
         try {
             Class<?> result = super.loadClass(name, resolve);
 
@@ -68,7 +68,7 @@ public class PluginClassloader extends URLClassLoader {
             for (PluginClassloader loader : allLoaders) {
                 if (loader != this) {
                     try {
-                        return loader.loadClass0(name, resolve, false, server.getPluginManager().isTransitiveDepend(desc, loader.desc));
+                        return loader.loadClass0(name, resolve, false);
                     } catch (ClassNotFoundException ignored) {
                     }
                 }
