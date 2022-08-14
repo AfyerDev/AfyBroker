@@ -1,6 +1,5 @@
 package net.afyer.afybroker.bukkit.command;
 
-import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.bukkit.AfyBroker;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.message.BroadcastChatMessage;
@@ -60,13 +59,7 @@ public class BroadcastChatCommand extends AbstractTabExecutor {
                 .setType(clientType)
                 .setMessage(message);
 
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                plugin.getBrokerClient().oneway(broadcastChatMessage);
-            } catch (RemotingException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> plugin.getBrokerClient().oneway(broadcastChatMessage));
         return true;
     }
 

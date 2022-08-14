@@ -1,6 +1,5 @@
 package net.afyer.afybroker.bukkit.listener;
 
-import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.bukkit.AfyBroker;
 import net.afyer.afybroker.bukkit.api.event.AsyncPlayerConnectOtherEvent;
 import net.afyer.afybroker.client.BrokerClient;
@@ -55,11 +54,7 @@ public class PlayerListener extends AbstractListener {
                     .setName(player.getName())
                     .setState(PlayerBungeeMessage.State.JOIN);
 
-            try {
-                brokerClient.oneway(msg);
-            } catch (RemotingException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            brokerClient.oneway(msg);
         });
 
         preConnect.remove(player.getUniqueId());

@@ -1,6 +1,5 @@
 package net.afyer.afybroker.bungee.listener;
 
-import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.bungee.AfyBroker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
@@ -42,8 +41,6 @@ public class PlayerListener extends AbstractListener {
                     event.setCancelled(true);
                     event.setCancelReason(new TextComponent("§c此账号已登录"));
                 }
-            } catch (RemotingException | InterruptedException e) {
-                e.printStackTrace();
             } finally {
                 event.completeIntent(plugin);
             }
@@ -62,11 +59,7 @@ public class PlayerListener extends AbstractListener {
                     .setName(event.getPlayer().getName())
                     .setState(PlayerBungeeMessage.State.DISCONNECT);
 
-            try {
-                brokerClient.oneway(msg);
-            } catch (RemotingException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            brokerClient.oneway(msg);
         });
     }
 

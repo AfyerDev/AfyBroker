@@ -2,7 +2,6 @@ package net.afyer.afybroker.server.processor;
 
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
-import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +22,7 @@ public class SendPlayerChatBrokerProcessor extends AsyncUserProcessor<SendPlayer
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, SendPlayerChatMessage request) {
-        try {
-            Util.forward(brokerServer, request.getType(), request.getPlayer(), request);
-        } catch (RemotingException | InterruptedException e) {
-            log.error(e.getMessage(), e);
-        }
+        Util.forward(brokerServer, request.getType(), request.getPlayer(), request);
     }
 
     @Override

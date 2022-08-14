@@ -45,20 +45,36 @@ public class BrokerClient {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T invokeSync(Object request) throws RemotingException, InterruptedException {
-        return (T) rpcClient.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
+    public <T> T invokeSync(Object request) {
+        try {
+            return (T) rpcClient.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
+        } catch (RemotingException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void oneway(Object request) throws RemotingException, InterruptedException {
-        rpcClient.oneway(clientInfo.getAddress(), request);
+    public void oneway(Object request) {
+        try {
+            rpcClient.oneway(clientInfo.getAddress(), request);
+        } catch (RemotingException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void invokeWithCallback(Object request, InvokeCallback invokeCallback) throws RemotingException, InterruptedException {
-        rpcClient.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
+    public void invokeWithCallback(Object request, InvokeCallback invokeCallback) {
+        try {
+            rpcClient.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
+        } catch (RemotingException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) throws RemotingException, InterruptedException {
-        return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, invokeContext, timeoutMillis);
+    public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) {
+        try {
+            return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, invokeContext, timeoutMillis);
+        } catch (RemotingException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void registerUserProcessor(UserProcessor<?> processor){
@@ -84,7 +100,7 @@ public class BrokerClient {
         try {
             rpcClient.getConnection(address, timeoutMillis);
         } catch (RemotingException | InterruptedException e) {
-            log.info(e.getMessage(), e);
+            log.error(e.getMessage());
         }
     }
 

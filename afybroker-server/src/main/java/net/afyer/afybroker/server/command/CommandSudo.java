@@ -1,6 +1,5 @@
 package net.afyer.afybroker.server.command;
 
-import com.alipay.remoting.exception.RemotingException;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.message.SudoMessage;
@@ -59,11 +58,7 @@ public class CommandSudo extends Command implements TabExecutor {
                 .setPlayer(brokerPlayer.getName())
                 .setCommand(commandBuilder.toString());
 
-        try {
-            Util.forward(type, sudoMessage, brokerPlayer);
-        } catch (RemotingException | InterruptedException e) {
-            log.error(e.getMessage(), e);
-        }
+        Util.forward(type, sudoMessage, brokerPlayer);
     }
 
     @Override

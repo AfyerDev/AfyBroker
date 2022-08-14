@@ -35,9 +35,7 @@ public class BrokerClientProxy {
 
     final RpcServer rpcServer;
 
-    /**
-     * 消息发送超时时间
-     */
+    /** 消息发送超时时间 */
     final int timeoutMillis = BrokerGlobalConfig.TIMEOUT_MILLIS;
 
     public BrokerClientProxy(BrokerClientInfoMessage clientInfo, RpcServer rpcServer) {
@@ -49,20 +47,36 @@ public class BrokerClientProxy {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T invokeSync(Object request) throws RemotingException, InterruptedException {
-        return (T) rpcServer.invokeSync(address, request, timeoutMillis);
+    public <T> T invokeSync(Object request) {
+        try {
+            return (T) rpcServer.invokeSync(address, request, timeoutMillis);
+        } catch (RemotingException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void oneway(Object request) throws RemotingException, InterruptedException {
-        rpcServer.oneway(address, request);
+    public void oneway(Object request) {
+        try {
+            rpcServer.oneway(address, request);
+        } catch (RemotingException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void invokeWithCallback(Object request, InvokeCallback invokeCallback) throws RemotingException, InterruptedException {
-        rpcServer.invokeWithCallback(address, request, invokeCallback, timeoutMillis);
+    public void invokeWithCallback(Object request, InvokeCallback invokeCallback) {
+        try {
+            rpcServer.invokeWithCallback(address, request, invokeCallback, timeoutMillis);
+        } catch (RemotingException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) throws RemotingException, InterruptedException {
-        return rpcServer.invokeWithFuture(address, request, invokeContext, timeoutMillis);
+    public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) {
+        try {
+            return rpcServer.invokeWithFuture(address, request, invokeContext, timeoutMillis);
+        } catch (RemotingException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

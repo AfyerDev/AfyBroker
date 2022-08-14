@@ -1,6 +1,5 @@
 package net.afyer.afybroker.server.proxy;
 
-import com.alipay.remoting.exception.RemotingException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -92,11 +91,7 @@ public class BrokerClientProxyManager {
     public void broadcast(BrokerClientType clientType, Object request) {
         for (BrokerClientProxy brokerClient : new ArrayList<>(list())) {
             if (clientType == null || brokerClient.getType() == clientType) {
-                try {
-                    brokerClient.oneway(request);
-                } catch (RemotingException | InterruptedException e) {
-                    log.error(e.getMessage(), e);
-                }
+                brokerClient.oneway(request);
             }
         }
     }

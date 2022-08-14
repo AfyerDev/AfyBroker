@@ -1,6 +1,5 @@
 package net.afyer.afybroker.server.util;
 
-import com.alipay.remoting.exception.RemotingException;
 import lombok.experimental.UtilityClass;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.BrokerServer;
@@ -16,15 +15,15 @@ import java.util.UUID;
 @UtilityClass
 public class Util {
 
-    public boolean forward(BrokerServer server, BrokerClientType clientType, UUID player, Object request) throws RemotingException, InterruptedException {
+    public boolean forward(BrokerServer server, BrokerClientType clientType, UUID player, Object request) {
         return forward(clientType, request, server.getBrokerPlayerManager().getPlayer(player));
     }
 
-    public boolean forward(BrokerServer server, BrokerClientType clientType, String player, Object request) throws RemotingException, InterruptedException {
+    public boolean forward(BrokerServer server, BrokerClientType clientType, String player, Object request) {
         return forward(clientType, request, server.getBrokerPlayerManager().getPlayer(player));
     }
 
-    public boolean forward(BrokerClientType clientType, Object request, BrokerPlayer brokerPlayer) throws RemotingException, InterruptedException {
+    public boolean forward(BrokerClientType clientType, Object request, BrokerPlayer brokerPlayer) {
         if (brokerPlayer == null) {
             return false;
         }
