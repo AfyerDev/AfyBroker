@@ -9,6 +9,10 @@ dependencies {
     api("com.google.guava:guava:31.0.1-jre")
 }
 
+java {
+    withSourcesJar()
+}
+
 configure<PublishingExtension> {
     publications.create<MavenPublication>("maven") {
         from(components["java"])

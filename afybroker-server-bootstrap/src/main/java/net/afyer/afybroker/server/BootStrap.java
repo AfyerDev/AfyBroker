@@ -10,6 +10,9 @@ public class BootStrap {
 
     public static void main(String[] args) throws IOException {
         BrokerServer brokerServer = BrokerServer.builder().build();
+
+        Broker.setServer(brokerServer);
+
         brokerServer.startup();
 
         String line;

@@ -1,6 +1,9 @@
+plugins {
+    id("com.github.johnrengelman.shadow")
+}
+
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
-    implementation("net.jodah:expiringmap:0.5.8")
     implementation(project(":afybroker-client")) {
         exclude(group = "io.netty", module = "netty-all")
         exclude(group = "org.slf4j", module = "slf4j-api")

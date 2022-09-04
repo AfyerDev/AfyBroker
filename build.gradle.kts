@@ -8,7 +8,6 @@ subprojects {
 
     apply(plugin = "java")
     apply(plugin = "maven-publish")
-    apply(plugin = "com.github.johnrengelman.shadow")
 
     group = "net.afyer.afybroker"
     version = "1.0"

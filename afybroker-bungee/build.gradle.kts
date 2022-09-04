@@ -1,3 +1,7 @@
+plugins {
+    id("com.github.johnrengelman.shadow")
+}
+
 dependencies {
     compileOnly("net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT")
     implementation(project(":afybroker-client")) {
@@ -9,10 +13,6 @@ dependencies {
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     archiveClassifier.set("")
-}
-
-tasks.build {
-    dependsOn(tasks.shadowJar)
 }
 
 tasks.processResources {

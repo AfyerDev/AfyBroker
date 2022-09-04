@@ -1,29 +1,20 @@
+plugins {
+    `java-library`
+}
 dependencies {
-    implementation(project(":afybroker-core"))
-    implementation("com.google.code.gson:gson:2.8.8")
-    implementation("org.yaml:snakeyaml:1.30")
-    implementation("net.sf.trove4j:core:3.1.0")
-    implementation("jline:jline:2.14.6")
+    api(project(":afybroker-core"))
+    api("com.google.code.gson:gson:2.8.8")
+    api("org.yaml:snakeyaml:1.30")
+    api("net.sf.trove4j:core:3.1.0")
+    api("jline:jline:2.14.6")
 }
 
-tasks.jar {
-    manifest {
-        attributes(
-            "Main-Class" to "net.afyer.afybroker.server.BootStrap",
-        )
-    }
+java {
+    withSourcesJar()
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveClassifier.set("")
-}
-
-tasks.build {
-    dependsOn(tasks.shadowJar)
-}
-
-publishing {
+configure<PublishingExtension> {
     publications.create<MavenPublication>("maven") {
-        artifact(tasks.shadowJar)
+        from(components["java"])
     }
 }
