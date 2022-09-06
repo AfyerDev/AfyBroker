@@ -140,7 +140,8 @@ public class BrokerServerBuilder {
                 .registerUserProcessor(new BroadcastChatBrokerProcessor())
                 .registerUserProcessor(new SendPlayerTitleBrokerProcessor())
                 .registerUserProcessor(new SudoBrokerProcessor())
-                .registerUserProcessor(new ForwardingMessageWrapperBrokerProcessor());
+                .registerUserProcessor(new ForwardingMessageWrapperBrokerProcessor())
+                .registerUserProcessor(new ConnectToServerBrokerProcessor());
 
     }
 

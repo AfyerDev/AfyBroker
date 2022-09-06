@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.bungee.listener.ConnectCommandTabListener;
 import net.afyer.afybroker.bungee.listener.PlayerListener;
 import net.afyer.afybroker.bungee.processor.BroadcastChatBungeeProcessor;
+import net.afyer.afybroker.bungee.processor.ConnectToServerBungeeProcessor;
 import net.afyer.afybroker.bungee.processor.SendPlayerChatBungeeProcessor;
 import net.afyer.afybroker.bungee.processor.SudoBungeeProcessor;
 import net.afyer.afybroker.client.BrokerClient;
@@ -42,6 +43,7 @@ public class AfyBroker extends Plugin {
                     .registerUserProcessor(new SendPlayerChatBungeeProcessor())
                     .registerUserProcessor(new BroadcastChatBungeeProcessor())
                     .registerUserProcessor(new SudoBungeeProcessor())
+                    .registerUserProcessor(new ConnectToServerBungeeProcessor())
                     .build();
 
             brokerClient.startup();
