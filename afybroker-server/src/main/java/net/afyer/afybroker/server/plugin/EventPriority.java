@@ -8,9 +8,9 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class EventPriority {
-    final byte LOWEST = -64;
-    final byte LOW = -32;
-    final byte NORMAL = 0;
-    final byte HIGH = 32;
-    final byte HIGHEST = 64;
+    public final byte LOWEST = -64;
+    public final byte LOW = -32;
+    public final byte NORMAL = 0;
+    public final byte HIGH = 32;
+    public final byte HIGHEST = 64;
 }
