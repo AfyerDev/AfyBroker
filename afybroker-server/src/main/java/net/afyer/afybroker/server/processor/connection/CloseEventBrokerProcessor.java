@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
+import net.afyer.afybroker.server.event.BrokerClientCloseEvent;
 
 /**
  * @author Nipuru
@@ -23,8 +24,11 @@ public class CloseEventBrokerProcessor implements ConnectionEventProcessor, Brok
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
 
-        log.info("BrokerClient remoteAddress : {} disconnect", remoteAddress);
+        BrokerClientCloseEvent event = new BrokerClientCloseEvent(remoteAddress, connection);
+        brokerServer.getPluginManager().callEvent(event);
 
         brokerServer.getBrokerClientProxyManager().remove(remoteAddress);
+
+        log.info("BrokerClient remoteAddress : {} disconnect", remoteAddress);
     }
 }

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.message.RequestBrokerClientInfoMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
+import net.afyer.afybroker.server.event.BrokerClientConnectEvent;
 
 /**
  * @author Nipuru
@@ -33,5 +34,8 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
         } catch (RemotingException e) {
             log.error(e.getMessage(), e);
         }
+
+        BrokerClientConnectEvent event = new BrokerClientConnectEvent(remoteAddress, connection);
+        brokerServer.getPluginManager().callEvent(event);
     }
 }

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
+import net.afyer.afybroker.server.event.BrokerClientRegisterEvent;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 
 /**
@@ -26,6 +27,9 @@ public class RegisterBrokerClientInfoBrokerProcessor extends AsyncUserProcessor<
 
         BrokerClientProxy brokerClientProxy = new BrokerClientProxy(request, brokerServer.getRpcServer());
         brokerServer.getBrokerClientProxyManager().register(brokerClientProxy);
+
+        BrokerClientRegisterEvent event = new BrokerClientRegisterEvent(request, brokerClientProxy);
+        brokerServer.getPluginManager().callEvent(event);
 
         log.info("BrokerClient remoteAddress : {} successfully registered", bizCtx.getRemoteAddress());
     }
