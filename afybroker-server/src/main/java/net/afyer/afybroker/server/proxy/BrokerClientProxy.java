@@ -7,7 +7,6 @@ import com.alipay.remoting.rpc.RpcResponseFuture;
 import com.alipay.remoting.rpc.RpcServer;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
@@ -20,7 +19,6 @@ import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
  * @since 2022/7/30 16:15
  */
 @Getter
-@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClientProxy {
 
@@ -79,5 +77,13 @@ public class BrokerClientProxy {
         }
     }
 
-
+    @Override
+    public String toString() {
+        return "BrokerClientProxy{" +
+                "name='" + name + '\'' +
+                ", tag='" + tag + '\'' +
+                ", type=" + type +
+                ", address='" + address + '\'' +
+                '}';
+    }
 }

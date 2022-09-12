@@ -2,8 +2,7 @@ package net.afyer.afybroker.bukkit.listener;
 
 import net.afyer.afybroker.bukkit.AfyBroker;
 import net.afyer.afybroker.client.BrokerClient;
-import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
-import net.afyer.afybroker.core.message.PlayerBungeeMessage;
+import net.afyer.afybroker.core.message.PlayerBukkitJoinMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -25,14 +24,11 @@ public class PlayerListener extends AbstractListener {
 
         Player player = event.getPlayer();
         BrokerClient brokerClient = plugin.getBrokerClient();
-        BrokerClientInfoMessage clientInfo = brokerClient.getClientInfo();
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            PlayerBungeeMessage msg = new PlayerBungeeMessage()
-                    .setClientName(clientInfo.getName())
+            PlayerBukkitJoinMessage msg = new PlayerBukkitJoinMessage()
                     .setUid(player.getUniqueId())
-                    .setName(player.getName())
-                    .setState(PlayerBungeeMessage.State.JOIN);
+                    .setName(player.getName());
 
             brokerClient.oneway(msg);
         });

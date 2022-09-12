@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import net.afyer.afybroker.server.BrokerServer;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -20,39 +19,18 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerPlayer {
 
-    final BrokerServer server;
-
     /** 玩家UUID */
     final UUID uid;
     /** 玩家名字 */
     final String name;
-    /** 玩家所在的Bungeecord名称 */
-    String bungeeProxy;
-    /** 玩家所在的Bukkit名称 */
-    String bukkitServer;
+    /** 玩家所在的 Bungeecord 服务器客户端代理 */
+    BrokerClientProxy bungeeClientProxy;
+    /** 玩家所在的 Bukkit 服务器客户端代理 */
+    BrokerClientProxy bukkitClientProxy;
 
-    public BrokerPlayer(BrokerServer server, UUID uid, String name) {
-        this.server = server;
+    public BrokerPlayer(UUID uid, String name) {
         this.uid = uid;
         this.name = name;
-    }
-
-    /** 获取玩家所在的 Bungee BrokerClientProxy */
-    public BrokerClientProxy getBungeeClientProxy() {
-        String bungeeProxy = this.bungeeProxy;
-        if (bungeeProxy == null) {
-            return null;
-        }
-        return server.getBrokerClientProxyManager().getByName(bungeeProxy);
-    }
-
-    /** 获取玩家所在的 Bukkit BrokerClientProxy */
-    public BrokerClientProxy getBukkitClientProxy() {
-        String bukkitServer = this.bukkitServer;
-        if (bukkitServer == null) {
-            return null;
-        }
-        return server.getBrokerClientProxyManager().getByName(bukkitServer);
     }
 
     @Override
@@ -73,8 +51,8 @@ public class BrokerPlayer {
         return "BrokerPlayer{" +
                 ", uid=" + uid +
                 ", name='" + name + '\'' +
-                ", bungeeProxy='" + bungeeProxy + '\'' +
-                ", bukkitServer='" + bukkitServer + '\'' +
+                ", bungeeProxy='" + bungeeClientProxy + '\'' +
+                ", bukkitServer='" + bungeeClientProxy + '\'' +
                 '}';
     }
 }

@@ -17,7 +17,10 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerBungeeLogoutEvent extends Event {
 
+    /** 玩家UID */
     final UUID uniqueId;
+
+    /** 玩家名 */
     final String name;
 
 }

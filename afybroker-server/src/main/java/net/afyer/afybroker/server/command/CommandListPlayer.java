@@ -26,7 +26,9 @@ public class CommandListPlayer extends Command {
 
         for (BrokerPlayer player : players) {
             BrokerServer.getLogger().info("BrokerPlayer(Uid={}, bungee={}, bukkit={}",
-                    player.getUid(), player.getBungeeProxy(), player.getBukkitServer());
+                    player.getUid(),
+                    player.getBungeeClientProxy() != null ? player.getBungeeClientProxy().getName() : null,
+                    player.getBukkitClientProxy() != null ? player.getBukkitClientProxy().getName() : null);
         }
     }
 }
