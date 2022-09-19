@@ -21,9 +21,3 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
 tasks.build {
     dependsOn(tasks.shadowJar)
 }
-
-publishing {
-    publications.create<MavenPublication>("maven") {
-        artifact(tasks.shadowJar)
-    }
-}

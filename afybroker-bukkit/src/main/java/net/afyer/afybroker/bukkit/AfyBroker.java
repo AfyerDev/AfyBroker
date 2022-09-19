@@ -9,6 +9,7 @@ import net.afyer.afybroker.bukkit.processor.BroadcastChatBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.SendPlayerChatBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.SendPlayerTitleBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.SudoBukkitProcessor;
+import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,8 +28,6 @@ public class AfyBroker extends JavaPlugin {
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
-
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -50,6 +49,8 @@ public class AfyBroker extends JavaPlugin {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
 
+        Broker.setClient(brokerClient);
+
         registerCommands();
         registerListeners();
     }
@@ -67,6 +68,7 @@ public class AfyBroker extends JavaPlugin {
         new PlayerListener(this).register(this);
     }
 
+    @Deprecated
     @Getter
     private static AfyBroker instance;
 }

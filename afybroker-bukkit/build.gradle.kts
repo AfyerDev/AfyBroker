@@ -28,9 +28,3 @@ tasks.processResources {
         expand(props)
     }
 }
-
-publishing {
-    publications.create<MavenPublication>("maven") {
-        artifact(tasks.shadowJar)
-    }
-}

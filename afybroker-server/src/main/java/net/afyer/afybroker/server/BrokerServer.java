@@ -11,11 +11,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.command.*;
 import net.afyer.afybroker.server.plugin.Plugin;
 import net.afyer.afybroker.server.plugin.PluginManager;
 import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
+import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -91,6 +94,22 @@ public class BrokerServer {
     public void addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {
         aware(processor);
         rpcServer.addConnectionEventProcessor(type, processor);
+    }
+
+    public BrokerPlayer getPlayer(UUID uuid) {
+        return brokerPlayerManager.getPlayer(uuid);
+    }
+
+    public BrokerPlayer getPlayer(String name) {
+        return brokerPlayerManager.getPlayer(name);
+    }
+
+    public void broadcast(BrokerClientType type, Object request) {
+        brokerClientProxyManager.broadcast(type, request);
+    }
+
+    public void broadcast(Object request) {
+        brokerClientProxyManager.broadcast(request);
     }
 
     public void startup() {

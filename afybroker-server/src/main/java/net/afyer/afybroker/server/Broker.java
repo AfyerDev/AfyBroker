@@ -1,12 +1,15 @@
 package net.afyer.afybroker.server;
 
 import com.alipay.remoting.rpc.RpcServer;
+import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.plugin.PluginManager;
 import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
+import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
 
 import java.io.File;
+import java.util.UUID;
 import java.util.concurrent.Executor;
 
 /**
@@ -25,7 +28,7 @@ public class Broker {
 
     public static void setServer(BrokerServer brokerServer) {
         if (Broker.server != null) {
-            throw new UnsupportedOperationException("Cannot redefine singleton Server");
+            throw new UnsupportedOperationException("Cannot redefine singleton instance");
         }
         Broker.server = brokerServer;
     }
@@ -56,6 +59,22 @@ public class Broker {
 
     public static BrokerPlayerManager getBrokerPlayerManager() {
         return server.getBrokerPlayerManager();
+    }
+
+    public static BrokerPlayer getPlayer(UUID uuid) {
+        return server.getPlayer(uuid);
+    }
+
+    public static BrokerPlayer getPlayer(String name) {
+        return server.getPlayer(name);
+    }
+
+    public static void broadcast(BrokerClientType type, Object request) {
+        server.broadcast(type, request);
+    }
+
+    public static void broadcast(Object request) {
+        server.broadcast(request);
     }
 
     public static File getPluginsFolder() {

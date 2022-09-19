@@ -7,10 +7,9 @@ plugins {
 subprojects {
 
     apply(plugin = "java")
-    apply(plugin = "maven-publish")
 
     group = "net.afyer.afybroker"
-    version = "1.0"
+    version = "1.1"
 
     repositories {
         mavenCentral()

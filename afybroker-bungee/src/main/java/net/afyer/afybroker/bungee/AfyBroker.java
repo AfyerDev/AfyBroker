@@ -9,6 +9,7 @@ import net.afyer.afybroker.bungee.processor.BroadcastChatBungeeProcessor;
 import net.afyer.afybroker.bungee.processor.ConnectToServerBungeeProcessor;
 import net.afyer.afybroker.bungee.processor.SendPlayerChatBungeeProcessor;
 import net.afyer.afybroker.bungee.processor.SudoBungeeProcessor;
+import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -23,6 +24,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AfyBroker extends Plugin {
 
+    @Deprecated
     @Getter
     private static AfyBroker instance;
 
@@ -53,6 +55,8 @@ public class AfyBroker extends Plugin {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
 
+        Broker.setClient(brokerClient);
+
         new PlayerListener(this).register(this);
         new ConnectCommandTabListener().register(this);
     }
@@ -61,5 +65,4 @@ public class AfyBroker extends Plugin {
     public void onDisable() {
         brokerClient.shutdown();
     }
-
 }

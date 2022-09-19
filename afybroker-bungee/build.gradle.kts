@@ -15,6 +15,10 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     archiveClassifier.set("")
 }
 
+tasks.build {
+    dependsOn(tasks.shadowJar)
+}
+
 tasks.processResources {
     val props = mapOf(
         "version" to project.version
@@ -22,11 +26,5 @@ tasks.processResources {
     inputs.properties(props)
     filesMatching("bungee.yml") {
         expand(props)
-    }
-}
-
-publishing {
-    publications.create<MavenPublication>("maven") {
-        artifact(tasks.shadowJar)
     }
 }
