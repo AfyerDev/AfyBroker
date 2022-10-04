@@ -37,6 +37,9 @@ public class PlayerListener extends AbstractListener {
                     event.setCancelled(true);
                     event.setCancelReason(new TextComponent("§c此账号已登录"));
                 }
+            } catch (Exception ex) {
+                event.setCancelled(true);
+                event.setCancelReason(new TextComponent("§c产生了一个错误"));
             } finally {
                 event.completeIntent(plugin);
             }
