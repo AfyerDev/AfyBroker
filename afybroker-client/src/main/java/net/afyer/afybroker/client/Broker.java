@@ -19,7 +19,7 @@ public final class Broker {
 
     private Broker() {}
 
-    /** 设置 broker 服务端 */
+    /** 设置 broker 客户端 */
     public static void setClient(BrokerClient client) {
         if (Broker.client != null) {
             throw new UnsupportedOperationException("Cannot redefine singleton instance");
