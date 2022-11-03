@@ -1,10 +1,10 @@
 package net.afyer.afybroker.server.event;
 
-import com.alipay.remoting.Connection;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.plugin.Event;
 
 /**
@@ -20,7 +20,13 @@ public class BrokerClientCloseEvent extends Event {
     /** 客户端地址 */
     final String remoteAddress;
 
-    /** 客户端连接 */
-    final Connection connection;
+    /** 客户端名称 */
+    final String name;
+
+    /** 客户端标签 */
+    final String tag;
+
+    /** 客户端类型 */
+    final BrokerClientType type;
 
 }
