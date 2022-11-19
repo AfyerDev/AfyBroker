@@ -7,6 +7,7 @@ import net.afyer.afybroker.core.BrokerClientType;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 /**
  * 客户端代理 管理器
@@ -47,6 +48,19 @@ public class BrokerClientProxyManager {
             }
         }
         return null;
+    }
+
+    /** 通过自定义过滤器获取客户端代理 */
+    public List<BrokerClientProxy> getByFilter(Predicate<BrokerClientProxy> filter){
+        List<BrokerClientProxy> list = new ArrayList<>(16);
+
+        for(BrokerClientProxy client : byAddress.values()){
+            if(filter.test(client)){
+                list.add(client);
+            }
+        }
+
+        return list;
     }
 
     /** 通过标签获取客户端代理 */
