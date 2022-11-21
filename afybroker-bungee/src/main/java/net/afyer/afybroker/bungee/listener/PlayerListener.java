@@ -2,7 +2,8 @@ package net.afyer.afybroker.bungee.listener;
 
 import net.afyer.afybroker.bungee.AfyBroker;
 import net.afyer.afybroker.client.BrokerClient;
-import net.afyer.afybroker.core.message.PlayerBungeeConnectionMessage;
+import net.afyer.afybroker.core.message.PlayerBungeeConnectMessage;
+import net.afyer.afybroker.core.message.PlayerBungeeDisconnectMessage;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.LoginEvent;
@@ -27,15 +28,14 @@ public class PlayerListener extends AbstractListener {
 
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
-                PlayerBungeeConnectionMessage msg = new PlayerBungeeConnectionMessage()
+                PlayerBungeeConnectMessage msg = new PlayerBungeeConnectMessage()
                         .setUid(event.getConnection().getUniqueId())
-                        .setName(event.getConnection().getName())
-                        .setState(PlayerBungeeConnectionMessage.CONNECT);
+                        .setName(event.getConnection().getName());
 
                 boolean result = plugin.getBrokerClient().invokeSync(msg);
                 if (!result) {
                     event.setCancelled(true);
-                    event.setCancelReason(new TextComponent("§c此账号已登录"));
+                    event.setCancelReason(new TextComponent("§c登录失败"));
                 }
             } catch (Exception ex) {
                 event.setCancelled(true);
@@ -51,10 +51,9 @@ public class PlayerListener extends AbstractListener {
         BrokerClient brokerClient = plugin.getBrokerClient();
 
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
-            PlayerBungeeConnectionMessage msg = new PlayerBungeeConnectionMessage()
+            PlayerBungeeDisconnectMessage msg = new PlayerBungeeDisconnectMessage()
                     .setUid(event.getPlayer().getUniqueId())
-                    .setName(event.getPlayer().getName())
-                    .setState(PlayerBungeeConnectionMessage.DISCONNECT);
+                    .setName(event.getPlayer().getName());
 
             brokerClient.oneway(msg);
         });

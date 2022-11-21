@@ -12,33 +12,22 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * 玩家与 bungee 连接状态变化的消息
- *
+ * 玩家从 bungee 断开连接的消息
  * @author Nipuru
- * @since 2022/8/1 11:32
+ * @since 2022/11/21 17:30
  */
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerBungeeConnectionMessage implements Serializable {
+public class PlayerBungeeDisconnectMessage implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1791475059445212432L;
-
-    /** bungee 连接的标识 */
-    public static final byte CONNECT = 1;
-
-    /** bungee 断开连接的标识 */
-    public static final byte DISCONNECT = 0;
+    private static final long serialVersionUID = -5160344925177364814L;
 
     /** 玩家uid */
     UUID uid;
 
     /** 玩家名 */
     String name;
-
-    /** 状态标识符 */
-    byte state;
-
 }
