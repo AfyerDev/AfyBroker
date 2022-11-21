@@ -10,6 +10,7 @@ import net.afyer.afybroker.core.BrokerClientType;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * @author Nipuru
@@ -27,7 +28,7 @@ public class BrokerClientInfoMessage implements Serializable {
     /** 客户端名称(唯一标识) */
     String name;
     /** 客户端标签 */
-    String tag;
+    Set<String> tags;
     /** 客户端类型 */
     BrokerClientType type;
     /** 客户端地址 */

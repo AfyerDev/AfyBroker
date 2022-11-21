@@ -20,15 +20,10 @@ import net.md_5.bungee.config.YamlConfiguration;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AfyBroker extends Plugin {
 
-    @Deprecated
-    @Getter
-    private static AfyBroker instance;
-
-    BrokerClient brokerClient;
+    private BrokerClient brokerClient;
 
     @Override
     public void onEnable() {
-        instance = this;
         Configuration config = new BungeeFileConfig("config.yml", this, YamlConfiguration.class).get();
 
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
@@ -38,6 +33,7 @@ public class AfyBroker extends Plugin {
             brokerClient = BrokerClient.newBuilder()
                     .name(config.getString("broker.name"))
                     .type(BrokerClientType.BUNGEE)
+                    .addTags(config.getStringList("broker.tags"))
                     .registerUserProcessor(new SendPlayerChatBungeeProcessor())
                     .registerUserProcessor(new BroadcastChatBungeeProcessor())
                     .registerUserProcessor(new SudoBungeeProcessor())

@@ -7,6 +7,8 @@ import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.plugin.Event;
 
+import java.util.Set;
+
 /**
  * 当BrokerClient与BrokerServer断开连接时触发此事件
  * @author Nipuru
@@ -24,7 +26,7 @@ public class BrokerClientCloseEvent extends Event {
     final String name;
 
     /** 客户端标签 */
-    final String tag;
+    final Set<String> tags;
 
     /** 客户端类型 */
     final BrokerClientType type;

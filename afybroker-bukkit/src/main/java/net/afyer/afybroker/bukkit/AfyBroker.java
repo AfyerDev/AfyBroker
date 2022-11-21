@@ -19,11 +19,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AfyBroker extends JavaPlugin {
 
-    BrokerClient brokerClient;
+    private BrokerClient brokerClient;
 
     @Override
     public void onEnable() {
-        instance = this;
         saveDefaultConfig();
 
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
@@ -32,7 +31,7 @@ public class AfyBroker extends JavaPlugin {
 
             brokerClient = BrokerClient.newBuilder()
                     .name(getConfig().getString("broker.name"))
-                    .tag(getConfig().getString("broker.tag"))
+                    .addTags(getConfig().getStringList("broker.tags"))
                     .type(BrokerClientType.BUKKIT)
                     .registerUserProcessor(new SendPlayerChatBukkitProcessor())
                     .registerUserProcessor(new BroadcastChatBukkitProcessor())
@@ -65,8 +64,4 @@ public class AfyBroker extends JavaPlugin {
     private void registerListeners() {
         new PlayerListener(this).register(this);
     }
-
-    @Deprecated
-    @Getter
-    private static AfyBroker instance;
 }

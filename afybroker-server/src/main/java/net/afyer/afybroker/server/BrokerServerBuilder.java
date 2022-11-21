@@ -116,7 +116,7 @@ public class BrokerServerBuilder {
      *
      * @return this
      */
-    public BrokerServerBuilder clearProcessor() {
+    public BrokerServerBuilder clearProcessors() {
         this.processorList.clear();
         this.connectionEventProcessorMap.clear();
         return this;

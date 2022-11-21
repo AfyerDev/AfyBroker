@@ -1,3 +1,5 @@
 broker:
-  #服务器名称 每个服务器（包括bukkit）应该唯一
+  #客户端名称 每个客户端（包括bukkit）应该唯一
   name: bungee
+  #客户端标签
+  tags: []

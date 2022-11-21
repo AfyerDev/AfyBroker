@@ -31,7 +31,7 @@ public class CloseEventBrokerProcessor implements ConnectionEventProcessor, Brok
         clientProxyManager.remove(remoteAddress);
 
         if (brokerClientProxy != null) {
-            BrokerClientCloseEvent event = new BrokerClientCloseEvent(remoteAddress, brokerClientProxy.getName(), brokerClientProxy.getTag(), brokerClientProxy.getType());
+            BrokerClientCloseEvent event = new BrokerClientCloseEvent(remoteAddress, brokerClientProxy.getName(), brokerClientProxy.getTags(), brokerClientProxy.getType());
             brokerServer.getPluginManager().callEvent(event);
         }
 

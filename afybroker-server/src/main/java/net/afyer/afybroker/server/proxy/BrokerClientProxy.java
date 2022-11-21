@@ -12,6 +12,9 @@ import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * 客户端代理
  *
@@ -25,7 +28,7 @@ public class BrokerClientProxy {
     /** 客户端名称(唯一标识) */
     final String name;
     /** 客户端标签 */
-    final String tag;
+    final Set<String> tags;
     /** 客户端类型 */
     final BrokerClientType type;
     /** 客户端地址 */
@@ -38,10 +41,14 @@ public class BrokerClientProxy {
 
     public BrokerClientProxy(BrokerClientInfoMessage clientInfo, RpcServer rpcServer) {
         this.name = clientInfo.getName();
-        this.tag = clientInfo.getTag();
+        this.tags = Collections.unmodifiableSet(clientInfo.getTags());
         this.type = clientInfo.getType();
         this.address = clientInfo.getAddress();
         this.rpcServer = rpcServer;
+    }
+
+    public boolean hasTag(String tag) {
+        return tags.contains(tag);
     }
 
     @SuppressWarnings("unchecked")
@@ -81,7 +88,7 @@ public class BrokerClientProxy {
     public String toString() {
         return "BrokerClientProxy{" +
                 "name='" + name + '\'' +
-                ", tag='" + tag + '\'' +
+                ", tags='" + tags + '\'' +
                 ", type=" + type +
                 ", address='" + address + '\'' +
                 '}';

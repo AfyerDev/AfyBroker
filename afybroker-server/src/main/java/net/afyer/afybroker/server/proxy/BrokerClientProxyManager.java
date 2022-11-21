@@ -68,7 +68,7 @@ public class BrokerClientProxyManager {
         List<BrokerClientProxy> list = new ArrayList<>(16);
 
         for (BrokerClientProxy brokerClientProxy : byAddress.values()) {
-            if (brokerClientProxy.getTag() != null && brokerClientProxy.getTag().equalsIgnoreCase(tag)) {
+            if (brokerClientProxy.hasTag(tag)) {
                 list.add(brokerClientProxy);
             }
         }

@@ -38,11 +38,6 @@ public class BrokerClientBuilder {
     BrokerClientType type;
 
     /**
-     * 客户端标签
-     */
-    String tag;
-
-    /**
      * broker 服务端主机
      */
     String host = BrokerGlobalConfig.BROKER_HOST;
@@ -51,6 +46,9 @@ public class BrokerClientBuilder {
      * broker 服务端端口
      */
     int port = BrokerGlobalConfig.BROKER_PORT;
+
+    /** 客户端标签 */
+    final Set<String> tags = new HashSet<>();
 
     /** 用户处理器 */
     final List<UserProcessor<?>> processorList = new ArrayList<>();
@@ -71,7 +69,7 @@ public class BrokerClientBuilder {
         BrokerClientInfoMessage clientInfo = new BrokerClientInfoMessage()
                 .setName(name)
                 .setType(type)
-                .setTag(tag)
+                .setTags(tags)
                 .setAddress(address.getAddress());
 
         BrokerClient brokerClient = new BrokerClient();
@@ -89,6 +87,51 @@ public class BrokerClientBuilder {
         if (type == null) {
             throw new RuntimeException("BrokerClientType cannot be null");
         }
+    }
+
+    /**
+     * 添加客户端标签
+     *
+     * @param tag 客户端标签
+     * @return this
+     */
+    public BrokerClientBuilder addTag(String tag) {
+        if (tag != null) {
+            tags.add(tag);
+        }
+        return this;
+    }
+
+    /**
+     * 添加客户端标签
+     *
+     * @param tags 客户端标签
+     * @return this
+     */
+    public BrokerClientBuilder addTags(String... tags) {
+        this.tags.addAll(Arrays.asList(tags));
+        return this;
+    }
+
+    /**
+     * 添加客户端标签
+     *
+     * @param tags 客户端标签
+     * @return this
+     */
+    public BrokerClientBuilder addTags(Collection<String> tags) {
+        this.tags.addAll(tags);
+        return this;
+    }
+
+    /**
+     * 移除所有客户端标签
+     *
+     * @return this
+     */
+    public BrokerClientBuilder clearTags() {
+        this.tags.clear();
+        return this;
     }
 
     /**
@@ -119,7 +162,7 @@ public class BrokerClientBuilder {
      *
      * @return this
      */
-    public BrokerClientBuilder clearProcessor() {
+    public BrokerClientBuilder clearProcessors() {
         this.processorList.clear();
         this.connectionEventProcessorMap.clear();
         return this;

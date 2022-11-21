@@ -25,8 +25,8 @@ public class CommandList extends Command {
         List<BrokerClientProxy> clients = new ArrayList<>(server.getBrokerClientProxyManager().list());
 
         for (BrokerClientProxy client : clients) {
-            BrokerServer.getLogger().info("BrokerClient(type={}, address={}, name={}, tag={})",
-                    client.getType(), client.getAddress(), client.getName(), client.getTag());
+            BrokerServer.getLogger().info("BrokerClient(type={}, address={}, name={}, tags={})",
+                    client.getType(), client.getAddress(), client.getName(), client.getTags());
         }
     }
 }
