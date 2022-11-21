@@ -115,8 +115,6 @@ public class EventBus {
         if (handlersByPriority != null) {
             List<EventHandlerMethod> handlersList = new ArrayList<>(handlersByPriority.size() * 2);
 
-            // Either I'm really tired, or the only way we can iterate between Byte.MIN_VALUE and Byte.MAX_VALUE inclusively,
-            // with only a byte on the stack is by using a do {} while() format loop.
             byte value = Byte.MIN_VALUE;
             do {
                 Map<Object, Method[]> handlersByListener = handlersByPriority.get(value);
