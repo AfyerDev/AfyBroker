@@ -64,7 +64,7 @@ public class BrokerServerBuilder {
     }
 
     public BrokerServer build() throws IOException {
-        this.checked();
+        this.check();
 
         if (bizThread == null) {
             bizThread = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
@@ -122,7 +122,7 @@ public class BrokerServerBuilder {
         return this;
     }
 
-    private void checked() {
+    private void check() {
         if (this.port <= 0) {
             throw new RuntimeException("port error!");
         }

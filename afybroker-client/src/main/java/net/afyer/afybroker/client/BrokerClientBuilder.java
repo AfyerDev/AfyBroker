@@ -64,6 +64,8 @@ public class BrokerClientBuilder {
     }
 
     public BrokerClient build() {
+        this.check();
+
         BrokerAddress address = new BrokerAddress(host, port);
 
         BrokerClientInfoMessage clientInfo = new BrokerClientInfoMessage()
