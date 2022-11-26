@@ -99,6 +99,7 @@ public class Broker {
     /**
      * 给指定的客户端广播一条消息
      */
+    @Deprecated
     public static void broadcast(BrokerClientType type, Object request) {
         server.broadcast(type, request);
     }
@@ -106,6 +107,7 @@ public class Broker {
     /**
      * 给所有客户端广播一条消息
      */
+    @Deprecated
     public static void broadcast(Object request) {
         server.broadcast(request);
     }

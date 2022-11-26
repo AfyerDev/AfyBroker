@@ -4,8 +4,10 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
+import net.afyer.afybroker.server.util.BrokerClientProxies;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
@@ -20,7 +22,6 @@ import java.util.function.Predicate;
 public class BrokerClientProxyManager {
 
     final Map<String, BrokerClientProxy> byAddress = new ConcurrentHashMap<>();
-    final Map<String, BrokerClientProxy> view = Collections.unmodifiableMap(byAddress);
 
 
     /** 注册客户端代理 */
@@ -51,8 +52,8 @@ public class BrokerClientProxyManager {
     }
 
     /** 通过自定义过滤器获取客户端代理 */
-    public List<BrokerClientProxy> getByFilter(Predicate<BrokerClientProxy> filter){
-        List<BrokerClientProxy> list = new ArrayList<>(16);
+    public BrokerClientProxies getByFilter(Predicate<BrokerClientProxy> filter){
+        BrokerClientProxies list = new BrokerClientProxies();
 
         for(BrokerClientProxy client : byAddress.values()){
             if(filter.test(client)){
@@ -64,8 +65,8 @@ public class BrokerClientProxyManager {
     }
 
     /** 通过标签获取客户端代理 */
-    public List<BrokerClientProxy> getByTag(String tag) {
-        List<BrokerClientProxy> list = new ArrayList<>(16);
+    public BrokerClientProxies getByTag(String tag) {
+        BrokerClientProxies list = new BrokerClientProxies();
 
         for (BrokerClientProxy brokerClientProxy : byAddress.values()) {
             if (brokerClientProxy.hasTag(tag)) {
@@ -77,8 +78,8 @@ public class BrokerClientProxyManager {
     }
 
     /** 通过类型获取客户端代理 */
-    public List<BrokerClientProxy> getByType(BrokerClientType type) {
-        List<BrokerClientProxy> list = new ArrayList<>(16);
+    public BrokerClientProxies getByType(BrokerClientType type) {
+        BrokerClientProxies list = new BrokerClientProxies();
 
         for (BrokerClientProxy brokerClientProxy : byAddress.values()) {
             if (brokerClientProxy.getType() == type) {
@@ -92,16 +93,19 @@ public class BrokerClientProxyManager {
     /**
      * 获取客户端代理集合
      */
-    public Collection<BrokerClientProxy> list() {
-        return view.values();
+    public BrokerClientProxies list() {
+        return new BrokerClientProxies(byAddress.values());
     }
 
+
     /** 广播消息给全部客户端 */
+    @Deprecated
     public void broadcast(Object request) {
         this.broadcast(null, request);
     }
 
     /** 广播消息给指定类型客户端 */
+    @Deprecated
     public void broadcast(BrokerClientType clientType, Object request) {
         for (BrokerClientProxy brokerClient : new ArrayList<>(list())) {
             if (clientType == null || brokerClient.getType() == clientType) {

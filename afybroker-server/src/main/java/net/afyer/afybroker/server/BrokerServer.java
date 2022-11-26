@@ -105,10 +105,12 @@ public class BrokerServer {
         return brokerPlayerManager.getPlayer(name);
     }
 
+    @Deprecated
     public void broadcast(BrokerClientType type, Object request) {
         brokerClientProxyManager.broadcast(type, request);
     }
 
+    @Deprecated
     public void broadcast(Object request) {
         brokerClientProxyManager.broadcast(request);
     }
