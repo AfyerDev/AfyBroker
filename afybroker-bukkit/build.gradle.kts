@@ -8,6 +8,7 @@ dependencies {
         exclude(group = "io.netty", module = "netty-all")
         exclude(group = "org.slf4j", module = "slf4j-api")
         exclude(group = "com.google.guava", module = "guava")
+        exclude(group = "org.jetbrains", module = "annotations")
     }
 }
 

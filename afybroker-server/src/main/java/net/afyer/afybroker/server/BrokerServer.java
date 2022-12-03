@@ -20,6 +20,7 @@ import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -97,10 +98,12 @@ public class BrokerServer {
         rpcServer.addConnectionEventProcessor(type, processor);
     }
 
+    @Nullable
     public BrokerPlayer getPlayer(UUID uuid) {
         return brokerPlayerManager.getPlayer(uuid);
     }
 
+    @Nullable
     public BrokerPlayer getPlayer(String name) {
         return brokerPlayerManager.getPlayer(name);
     }

@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -24,13 +25,16 @@ public class BrokerPlayer {
     /** 玩家名字 */
     final String name;
     /** 玩家所在的 Bungeecord 服务器客户端代理 */
-    BrokerClientProxy bungeeClientProxy;
+    final BrokerClientProxy bungeeClientProxy;
+
     /** 玩家所在的 Bukkit 服务器客户端代理 */
+    @Nullable
     BrokerClientProxy bukkitClientProxy;
 
-    public BrokerPlayer(UUID uid, String name) {
+    public BrokerPlayer(UUID uid, String name, BrokerClientProxy bungeeClientProxy) {
         this.uid = uid;
         this.name = name;
+        this.bungeeClientProxy = bungeeClientProxy;
     }
 
     @Override

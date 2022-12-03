@@ -13,6 +13,7 @@ import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.event.PlayerBungeeLogoutEvent;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
+import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 
 /**
@@ -42,8 +43,11 @@ public class PlayerBungeeDisconnectBrokerProcessor extends AsyncUserProcessor<Pl
         }
 
         BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
-        playerManager.removePlayer(request.getUid());
-        brokerServer.getPluginManager().callEvent(new PlayerBungeeLogoutEvent(request.getUid(), request.getName()));
+        BrokerPlayer brokerPlayer = playerManager.getPlayer(request.getUid());
+        if (brokerPlayer != null) {
+            brokerServer.getPluginManager().callEvent(new PlayerBungeeLogoutEvent(brokerPlayer));
+            playerManager.removePlayer(request.getUid());
+        }
     }
 
     @Override

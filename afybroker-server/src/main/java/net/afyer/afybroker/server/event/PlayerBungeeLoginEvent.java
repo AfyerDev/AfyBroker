@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.server.plugin.Event;
-
-import java.util.UUID;
+import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
 /**
  * @author Nipuru
@@ -17,10 +16,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerBungeeLoginEvent extends Event {
 
-    /** 玩家UID */
-    final UUID uniqueId;
-
-    /** 玩家名 */
-    final String name;
+    /** 玩家代理 */
+    final BrokerPlayer player;
 
 }

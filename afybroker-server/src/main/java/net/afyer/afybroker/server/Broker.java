@@ -7,6 +7,7 @@ import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.UUID;
@@ -85,6 +86,7 @@ public class Broker {
     /**
      * 通过uid获取玩家代理
      */
+    @Nullable
     public static BrokerPlayer getPlayer(UUID uuid) {
         return server.getPlayer(uuid);
     }
@@ -92,6 +94,7 @@ public class Broker {
     /**
      * 通过名称获取玩家代理
      */
+    @Nullable
     public static BrokerPlayer getPlayer(String name) {
         return server.getPlayer(name);
     }

@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.util.BrokerClientProxies;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -37,11 +38,13 @@ public class BrokerClientProxyManager {
     }
 
     /** 通过地址获取客户端代理 */
+    @Nullable
     public BrokerClientProxy getByAddress(String address) {
         return byAddress.get(address);
     }
 
     /** 通过名称（唯一标识）获取客户端代理 */
+    @Nullable
     public BrokerClientProxy getByName(String name) {
         for (BrokerClientProxy brokerClientProxy : byAddress.values()) {
             if (brokerClientProxy.getName().equalsIgnoreCase(name)) {

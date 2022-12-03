@@ -2,6 +2,7 @@ package net.afyer.afybroker.server.proxy;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +27,7 @@ public class BrokerPlayerManager {
         return view.values();
     }
 
+    @Nullable
     public BrokerPlayer addPlayer(BrokerPlayer player) {
         UUID uid = player.getUid();
         BrokerPlayer absent = byUid.putIfAbsent(uid, player);
@@ -42,10 +44,12 @@ public class BrokerPlayerManager {
         }
     }
 
+    @Nullable
     public BrokerPlayer getPlayer(UUID uid) {
         return byUid.get(uid);
     }
 
+    @Nullable
     public BrokerPlayer getPlayer(String name) {
         return byName.get(name);
     }

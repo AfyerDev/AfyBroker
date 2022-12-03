@@ -43,10 +43,9 @@ public class PlayerBungeeConnectBrokerProcessor extends SyncUserProcessor<Player
 
         BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
 
-        BrokerPlayer brokerPlayer = new BrokerPlayer(request.getUid(), request.getName());
-        brokerPlayer.setBungeeClientProxy(playerBungee);
+        BrokerPlayer brokerPlayer = new BrokerPlayer(request.getUid(), request.getName(), playerBungee);
         BrokerPlayer player = playerManager.addPlayer(brokerPlayer);
-        brokerServer.getPluginManager().callEvent(new PlayerBungeeLoginEvent(request.getUid(), request.getName()));
+        brokerServer.getPluginManager().callEvent(new PlayerBungeeLoginEvent(brokerPlayer));
         return player == null;
     }
 
