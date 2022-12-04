@@ -10,6 +10,7 @@ import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.PlayerBukkitJoinMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
+import net.afyer.afybroker.server.event.PlayerBukkitJoinEvent;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
@@ -29,13 +30,13 @@ public class PlayerBukkitJoinBrokerProcessor extends AsyncUserProcessor<PlayerBu
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerBukkitJoinMessage request) {
 
         BrokerClientProxyManager clientProxyManager = brokerServer.getBrokerClientProxyManager();
-        BrokerClientProxy playerBukkit = clientProxyManager.getByAddress(bizCtx.getRemoteAddress());
-        if (playerBukkit == null) return;
-        if (playerBukkit.getType() != BrokerClientType.BUKKIT) return;
+        BrokerClientProxy currentBukkit = clientProxyManager.getByAddress(bizCtx.getRemoteAddress());
+        if (currentBukkit == null) return;
+        if (currentBukkit.getType() != BrokerClientType.BUKKIT) return;
 
         if (BrokerGlobalConfig.OPEN_LOG) {
             log.info("Received player bukkit join message (uuid:{}, name:{}, clientName:{}",
-                    request.getUid(), request.getName(), playerBukkit.getName());
+                    request.getUid(), request.getName(), currentBukkit.getName());
         }
 
         BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
@@ -44,7 +45,11 @@ public class PlayerBukkitJoinBrokerProcessor extends AsyncUserProcessor<PlayerBu
         if (brokerPlayer == null) {
             return;
         }
-        brokerPlayer.setBukkitClientProxy(playerBukkit);
+        BrokerClientProxy previousBukkit = brokerPlayer.getBukkitClientProxy();
+        brokerPlayer.setBukkitClientProxy(currentBukkit);
+
+        PlayerBukkitJoinEvent event = new PlayerBukkitJoinEvent(brokerPlayer, previousBukkit, currentBukkit);
+        brokerServer.getPluginManager().callEvent(event);
     }
 
     @Override
