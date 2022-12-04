@@ -9,7 +9,11 @@ import net.afyer.afybroker.server.Broker;
 public class Event {
     public void postCall() {}
 
-    public void call() {
+    public boolean call() {
         Broker.getPluginManager().callEvent(this);
+        if (this instanceof Cancellable) {
+            return !((Cancellable) this).isCancelled();
+        }
+        return true;
     }
 }
