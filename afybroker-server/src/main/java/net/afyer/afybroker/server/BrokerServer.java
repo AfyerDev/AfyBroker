@@ -121,11 +121,11 @@ public class BrokerServer {
     public void startup() {
         synchronized (this) {
             if (start) {
-                log.info("BrokerServer already started!");
+                log.info("Server already started!");
                 return;
             }
             this.start = true;
-            log.info("BrokerServer port: [{}], Starting", this.port);
+            log.info("Server port: [{}], Starting", this.port);
             long start = System.currentTimeMillis();
             // 启动 bolt rpc
             this.rpcServer.startup();
@@ -141,7 +141,7 @@ public class BrokerServer {
     public void shutdown() {
         synchronized (this) {
             if (!start) {
-                log.info("BrokerServer already closed");
+                log.info("Server already closed");
                 return;
             }
             start = false;
@@ -150,7 +150,7 @@ public class BrokerServer {
                 @Override
                 public void run() {
                     log.info("Stopping server");
-                    log.info("BrokerServer disabling plugins");
+                    log.info("Disabling plugins");
                     for (Plugin plugin : Lists.reverse(new ArrayList<>(pluginManager.getPlugins()))) {
                         try {
                             plugin.onDisable();
