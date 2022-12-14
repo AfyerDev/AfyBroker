@@ -9,7 +9,10 @@ import net.afyer.afybroker.bukkit.processor.*;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
+import net.afyer.afybroker.core.BrokerGlobalConfig;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.UUID;
 
 /**
  * @author Nipuru
@@ -30,7 +33,9 @@ public class AfyBroker extends JavaPlugin {
             Thread.currentThread().setContextClassLoader(getClassLoader());
 
             brokerClient = BrokerClient.newBuilder()
-                    .name(getConfig().getString("broker.name"))
+                    .host(getConfig().getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
+                    .port(getConfig().getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
+                    .name(getConfig().getString("broker.name", "bukkit-" + UUID.randomUUID()).substring(0, 8))
                     .addTags(getConfig().getStringList("broker.tags"))
                     .type(BrokerClientType.BUKKIT)
                     .registerUserProcessor(new SendPlayerChatBukkitProcessor())

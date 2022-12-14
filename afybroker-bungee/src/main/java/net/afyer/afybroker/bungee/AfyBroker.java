@@ -8,9 +8,12 @@ import net.afyer.afybroker.bungee.processor.*;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
+import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.YamlConfiguration;
+
+import java.util.UUID;
 
 /**
  * @author Nipuru
@@ -31,7 +34,9 @@ public class AfyBroker extends Plugin {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
             brokerClient = BrokerClient.newBuilder()
-                    .name(config.getString("broker.name"))
+                    .host(config.getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
+                    .port(config.getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
+                    .name(config.getString("broker.name", "bungee-" + UUID.randomUUID()).substring(0, 8))
                     .type(BrokerClientType.BUNGEE)
                     .addTags(config.getStringList("broker.tags"))
                     .registerUserProcessor(new SendPlayerChatBungeeProcessor())
