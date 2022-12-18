@@ -2,6 +2,7 @@ package net.afyer.afybroker.server.processor;
 
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
+import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,11 @@ public class BroadcastChatBrokerProcessor extends AsyncUserProcessor<BroadcastCh
         }
 
         for (BrokerClientProxy brokerClient : brokerClients) {
-            brokerClient.oneway(request);
+            try {
+                brokerClient.oneway(request);
+            } catch (RemotingException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package net.afyer.afybroker.bukkit.listener;
 
+import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.bukkit.AfyBroker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.PlayerBukkitJoinMessage;
@@ -30,7 +31,12 @@ public class PlayerListener extends AbstractListener {
                     .setUid(player.getUniqueId())
                     .setName(player.getName());
 
-            brokerClient.oneway(msg);
+            try {
+                brokerClient.oneway(msg);
+            } catch (RemotingException | InterruptedException e) {
+                e.printStackTrace();
+                player.kick(null);
+            }
         });
     }
 

@@ -3,6 +3,7 @@ package net.afyer.afybroker.server.processor;
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.InvokeCallback;
+import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -36,24 +37,32 @@ public class ForwardingMessageWrapperBrokerProcessor extends AsyncUserProcessor<
 
         //如果有回调则异步执行 否则直接oneway
          if (request.isHasResponse()) {
-             target.invokeWithCallback(message, new InvokeCallback() {
-                 @Override
-                 public void onResponse(Object result) {
-                     asyncCtx.sendResponse(result);
-                 }
+             try {
+                 target.invokeWithCallback(message, new InvokeCallback() {
+                     @Override
+                     public void onResponse(Object result) {
+                         asyncCtx.sendResponse(result);
+                     }
 
-                 @Override
-                 public void onException(Throwable e) {
-                     log.error(e.getMessage(), e);
-                 }
+                     @Override
+                     public void onException(Throwable e) {
+                         log.error(e.getMessage(), e);
+                     }
 
-                 @Override
-                 public Executor getExecutor() {
-                     return null;
-                 }
-             });
+                     @Override
+                     public Executor getExecutor() {
+                         return null;
+                     }
+                 });
+             } catch (RemotingException | InterruptedException e) {
+                 e.printStackTrace();
+             }
          } else {
-             target.oneway(message);
+             try {
+                 target.oneway(message);
+             } catch (RemotingException | InterruptedException e) {
+                 e.printStackTrace();
+             }
          }
 
     }

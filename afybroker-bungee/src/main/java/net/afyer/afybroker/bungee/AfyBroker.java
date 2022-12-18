@@ -1,5 +1,6 @@
 package net.afyer.afybroker.bungee;
 
+import com.alipay.remoting.exception.RemotingException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -49,6 +50,10 @@ public class AfyBroker extends Plugin {
             brokerClient.startup();
             brokerClient.ping();
 
+        } catch (RemotingException | InterruptedException e) {
+            getLogger().severe("Broker client initialization failed!");
+            e.printStackTrace();
+            getProxy().stop();
         } finally {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }

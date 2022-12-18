@@ -1,5 +1,6 @@
 package net.afyer.afybroker.server.command;
 
+import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.core.message.KickPlayerMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.plugin.Command;
@@ -41,6 +42,10 @@ public class CommandKick extends Command {
                 .setPlayer(playerName)
                 .setMessage(messageBuilder.toString());
 
-        player.getBungeeClientProxy().oneway(message);
+        try {
+            player.getBungeeClientProxy().oneway(message);
+        } catch (RemotingException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

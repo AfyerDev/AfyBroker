@@ -20,9 +20,9 @@ public class BrokerGlobalConfig {
     public final int BROKER_PORT = 11200;
 
     /**
-     * bolt 消息发送超时时间
+     * bolt 默认消息发送超时时间
      */
-    public final int TIMEOUT_MILLIS = 3000;
+    public final int DEFAULT_TIMEOUT_MILLIS = 3000;
 
     /**
      * true 开启日志

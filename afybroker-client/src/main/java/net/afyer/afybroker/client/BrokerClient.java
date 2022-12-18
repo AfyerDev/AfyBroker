@@ -13,7 +13,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
@@ -22,7 +21,6 @@ import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
  * @author Nipuru
  * @since 2022/7/30 19:15
  */
-@Slf4j
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -33,10 +31,8 @@ public class BrokerClient {
 
     final RpcClient rpcClient;
 
-    /**
-     * 消息发送超时时间
-     */
-    final int timeoutMillis = BrokerGlobalConfig.TIMEOUT_MILLIS;
+    /** 默认消息发送超时时间 */
+    final int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
 
     BrokerClient() {
         this.rpcClient = new RpcClient();
@@ -44,62 +40,33 @@ public class BrokerClient {
         rpcClient.option(BoltClientOption.CONN_MONITOR_SWITCH, true);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T invokeSync(Object request) {
-        try {
-            return (T) rpcClient.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
-        } catch (RemotingException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public <T> T invokeSync(Object request) throws RemotingException, InterruptedException {
+        return invokeSync(request, defaultTimeoutMillis);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T invokeSync(Object request, int timeoutMillis) {
-        try {
-            return (T) rpcClient.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
-        } catch (RemotingException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public <T> T invokeSync(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
+        return (T) rpcClient.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
     }
 
-    public void oneway(Object request) {
-        try {
-            rpcClient.oneway(clientInfo.getAddress(), request);
-        } catch (RemotingException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public void oneway(Object request) throws RemotingException, InterruptedException {
+        rpcClient.oneway(clientInfo.getAddress(), request);
     }
 
-    public void invokeWithCallback(Object request, InvokeCallback invokeCallback) {
-        try {
-            rpcClient.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
-        } catch (RemotingException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public void invokeWithCallback(Object request, InvokeCallback invokeCallback) throws RemotingException, InterruptedException {
+        invokeWithCallback(request, invokeCallback, defaultTimeoutMillis);
     }
 
-    public void invokeWithCallback(Object request, InvokeCallback invokeCallback, int timeoutMillis) {
-        try {
-            rpcClient.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
-        } catch (RemotingException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public void invokeWithCallback(Object request, InvokeCallback invokeCallback, int timeoutMillis) throws RemotingException, InterruptedException {
+        rpcClient.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
     }
 
-    public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) {
-        try {
-            return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, invokeContext, timeoutMillis);
-        } catch (RemotingException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) throws RemotingException, InterruptedException {
+        return invokeWithFuture(request, invokeContext, defaultTimeoutMillis);
     }
 
-    public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext, int timeoutMillis) {
-        try {
-            return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, invokeContext, timeoutMillis);
-        } catch (RemotingException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext, int timeoutMillis) throws RemotingException, InterruptedException {
+        return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, invokeContext, timeoutMillis);
     }
 
     public void registerUserProcessor(UserProcessor<?> processor){
@@ -119,14 +86,10 @@ public class BrokerClient {
         rpcClient.shutdown();
     }
 
-    public void ping() {
+    public void ping() throws RemotingException, InterruptedException {
         String address = clientInfo.getAddress();
 
-        try {
-            rpcClient.getConnection(address, timeoutMillis);
-        } catch (RemotingException | InterruptedException e) {
-            log.error(e.getMessage());
-        }
+        rpcClient.getConnection(address, defaultTimeoutMillis);
     }
 
     public void aware(Object object) {

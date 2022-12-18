@@ -4,6 +4,7 @@ import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.InvokeContext;
+import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.RpcResponseFuture;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
@@ -50,55 +51,55 @@ public final class Broker {
      * 获取通信超时时间（ms）
      */
     public static int getTimeoutMillis() {
-        return client.getTimeoutMillis();
+        return client.getDefaultTimeoutMillis();
     }
 
     /**
      * 发送消息 sync
      */
-    public static <T> T invokeSync(Object request) {
+    public static <T> T invokeSync(Object request) throws RemotingException, InterruptedException {
         return client.invokeSync(request);
     }
 
     /**
      * 发送消息 sync
      */
-    public static <T> T invokeSync(Object request, int timeoutMillis) {
+    public static <T> T invokeSync(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
         return client.invokeSync(request, timeoutMillis);
     }
 
     /**
      * 发送消息 oneway
      */
-    public static void oneway(Object request) {
+    public static void oneway(Object request) throws RemotingException, InterruptedException {
         client.oneway(request);
     }
 
     /**
      * 发送消息 callback
      */
-    public static void invokeWithCallback(Object request, InvokeCallback invokeCallback) {
+    public static void invokeWithCallback(Object request, InvokeCallback invokeCallback) throws RemotingException, InterruptedException {
         client.invokeWithCallback(request, invokeCallback);
     }
 
     /**
      * 发送消息 callback
      */
-    public static void invokeWithCallback(Object request, InvokeCallback invokeCallback, int timeoutMillis) {
+    public static void invokeWithCallback(Object request, InvokeCallback invokeCallback, int timeoutMillis) throws RemotingException, InterruptedException {
         client.invokeWithCallback(request, invokeCallback, timeoutMillis);
     }
 
     /**
      * 发送消息 future
      */
-    public static RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) {
+    public static RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) throws RemotingException, InterruptedException {
         return client.invokeWithFuture(request, invokeContext);
     }
 
     /**
      * 发送消息 future
      */
-    public static RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext, int timeoutMillis) {
+    public static RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext, int timeoutMillis) throws RemotingException, InterruptedException {
         return client.invokeWithFuture(request, invokeContext, timeoutMillis);
     }
 

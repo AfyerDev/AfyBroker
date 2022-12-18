@@ -1,5 +1,6 @@
 package net.afyer.afybroker.bungee.listener;
 
+import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.bungee.AfyBroker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.PlayerBungeeConnectMessage;
@@ -55,7 +56,11 @@ public class PlayerListener extends AbstractListener {
                     .setUid(event.getPlayer().getUniqueId())
                     .setName(event.getPlayer().getName());
 
-            brokerClient.oneway(msg);
+            try {
+                brokerClient.oneway(msg);
+            } catch (RemotingException | InterruptedException e) {
+                e.printStackTrace();
+            }
         });
     }
 

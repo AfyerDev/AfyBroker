@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.command.*;
 import net.afyer.afybroker.server.plugin.Plugin;
@@ -106,16 +105,6 @@ public class BrokerServer {
     @Nullable
     public BrokerPlayer getPlayer(String name) {
         return brokerPlayerManager.getPlayer(name);
-    }
-
-    @Deprecated
-    public void broadcast(BrokerClientType type, Object request) {
-        brokerClientProxyManager.broadcast(type, request);
-    }
-
-    @Deprecated
-    public void broadcast(Object request) {
-        brokerClientProxyManager.broadcast(request);
     }
 
     public void startup() {

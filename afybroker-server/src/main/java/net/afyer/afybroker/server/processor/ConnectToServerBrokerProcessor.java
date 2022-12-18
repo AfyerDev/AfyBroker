@@ -2,6 +2,7 @@ package net.afyer.afybroker.server.processor;
 
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
+import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.Setter;
 import net.afyer.afybroker.core.message.ConnectToServerMessage;
@@ -27,7 +28,11 @@ public class ConnectToServerBrokerProcessor extends AsyncUserProcessor<ConnectTo
         BrokerClientProxy playerBungee = brokerPlayer.getBungeeClientProxy();
         if (playerBungee == null) return;
 
-        playerBungee.oneway(message);
+        try {
+            playerBungee.oneway(message);
+        } catch (RemotingException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -7,7 +7,6 @@ import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.util.BrokerClientProxies;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -98,23 +97,6 @@ public class BrokerClientProxyManager {
      */
     public BrokerClientProxies list() {
         return new BrokerClientProxies(byAddress.values());
-    }
-
-
-    /** 广播消息给全部客户端 */
-    @Deprecated
-    public void broadcast(Object request) {
-        this.broadcast(null, request);
-    }
-
-    /** 广播消息给指定类型客户端 */
-    @Deprecated
-    public void broadcast(BrokerClientType clientType, Object request) {
-        for (BrokerClientProxy brokerClient : new ArrayList<>(list())) {
-            if (clientType == null || brokerClient.getType() == clientType) {
-                brokerClient.oneway(request);
-            }
-        }
     }
 
 }

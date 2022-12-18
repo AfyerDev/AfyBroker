@@ -47,6 +47,10 @@ public class AfyBroker extends JavaPlugin {
 
             brokerClient.startup();
             brokerClient.ping();
+        } catch (Exception e) {
+            getLogger().severe("Broker client initialization failed!");
+            e.printStackTrace();
+            getServer().shutdown();
         } finally {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }

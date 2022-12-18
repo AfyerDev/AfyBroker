@@ -1,7 +1,6 @@
 package net.afyer.afybroker.server;
 
 import com.alipay.remoting.rpc.RpcServer;
-import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.plugin.PluginManager;
 import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
@@ -97,22 +96,6 @@ public class Broker {
     @Nullable
     public static BrokerPlayer getPlayer(String name) {
         return server.getPlayer(name);
-    }
-
-    /**
-     * 给指定的客户端广播一条消息
-     */
-    @Deprecated
-    public static void broadcast(BrokerClientType type, Object request) {
-        server.broadcast(type, request);
-    }
-
-    /**
-     * 给所有客户端广播一条消息
-     */
-    @Deprecated
-    public static void broadcast(Object request) {
-        server.broadcast(request);
     }
 
     /**

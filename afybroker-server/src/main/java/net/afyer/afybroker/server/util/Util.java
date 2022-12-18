@@ -1,5 +1,6 @@
 package net.afyer.afybroker.server.util;
 
+import com.alipay.remoting.exception.RemotingException;
 import lombok.experimental.UtilityClass;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.BrokerServer;
@@ -37,7 +38,11 @@ public class Util {
             return false;
         }
 
-        clientProxy.oneway(request);
+        try {
+            clientProxy.oneway(request);
+        } catch (RemotingException | InterruptedException e) {
+            e.printStackTrace();
+        }
         return true;
     }
 }

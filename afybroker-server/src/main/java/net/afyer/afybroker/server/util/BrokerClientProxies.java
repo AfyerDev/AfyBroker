@@ -5,7 +5,6 @@ import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -44,21 +43,5 @@ public class BrokerClientProxies extends ArrayList<BrokerClientProxy> {
                 exceptionConsumer.accept(throwable);
             }
         }
-    }
-
-    public <T> List<T> invokeSync(Object message) {
-        return this.invokeSync(message, DEFAULT_EXCEPTION_CONSUMER);
-    }
-
-    public <T> List<T> invokeSync(Object message, Consumer<Throwable> exceptionConsumer) {
-        List<T> returns = new ArrayList<>(this.size());
-        for (BrokerClientProxy brokerClientProxy : this) {
-            try {
-                returns.add(brokerClientProxy.invokeSync(message));
-            } catch (Throwable throwable) {
-                exceptionConsumer.accept(throwable);
-            }
-        }
-        return returns;
     }
 }
