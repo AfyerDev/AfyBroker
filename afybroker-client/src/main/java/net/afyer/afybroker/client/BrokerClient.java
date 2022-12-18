@@ -53,6 +53,15 @@ public class BrokerClient {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T invokeSync(Object request, int timeoutMillis) {
+        try {
+            return (T) rpcClient.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
+        } catch (RemotingException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void oneway(Object request) {
         try {
             rpcClient.oneway(clientInfo.getAddress(), request);
@@ -69,7 +78,23 @@ public class BrokerClient {
         }
     }
 
+    public void invokeWithCallback(Object request, InvokeCallback invokeCallback, int timeoutMillis) {
+        try {
+            rpcClient.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
+        } catch (RemotingException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) {
+        try {
+            return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, invokeContext, timeoutMillis);
+        } catch (RemotingException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext, int timeoutMillis) {
         try {
             return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, invokeContext, timeoutMillis);
         } catch (RemotingException | InterruptedException e) {

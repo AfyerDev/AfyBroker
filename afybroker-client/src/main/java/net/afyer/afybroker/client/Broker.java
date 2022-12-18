@@ -61,6 +61,13 @@ public final class Broker {
     }
 
     /**
+     * 发送消息 sync
+     */
+    public static <T> T invokeSync(Object request, int timeoutMillis) {
+        return client.invokeSync(request, timeoutMillis);
+    }
+
+    /**
      * 发送消息 oneway
      */
     public static void oneway(Object request) {
@@ -75,11 +82,26 @@ public final class Broker {
     }
 
     /**
+     * 发送消息 callback
+     */
+    public static void invokeWithCallback(Object request, InvokeCallback invokeCallback, int timeoutMillis) {
+        client.invokeWithCallback(request, invokeCallback, timeoutMillis);
+    }
+
+    /**
      * 发送消息 future
      */
     public static RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) {
         return client.invokeWithFuture(request, invokeContext);
     }
+
+    /**
+     * 发送消息 future
+     */
+    public static RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext, int timeoutMillis) {
+        return client.invokeWithFuture(request, invokeContext, timeoutMillis);
+    }
+
 
     /**
      * 注册用户消息处理器
