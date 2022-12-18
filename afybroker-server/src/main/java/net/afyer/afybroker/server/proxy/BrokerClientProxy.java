@@ -1,7 +1,6 @@
 package net.afyer.afybroker.server.proxy;
 
 import com.alipay.remoting.InvokeCallback;
-import com.alipay.remoting.InvokeContext;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcResponseFuture;
 import com.alipay.remoting.rpc.RpcServer;
@@ -72,12 +71,12 @@ public class BrokerClientProxy {
         rpcServer.invokeWithCallback(address, request, invokeCallback, timeoutMillis);
     }
 
-    public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) throws RemotingException, InterruptedException {
-        return invokeWithFuture(request, invokeContext, defaultTimeoutMillis);
+    public RpcResponseFuture invokeWithFuture(Object request) throws RemotingException, InterruptedException {
+        return invokeWithFuture(request, defaultTimeoutMillis);
     }
 
-    public RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext, int timeoutMillis) throws RemotingException, InterruptedException {
-        return rpcServer.invokeWithFuture(address, request, invokeContext, timeoutMillis);
+    public RpcResponseFuture invokeWithFuture(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
+        return rpcServer.invokeWithFuture(address, request, timeoutMillis);
     }
 
     @Override

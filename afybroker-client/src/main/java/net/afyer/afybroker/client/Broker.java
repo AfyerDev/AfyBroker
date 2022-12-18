@@ -3,7 +3,6 @@ package net.afyer.afybroker.client;
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.InvokeCallback;
-import com.alipay.remoting.InvokeContext;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.RpcResponseFuture;
@@ -92,15 +91,15 @@ public final class Broker {
     /**
      * 发送消息 future
      */
-    public static RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext) throws RemotingException, InterruptedException {
-        return client.invokeWithFuture(request, invokeContext);
+    public static RpcResponseFuture invokeWithFuture(Object request) throws RemotingException, InterruptedException {
+        return client.invokeWithFuture(request);
     }
 
     /**
      * 发送消息 future
      */
-    public static RpcResponseFuture invokeWithFuture(Object request, InvokeContext invokeContext, int timeoutMillis) throws RemotingException, InterruptedException {
-        return client.invokeWithFuture(request, invokeContext, timeoutMillis);
+    public static RpcResponseFuture invokeWithFuture(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
+        return client.invokeWithFuture(request, timeoutMillis);
     }
 
 
