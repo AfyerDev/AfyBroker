@@ -13,8 +13,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
+import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
-import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 
 /**
  * @author Nipuru
@@ -26,7 +26,7 @@ import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 public class BrokerClient {
 
     /** 客户端信息 */
-    BrokerClientInfoMessage clientInfo;
+    BrokerClientInfo clientInfo;
 
     final RpcClient rpcClient;
 
@@ -37,6 +37,10 @@ public class BrokerClient {
         this.rpcClient = new RpcClient();
         rpcClient.option(BoltClientOption.CONN_RECONNECT_SWITCH, true);
         rpcClient.option(BoltClientOption.CONN_MONITOR_SWITCH, true);
+    }
+
+    public boolean hasTag(String tag) {
+        return clientInfo.getTags().contains(tag);
     }
 
     public <T> T invokeSync(Object request) throws RemotingException, InterruptedException {

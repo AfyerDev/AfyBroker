@@ -66,7 +66,7 @@ public class BrokerClientBuilder {
 
         BrokerAddress address = new BrokerAddress(host, port);
 
-        BrokerClientInfoMessage clientInfo = new BrokerClientInfoMessage()
+        BrokerClientInfoMessage clientInfoMessage = new BrokerClientInfoMessage()
                 .setName(name)
                 .setType(type)
                 .setTags(tags)
@@ -74,11 +74,10 @@ public class BrokerClientBuilder {
 
         BrokerClient brokerClient = new BrokerClient();
 
-        brokerClient.setClientInfo(clientInfo);
+        brokerClient.setClientInfo(clientInfoMessage.build());
 
         this.processorList.forEach(brokerClient::registerUserProcessor);
         this.connectionEventProcessorMap.forEach(brokerClient::addConnectionEventProcessor);
-
 
         return brokerClient;
     }

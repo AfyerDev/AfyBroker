@@ -6,10 +6,12 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
+import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerClientType;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -33,5 +35,9 @@ public class BrokerClientInfoMessage implements Serializable {
     BrokerClientType type;
     /** 客户端地址 */
     String address;
+
+    public BrokerClientInfo build() {
+        return new BrokerClientInfo(name, Collections.unmodifiableSet(tags), type, address);
+    }
 
 }

@@ -26,7 +26,7 @@ public class RequestBrokerClientInfoClientProcessor extends AsyncUserProcessor<R
 
         log.info("Received server request, sending client info");
 
-        BrokerClientInfoMessage response = brokerClient.getClientInfo();
+        BrokerClientInfoMessage response = brokerClient.getClientInfo().toMessage();
 
         try {
             brokerClient.getRpcClient().oneway(bizCtx.getConnection(), response);

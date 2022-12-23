@@ -7,7 +7,7 @@ import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.RpcResponseFuture;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
-import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
+import net.afyer.afybroker.core.BrokerClientInfo;
 
 /**
  * @author Nipuru
@@ -35,7 +35,7 @@ public final class Broker {
     /**
      * 获取客户端信息
      */
-    public static BrokerClientInfoMessage getClientInfo() {
+    public static BrokerClientInfo getClientInfo() {
         return client.getClientInfo();
     }
 
@@ -49,8 +49,15 @@ public final class Broker {
     /**
      * 获取通信超时时间（ms）
      */
-    public static int getTimeoutMillis() {
+    public static int getDefaultTimeoutMillis() {
         return client.getDefaultTimeoutMillis();
+    }
+
+    /**
+     * 判断客户端是否含有指定标签
+     */
+    public static boolean hasTag(String tag) {
+        return client.hasTag(tag);
     }
 
     /**
