@@ -1,5 +1,6 @@
 package net.afyer.afybroker.bukkit;
 
+import com.alipay.remoting.exception.RemotingException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -10,6 +11,8 @@ import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.message.ServerReadyToCloseMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
@@ -63,6 +66,13 @@ public class AfyBroker extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        try {
+            brokerClient.invokeSync(new ServerReadyToCloseMessage()
+                    .setServer(brokerClient.getClientInfo().getName())
+                    .setTags(brokerClient.getClientInfo().getTags()));
+        } catch (RemotingException | InterruptedException e) {
+            e.printStackTrace();
+        }
         brokerClient.shutdown();
     }
 
