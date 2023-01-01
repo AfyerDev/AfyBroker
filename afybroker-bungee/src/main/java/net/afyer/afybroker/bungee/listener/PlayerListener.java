@@ -3,19 +3,22 @@ package net.afyer.afybroker.bungee.listener;
 import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.bungee.AfyBroker;
 import net.afyer.afybroker.client.BrokerClient;
+import net.afyer.afybroker.core.message.PlayerBukkitConnectedMessage;
 import net.afyer.afybroker.core.message.PlayerBungeeConnectMessage;
 import net.afyer.afybroker.core.message.PlayerBungeeDisconnectMessage;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 /**
  * @author Nipuru
  * @since 2022/7/30 18:44
  */
-public class PlayerListener extends AbstractListener {
+public class PlayerListener implements Listener {
 
     private final AfyBroker plugin;
 
@@ -55,6 +58,24 @@ public class PlayerListener extends AbstractListener {
             PlayerBungeeDisconnectMessage msg = new PlayerBungeeDisconnectMessage()
                     .setUid(event.getPlayer().getUniqueId())
                     .setName(event.getPlayer().getName());
+
+            try {
+                brokerClient.oneway(msg);
+            } catch (RemotingException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @EventHandler
+    public void onServerConnected(ServerConnectedEvent event) {
+        BrokerClient brokerClient = plugin.getBrokerClient();
+
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+            PlayerBukkitConnectedMessage msg = new PlayerBukkitConnectedMessage()
+                    .setPlayerName(event.getPlayer().getName())
+                    .setPlayerUniqueId(event.getPlayer().getUniqueId())
+                    .setServerName(event.getServer().getInfo().getName());
 
             try {
                 brokerClient.oneway(msg);

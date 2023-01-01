@@ -143,7 +143,7 @@ public class BrokerServerBuilder {
                 .registerUserProcessor(new SudoBrokerProcessor())
                 .registerUserProcessor(new ForwardingMessageWrapperBrokerProcessor())
                 .registerUserProcessor(new ConnectToServerBrokerProcessor())
-                .registerUserProcessor(new PlayerBukkitJoinBrokerProcessor());
+                .registerUserProcessor(new PlayerBukkitConnectedBrokerProcessor());
 
     }
 

@@ -21,14 +21,17 @@ import java.util.UUID;
 @ToString
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerBukkitJoinMessage implements Serializable {
+public class PlayerBukkitConnectedMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = 5436035428469761938L;
 
     /** 玩家uid */
-    UUID uid;
+    UUID playerUniqueId;
 
     /** 玩家名 */
-    String name;
+    String playerName;
+
+    /** 服务器名 */
+    String serverName;
 
 }

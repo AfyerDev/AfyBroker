@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerBukkitJoinEvent extends Event {
+public class PlayerBukkitConnectedEvent extends Event {
 
     /** 玩家代理 */
     final BrokerPlayer player;

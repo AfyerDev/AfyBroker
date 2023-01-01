@@ -47,6 +47,8 @@ public class AfyBroker extends Plugin {
                     .registerUserProcessor(new KickPlayerBungeeProcessor())
                     .build();
 
+            Broker.setClient(brokerClient);
+
             brokerClient.startup();
             brokerClient.ping();
 
@@ -58,9 +60,7 @@ public class AfyBroker extends Plugin {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
 
-        Broker.setClient(brokerClient);
-
-        new PlayerListener(this).register(this);
+        getProxy().getPluginManager().registerListener(this, new PlayerListener(this));
     }
 
     @Override

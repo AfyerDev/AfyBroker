@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.bukkit.command.BroadcastChatCommand;
-import net.afyer.afybroker.bukkit.listener.PlayerListener;
 import net.afyer.afybroker.bukkit.processor.*;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
@@ -45,6 +44,8 @@ public class AfyBroker extends JavaPlugin {
                     .registerUserProcessor(new KickPlayerBukkitProcessor())
                     .build();
 
+            Broker.setClient(brokerClient);
+
             brokerClient.startup();
             brokerClient.ping();
         } catch (Exception e) {
@@ -55,10 +56,7 @@ public class AfyBroker extends JavaPlugin {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
 
-        Broker.setClient(brokerClient);
-
         registerCommands();
-        registerListeners();
     }
 
     @Override
@@ -70,7 +68,4 @@ public class AfyBroker extends JavaPlugin {
         new BroadcastChatCommand(this).register(this);
     }
 
-    private void registerListeners() {
-        new PlayerListener(this).register(this);
-    }
 }
