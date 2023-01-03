@@ -64,13 +64,6 @@ public class AfyBroker extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        try {
-            brokerClient.invokeSync(new ServerReadyToCloseMessage()
-                    .setServer(brokerClient.getClientInfo().getName())
-                    .setTags(brokerClient.getClientInfo().getTags()));
-        } catch (RemotingException | InterruptedException e) {
-            e.printStackTrace();
-        }
         brokerClient.shutdown();
     }
 
