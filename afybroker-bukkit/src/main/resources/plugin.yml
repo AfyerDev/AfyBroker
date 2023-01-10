@@ -3,6 +3,7 @@ version: '${version}'
 main: net.afyer.afybroker.bukkit.AfyBroker
 api-version: 1.18
 authors: [ Nipuru ]
+load: STARTUP
 commands:
   connect:
   broadcast:
