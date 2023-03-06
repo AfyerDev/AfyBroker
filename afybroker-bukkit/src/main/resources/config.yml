@@ -4,6 +4,6 @@ broker:
   #broker 网关服务器端口
   port: 11200
   #客户端名称 每个服务器（包括bungee）应该唯一
-  name: server
+  name: 'bukkit-%unique_id%'
   #客户端标签
   tags: []
