@@ -3,7 +3,7 @@ package net.afyer.afybroker.bukkit.processor;
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
-import net.afyer.afybroker.core.message.SendPlayerChatMessage;
+import net.afyer.afybroker.core.message.SendPlayerMessageMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -11,11 +11,11 @@ import org.bukkit.entity.Player;
  * @author Nipuru
  * @since 2022/8/5 10:08
  */
-public class SendPlayerChatBukkitProcessor extends AsyncUserProcessor<SendPlayerChatMessage> {
+public class SendPlayerChatBukkitProcessor extends AsyncUserProcessor<SendPlayerMessageMessage> {
 
     @Override
-    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, SendPlayerChatMessage request) {
-        Player target = Bukkit.getPlayer(request.getPlayer());
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, SendPlayerMessageMessage request) {
+        Player target = Bukkit.getPlayer(request.getUniqueId());
 
         if (target == null) {
             return;
@@ -26,6 +26,6 @@ public class SendPlayerChatBukkitProcessor extends AsyncUserProcessor<SendPlayer
 
     @Override
     public String interest() {
-        return SendPlayerChatMessage.class.getName();
+        return SendPlayerMessageMessage.class.getName();
     }
 }

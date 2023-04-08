@@ -6,10 +6,10 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import net.afyer.afybroker.core.BrokerClientType;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * @author Nipuru
@@ -20,19 +20,14 @@ import java.io.Serializable;
 @ToString
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SendPlayerChatMessage implements Serializable {
+public class SendPlayerMessageMessage implements Serializable {
     @Serial
     private static final long serialVersionUID = -4207075992906096144L;
 
     /**
-     * 玩家名
+     * 玩家 uniqueId
      */
-    String player;
-
-    /**
-     * 消息处理端的类型
-     */
-    BrokerClientType type = BrokerClientType.BUKKIT;
+    UUID uniqueId;
 
     /**
      * 消息
