@@ -20,6 +20,12 @@ tasks.build {
     dependsOn(tasks.shadowJar)
 }
 
+configure<PublishingExtension> {
+    publications.create<MavenPublication>("maven") {
+        artifact(tasks.shadowJar)
+    }
+}
+
 tasks.processResources {
     val props = mapOf(
         "version" to project.version

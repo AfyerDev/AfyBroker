@@ -7,6 +7,7 @@ plugins {
 subprojects {
 
     apply(plugin = "java")
+    apply(plugin = "maven-publish")
 
     group = "net.afyer.afybroker"
     version = "1.3"
@@ -37,7 +38,21 @@ subprojects {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(17)
     }
+
+    publishing {
+        repositories {
+            maven("http://101.34.76.125:8081/repository/maven-releases/") {
+                isAllowInsecureProtocol = true
+                credentials {
+                    username = project.findProperty("afyerUser").toString()
+                    password = project.findProperty("afyerPassword").toString()
+                }
+            }
+        }
+    }
 }
+
+
 
 tasks.withType<Jar> {
     enabled = false
