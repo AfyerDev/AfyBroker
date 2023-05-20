@@ -32,6 +32,7 @@ public class Util {
         BrokerClientProxy clientProxy = switch (clientType) {
             case BUNGEE -> brokerPlayer.getBungeeClientProxy();
             case BUKKIT -> brokerPlayer.getBukkitClientProxy();
+            default -> null;
         };
 
         if (clientProxy == null) {

@@ -29,10 +29,7 @@ public class BroadcastChatBrokerProcessor extends AsyncUserProcessor<BroadcastCh
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, BroadcastChatMessage request) {
         List<BrokerClientProxy> brokerClients = new ArrayList<>();
 
-        BrokerClientType type = switch (request.getType()) {
-            case BUKKIT -> BrokerClientType.BUKKIT;
-            case BUNGEE -> BrokerClientType.BUNGEE;
-        };
+        BrokerClientType type = request.getType();
 
         for (BrokerClientProxy brokerClient : brokerServer.getBrokerClientProxyManager().list()) {
             if (brokerClient.getType() == type) {
