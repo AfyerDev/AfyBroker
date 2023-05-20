@@ -14,4 +14,7 @@ public enum BrokerClientType {
     /** Bukkit客户端 */
     BUKKIT,
 
+    /** 其他类型的客户端 如Mirai */
+    OTHER
+
 }
