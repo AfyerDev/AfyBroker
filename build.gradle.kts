@@ -10,7 +10,7 @@ subprojects {
     apply(plugin = "maven-publish")
 
     group = "net.afyer.afybroker"
-    version = "1.3"
+    version = "1.4"
 
     repositories {
         mavenCentral()

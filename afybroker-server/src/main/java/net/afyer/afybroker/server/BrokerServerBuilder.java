@@ -134,7 +134,6 @@ public class BrokerServerBuilder {
                 .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBrokerProcessor());
 
         this
-                .registerUserProcessor(new RegisterBrokerClientInfoBrokerProcessor())
                 .registerUserProcessor(new PlayerBungeeConnectBrokerProcessor())
                 .registerUserProcessor(new PlayerBungeeDisconnectBrokerProcessor())
                 .registerUserProcessor(new SendPlayerChatBrokerProcessor())

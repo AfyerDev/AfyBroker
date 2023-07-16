@@ -2,7 +2,6 @@ package net.afyer.afybroker.client.processor;
 
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
-import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,16 +22,9 @@ public class RequestBrokerClientInfoClientProcessor extends AsyncUserProcessor<R
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, RequestBrokerClientInfoMessage request) {
-
         log.info("Received server request, sending client info");
-
         BrokerClientInfoMessage response = brokerClient.getClientInfo().toMessage();
-
-        try {
-            brokerClient.getRpcClient().oneway(bizCtx.getConnection(), response);
-        } catch (RemotingException e) {
-            e.printStackTrace();
-        }
+        asyncCtx.sendResponse(response);
     }
 
     @Override
