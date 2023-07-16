@@ -35,8 +35,6 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
         log.info("BrokerClient:{} connected, sending request client info message", remoteAddress);
 
         try {
-            brokerServer.getRpcServer().oneway(connection, requestBrokerClientInfoMessage);
-
             brokerServer.getRpcServer().invokeWithCallback(connection, requestBrokerClientInfoMessage, new AbstractInvokeCallback() {
                 @Override
                 public void onResponse(Object result) {
@@ -54,7 +52,7 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
 
                 @Override
                 public void onException(Throwable e) {
-                    log.info("BrokerClient:{} successfully registered", remoteAddress);
+                    log.info("BrokerClient:{} registration failed", remoteAddress);
                     log.error(e.getMessage(), e);
                 }
             }, BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS);
