@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerClientType;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Set;
@@ -24,7 +23,6 @@ import java.util.Set;
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClientInfoMessage implements Serializable {
-    @Serial
     private static final long serialVersionUID = 5964124139341528361L;
 
     /** 客户端名称(唯一标识) */

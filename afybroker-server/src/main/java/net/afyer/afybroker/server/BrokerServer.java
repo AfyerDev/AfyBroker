@@ -158,8 +158,8 @@ public class BrokerServer {
     }
 
     public void aware(Object object) {
-        if (object instanceof BrokerServerAware brokerServerAware) {
-            brokerServerAware.setBrokerServer(this);
+        if (object instanceof BrokerServerAware) {
+            ((BrokerServerAware) object).setBrokerServer(this);
         }
     }
 

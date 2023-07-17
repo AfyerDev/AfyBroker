@@ -8,7 +8,6 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerClientType;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,7 +20,6 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BroadcastChatMessage implements Serializable {
-    @Serial
     private static final long serialVersionUID = -4901406795508836396L;
 
     /**

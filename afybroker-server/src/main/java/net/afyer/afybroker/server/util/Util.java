@@ -29,11 +29,12 @@ public class Util {
             return false;
         }
 
-        BrokerClientProxy clientProxy = switch (clientType) {
-            case BUNGEE -> brokerPlayer.getBungeeClientProxy();
-            case BUKKIT -> brokerPlayer.getBukkitClientProxy();
-            default -> null;
-        };
+        BrokerClientProxy clientProxy = null;
+        if (clientType == BrokerClientType.BUNGEE) {
+            clientProxy = brokerPlayer.getBungeeClientProxy();
+        } else if (clientType == BrokerClientType.BUKKIT) {
+            clientProxy = brokerPlayer.getBukkitClientProxy();
+        }
 
         if (clientProxy == null) {
             return false;

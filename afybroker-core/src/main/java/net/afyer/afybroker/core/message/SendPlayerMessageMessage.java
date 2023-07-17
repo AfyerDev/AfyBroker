@@ -7,7 +7,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -21,7 +20,6 @@ import java.util.UUID;
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SendPlayerMessageMessage implements Serializable {
-    @Serial
     private static final long serialVersionUID = -4207075992906096144L;
 
     /**

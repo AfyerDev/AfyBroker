@@ -7,7 +7,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,7 +19,6 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SendPlayerTitleMessage implements Serializable {
-    @Serial
     private static final long serialVersionUID = 2892294285923120071L;
 
     /**

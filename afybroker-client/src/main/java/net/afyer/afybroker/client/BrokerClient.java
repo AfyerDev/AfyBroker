@@ -96,8 +96,8 @@ public class BrokerClient {
     }
 
     public void aware(Object object) {
-        if (object instanceof BrokerClientAware brokerClientAware) {
-            brokerClientAware.setBrokerClient(this);
+        if (object instanceof BrokerClientAware) {
+            ((BrokerClientAware) object).setBrokerClient(this);
         }
     }
 

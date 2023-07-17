@@ -7,7 +7,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,7 +21,6 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class KickPlayerMessage implements Serializable {
-    @Serial
     private static final long serialVersionUID = 225514412094976346L;
 
     /** 玩家名 */

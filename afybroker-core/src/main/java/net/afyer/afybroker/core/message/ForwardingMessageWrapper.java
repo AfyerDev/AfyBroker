@@ -7,7 +7,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,7 +20,6 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ForwardingMessageWrapper implements Serializable {
-    @Serial
     private static final long serialVersionUID = 7011303487498190975L;
 
     /** 目标broker client 名称 */

@@ -7,7 +7,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -22,7 +21,6 @@ import java.util.UUID;
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerBungeeDisconnectMessage implements Serializable {
-    @Serial
     private static final long serialVersionUID = -5160344925177364814L;
 
     /** 玩家uid */

@@ -8,7 +8,6 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerClientType;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,7 +22,6 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SudoMessage implements Serializable {
-    @Serial
     private static final long serialVersionUID = -2417851615120804419L;
 
     /**
