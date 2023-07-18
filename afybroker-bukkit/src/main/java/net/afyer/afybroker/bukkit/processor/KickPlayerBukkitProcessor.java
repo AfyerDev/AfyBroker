@@ -4,7 +4,6 @@ import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import net.afyer.afybroker.core.message.KickPlayerMessage;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -22,7 +21,7 @@ public class KickPlayerBukkitProcessor extends AsyncUserProcessor<KickPlayerMess
             return;
         }
 
-        player.kick(Component.text(request.getMessage()));
+        player.kickPlayer(request.getMessage());
     }
 
     @Override
