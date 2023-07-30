@@ -6,7 +6,6 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
     implementation(project(":afybroker-client")) {
         exclude(group = "io.netty", module = "netty-all")
-        exclude(group = "org.slf4j", module = "slf4j-api")
         exclude(group = "com.google.guava", module = "guava")
         exclude(group = "org.jetbrains", module = "annotations")
     }
