@@ -1,5 +1,6 @@
 package net.afyer.afybroker.bungee;
 
+import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.exception.RemotingException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import net.afyer.afybroker.bungee.processor.BroadcastChatBungeeProcessor;
 import net.afyer.afybroker.bungee.processor.ConnectToServerBungeeProcessor;
 import net.afyer.afybroker.bungee.processor.KickPlayerBungeeProcessor;
 import net.afyer.afybroker.bungee.processor.SudoBungeeProcessor;
+import net.afyer.afybroker.bungee.processor.connection.CloseEventBungeeProcessor;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
@@ -47,6 +49,7 @@ public class AfyBroker extends Plugin {
                     .registerUserProcessor(new SudoBungeeProcessor())
                     .registerUserProcessor(new ConnectToServerBungeeProcessor())
                     .registerUserProcessor(new KickPlayerBungeeProcessor())
+                    .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBungeeProcessor())
                     .build();
 
             Broker.setClient(brokerClient);
