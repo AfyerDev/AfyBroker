@@ -16,7 +16,7 @@ public class BootStrap {
         brokerServer.startup();
 
         String line;
-        while (brokerServer.isStart() && (line = brokerServer.getConsoleReader().readLine(">")) != null) {
+        while (brokerServer.isStart() && (line = brokerServer.getConsoleReader().readLine()) != null) {
             if (!brokerServer.getPluginManager().dispatchCommand(line)) {
                 BrokerServer.getLogger().warn("Command not found.");
             }
