@@ -5,7 +5,7 @@
     <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>
-                <pattern>%d{HH:mm:ss.SSS} %boldYellow([%thread]) %cyan(%-5level) %boldBlue(%logger{36}) - %msg%n</pattern>
+                <pattern>%d{HH:mm:ss.SSS} [%cyan(%level)] %msg%n</pattern>
             </pattern>
         </layout>
     </appender>
@@ -23,7 +23,7 @@
         </rollingPolicy>
         <encoder>
             <charset>UTF-8</charset>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%level] %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -39,7 +39,7 @@
 
         <encoder>
             <charset>UTF-8</charset>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%level] %msg%n</pattern>
         </encoder>
     </appender>
 

@@ -40,8 +40,8 @@ public class PlayerBukkitConnectedBrokerProcessor extends AsyncUserProcessor<Pla
         if (currentBukkit.getType() != BrokerClientType.BUKKIT) return;
 
         if (BrokerGlobalConfig.OPEN_LOG) {
-            log.info("Received player bukkit connected message (uuid:{}, name:{}, bukkitName:{}",
-                    playerUniqueId, playerName, currentBukkit.getName());
+            log.info("Received player bukkit connected message (player:{}, bukkitClient:{})",
+                    playerName, currentBukkit.getName());
         }
 
         BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
