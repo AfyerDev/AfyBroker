@@ -25,9 +25,9 @@ public class CommandListPlayer extends Command {
         List<BrokerPlayer> players = new ArrayList<>(server.getBrokerPlayerManager().getPlayers());
 
         for (BrokerPlayer player : players) {
-            BrokerServer.getLogger().info("BrokerPlayer(Uid={}, bungee={}, bukkit={}",
-                    player.getUid(),
-                    player.getBungeeClientProxy() != null ? player.getBungeeClientProxy().getName() : null,
+            BrokerServer.getLogger().info("BrokerPlayer(name={}, bungee={}, bukkit={})",
+                    player.getName(),
+                    player.getBungeeClientProxy().getName(),
                     player.getBukkitClientProxy() != null ? player.getBukkitClientProxy().getName() : null);
         }
     }
