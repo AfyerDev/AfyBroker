@@ -20,32 +20,34 @@ public class ConnectToServerBungeeProcessor extends AsyncUserProcessor<ConnectTo
 
     private static Field PENDING_CONNECT_FIELD;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "SynchronizationOnLocalVariableOrMethodParameter"})
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, ConnectToServerMessage message) {
         ProxyServer bungee = ProxyServer.getInstance();
 
-        ProxiedPlayer player = bungee.getPlayer(message.getPlayer());
-        if (player == null) return;
-
         ServerInfo target = bungee.getServerInfo(message.getServer());
         if (target == null) return;
 
-        if (player.getServer() != null && Objects.equals(player.getServer().getInfo(), target)) return;
+        ProxiedPlayer player = bungee.getPlayer(message.getPlayer());
+        if (player == null) return;
 
-        try {
-            if (PENDING_CONNECT_FIELD == null) {
-                Field field = player.getClass().getDeclaredField("pendingConnects");
-                field.setAccessible(true);
-                PENDING_CONNECT_FIELD = field;
+        synchronized (player) {
+            if (player.getServer() != null && Objects.equals(player.getServer().getInfo(), target)) return;
+
+            try {
+                if (PENDING_CONNECT_FIELD == null) {
+                    Field field = player.getClass().getDeclaredField("pendingConnects");
+                    field.setAccessible(true);
+                    PENDING_CONNECT_FIELD = field;
+                }
+                if (((Collection<ServerInfo>)PENDING_CONNECT_FIELD.get(player)).contains(target)) {
+                    return;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            if (((Collection<ServerInfo>)PENDING_CONNECT_FIELD.get(player)).contains(target)) {
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            player.connect(target);
         }
-        player.connect(target);
     }
 
     @Override
