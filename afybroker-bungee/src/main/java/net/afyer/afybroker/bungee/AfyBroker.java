@@ -65,11 +65,15 @@ public class AfyBroker extends Plugin {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
 
-        getProxy().getPluginManager().registerListener(this, new PlayerListener(this));
+        registerListeners();
     }
 
     @Override
     public void onDisable() {
         brokerClient.shutdown();
+    }
+
+    private void registerListeners() {
+        new PlayerListener(this).register(this);
     }
 }

@@ -14,7 +14,6 @@ import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
-import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import net.md_5.bungee.event.EventHandler;
 
@@ -26,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * @author Nipuru
  * @since 2022/7/30 18:44
  */
-public class PlayerListener implements Listener {
+public class PlayerListener extends AbstractListener {
 
     private final AfyBroker plugin;
     private final Map<UUID, ScheduledTask> disconnectTasks = Maps.newConcurrentMap();
