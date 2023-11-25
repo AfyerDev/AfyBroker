@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.message.PlayerHeartbeatValidateMessage;
 import net.afyer.afybroker.core.util.AbstractInvokeCallback;
 import net.afyer.afybroker.server.BrokerServer;
+import net.afyer.afybroker.server.event.PlayerBungeeLogoutEvent;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
+import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -56,7 +58,8 @@ public class PlayerHeartbeatValidateTask extends Thread {
     }
 
     private void validate() {
-        Collection<BrokerPlayer> brokerPlayers = brokerServer.getBrokerPlayerManager().getPlayers();
+        BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
+        Collection<BrokerPlayer> brokerPlayers = playerManager.getPlayers();
         if (brokerPlayers.isEmpty()) return;
         Map<BrokerClientProxy, List<UUID>> map = new IdentityHashMap<>();
         for (BrokerPlayer player : brokerPlayers) {
@@ -75,7 +78,11 @@ public class PlayerHeartbeatValidateTask extends Thread {
                         List<UUID> response = (List<UUID>) result;
                         if (response.isEmpty()) return;
                         for (UUID uniqueId : response) {
-                            brokerServer.getBrokerPlayerManager().removePlayer(uniqueId);
+                            BrokerPlayer brokerPlayer = playerManager.getPlayer(uniqueId);
+                            if (brokerPlayer != null) {
+                                brokerServer.getPluginManager().callEvent(new PlayerBungeeLogoutEvent(brokerPlayer));
+                                playerManager.removePlayer(uniqueId);
+                            }
                         }
                     }
                 });
