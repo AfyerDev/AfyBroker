@@ -19,6 +19,7 @@ import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
+import net.afyer.afybroker.server.task.PlayerHeartbeatValidateTask;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -65,6 +66,8 @@ public class BrokerServer {
      */
     final BrokerPlayerManager brokerPlayerManager;
 
+    final PlayerHeartbeatValidateTask playerHeartbeatValidateTask;
+
 
     BrokerServer() throws IOException {
         this.consoleReader = new ConsoleReader();
@@ -75,6 +78,7 @@ public class BrokerServer {
         this.pluginsFolder = new File("plugins");
         this.brokerClientProxyManager = new BrokerClientProxyManager();
         this.brokerPlayerManager = new BrokerPlayerManager();
+        this.playerHeartbeatValidateTask = new PlayerHeartbeatValidateTask(this);
         this.pluginManager.registerCommand(null, new CommandStop(this));
         this.pluginManager.registerCommand(null, new CommandList(this));
         this.pluginManager.registerCommand(null, new CommandListPlayer(this));
@@ -122,6 +126,7 @@ public class BrokerServer {
             pluginManager.detectPlugins(pluginsFolder);
             pluginManager.loadPlugins();
             pluginManager.enablePlugins();
+            playerHeartbeatValidateTask.start();
 
             log.info("Done ({}ms)", System.currentTimeMillis() - start);
         }
@@ -149,6 +154,7 @@ public class BrokerServer {
                         }
                         scheduler.cancel(plugin);
                     }
+                    playerHeartbeatValidateTask.cancel();
                     rpcServer.shutdown();
                     bizThread.shutdown();
                     System.exit(0);
