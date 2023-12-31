@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * @author Nipuru
@@ -73,7 +74,7 @@ public class BroadcastChatCommand extends AbstractTabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 1) {
-            return Arrays.stream(BrokerClientType.values()).map(Enum::name).toList();
+            return Arrays.stream(BrokerClientType.values()).map(Enum::name).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

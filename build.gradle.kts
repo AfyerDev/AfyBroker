@@ -15,7 +15,7 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
-        maven("https://repo.papermc.io/repository/maven-public/")
+        maven("https://repo.tabooproject.org/repository/releases/")
         maven("https://oss.sonatype.org/content/groups/public/")
     }
 
