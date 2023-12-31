@@ -3,7 +3,9 @@ plugins {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
+    compileOnly("ink.ptms.core:v12004:12004:mapped")
+    compileOnly("org.jetbrains:annotations:20.1.0")
+    compileOnly("commons-lang:commons-lang:2.6")
     implementation(project(":afybroker-client")) {
         exclude(group = "io.netty", module = "netty-all")
         exclude(group = "com.google.guava", module = "guava")
