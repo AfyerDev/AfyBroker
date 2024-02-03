@@ -143,7 +143,8 @@ public class BrokerServerBuilder {
                 .registerUserProcessor(new ForwardingMessageWrapperBrokerProcessor())
                 .registerUserProcessor(new ConnectToServerBrokerProcessor())
                 .registerUserProcessor(new PlayerBukkitConnectedBrokerProcessor())
-                .registerUserProcessor(new PlayerBukkitJoinBrokerProcessor());
+                .registerUserProcessor(new PlayerBukkitJoinBrokerProcessor())
+                .registerUserProcessor(new KickPlayerBrokerProcessor());
 
     }
 
