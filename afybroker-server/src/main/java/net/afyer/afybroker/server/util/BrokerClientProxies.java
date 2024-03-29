@@ -2,7 +2,6 @@ package net.afyer.afybroker.server.util;
 
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -15,7 +14,6 @@ import java.util.function.Consumer;
  */
 public class BrokerClientProxies extends ArrayList<BrokerClientProxy> {
 
-    @Serial
     private static final long serialVersionUID = 694390960241413698L;
     private static final Consumer<Throwable> DEFAULT_EXCEPTION_CONSUMER = Throwable::printStackTrace;
 

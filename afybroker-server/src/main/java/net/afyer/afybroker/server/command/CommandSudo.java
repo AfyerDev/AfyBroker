@@ -12,6 +12,7 @@ import net.afyer.afybroker.server.util.Util;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * @author Nipuru
@@ -64,9 +65,9 @@ public class CommandSudo extends Command implements TabExecutor {
     @Override
     public Iterable<String> onTabComplete(String[] args) {
         if (args.length == 1) {
-            return Arrays.stream(BrokerClientType.values()).map(Enum::name).filter(s -> s.startsWith(args[0])).toList();
+            return Arrays.stream(BrokerClientType.values()).map(Enum::name).filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
         } else if (args.length == 2) {
-            return brokerServer.getBrokerPlayerManager().getPlayers().stream().map(BrokerPlayer::getName).filter(s -> s.startsWith(args[1])).toList();
+            return brokerServer.getBrokerPlayerManager().getPlayers().stream().map(BrokerPlayer::getName).filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
