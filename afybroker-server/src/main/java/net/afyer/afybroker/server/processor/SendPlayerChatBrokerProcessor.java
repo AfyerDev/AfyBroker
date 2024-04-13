@@ -31,7 +31,7 @@ public class SendPlayerChatBrokerProcessor extends AsyncUserProcessor<SendPlayer
         try {
             clientProxy.oneway(request);
         } catch (RemotingException | InterruptedException e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage(), e);
         }
     }
 

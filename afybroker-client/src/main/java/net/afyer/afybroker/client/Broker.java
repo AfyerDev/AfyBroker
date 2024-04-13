@@ -7,6 +7,7 @@ import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.RpcResponseFuture;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
+import lombok.Getter;
 import net.afyer.afybroker.core.BrokerClientInfo;
 
 /**
@@ -15,6 +16,10 @@ import net.afyer.afybroker.core.BrokerClientInfo;
  */
 public final class Broker {
 
+    /**
+     * broker 客户端
+     */
+    @Getter
     private static BrokerClient client;
 
     private Broker() {}
@@ -25,11 +30,6 @@ public final class Broker {
             throw new UnsupportedOperationException("Cannot redefine singleton instance");
         }
         Broker.client = client;
-    }
-
-    /** 获取 broker 客户端 */
-    public static BrokerClient getClient() {
-        return client;
     }
 
     /**

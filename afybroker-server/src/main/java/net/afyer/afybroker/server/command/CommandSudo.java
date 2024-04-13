@@ -1,13 +1,14 @@
 package net.afyer.afybroker.server.command;
 
+import com.alipay.remoting.exception.RemotingException;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.message.SudoMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.plugin.Command;
 import net.afyer.afybroker.server.plugin.TabExecutor;
+import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
-import net.afyer.afybroker.server.util.Util;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,7 +60,22 @@ public class CommandSudo extends Command implements TabExecutor {
                 .setPlayer(brokerPlayer.getName())
                 .setCommand(commandBuilder.toString());
 
-        Util.forward(type, sudoMessage, brokerPlayer);
+        BrokerClientProxy clientProxy = null;
+        if (type == BrokerClientType.BUNGEE) {
+            clientProxy = brokerPlayer.getBungeeClientProxy();
+        } else if (type == BrokerClientType.BUKKIT) {
+            clientProxy = brokerPlayer.getBukkitClientProxy();
+        }
+
+        if (clientProxy == null) {
+            return;
+        }
+
+        try {
+            clientProxy.oneway(sudoMessage);
+        } catch (RemotingException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

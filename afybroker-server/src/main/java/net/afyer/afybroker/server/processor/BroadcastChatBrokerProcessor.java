@@ -41,7 +41,7 @@ public class BroadcastChatBrokerProcessor extends AsyncUserProcessor<BroadcastCh
             try {
                 brokerClient.oneway(request);
             } catch (RemotingException | InterruptedException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
     }

@@ -12,6 +12,7 @@ import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.util.BoltUtils;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -51,6 +52,7 @@ public class AfyBroker extends Plugin {
                     .build();
 
             Broker.setClient(brokerClient);
+            BoltUtils.ensureRegistered();
 
             brokerClient.startup();
             brokerClient.ping();
@@ -69,6 +71,7 @@ public class AfyBroker extends Plugin {
     @Override
     public void onDisable() {
         brokerClient.shutdown();
+        BoltUtils.ensureUnregistered();
     }
 
     private void registerListeners() {

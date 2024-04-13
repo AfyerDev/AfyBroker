@@ -10,6 +10,7 @@ import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.util.BoltUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
@@ -46,6 +47,7 @@ public class AfyBroker extends JavaPlugin {
                     .build();
 
             Broker.setClient(brokerClient);
+            BoltUtils.ensureRegistered();
 
             brokerClient.startup();
             brokerClient.ping();
@@ -64,6 +66,7 @@ public class AfyBroker extends JavaPlugin {
     @Override
     public void onDisable() {
         brokerClient.shutdown();
+        BoltUtils.ensureUnregistered();
     }
 
     private void registerCommands() {

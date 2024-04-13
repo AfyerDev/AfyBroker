@@ -21,7 +21,6 @@ import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
 import net.afyer.afybroker.server.task.PlayerHeartbeatValidateTask;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -167,10 +166,6 @@ public class BrokerServer {
         if (object instanceof BrokerServerAware) {
             ((BrokerServerAware) object).setBrokerServer(this);
         }
-    }
-
-    public static Logger getLogger() {
-        return log;
     }
 
     public static BrokerServerBuilder builder() {

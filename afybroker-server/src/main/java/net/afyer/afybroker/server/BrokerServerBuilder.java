@@ -61,6 +61,9 @@ public class BrokerServerBuilder {
         // 开启 bolt 重连, 通过系统属性来开和关，如果一个进程有多个 RpcClient，则同时生效
         System.setProperty(Configs.CONN_MONITOR_SWITCH, "true");
         System.setProperty(Configs.CONN_RECONNECT_SWITCH, "true");
+
+        System.setProperty(Configs.CONN_MONITOR_SWITCH, "true");
+        System.setProperty(Configs.CONN_RECONNECT_SWITCH, "true");
     }
 
     public BrokerServer build() throws IOException {
@@ -140,7 +143,7 @@ public class BrokerServerBuilder {
                 .registerUserProcessor(new BroadcastChatBrokerProcessor())
                 .registerUserProcessor(new SendPlayerTitleBrokerProcessor())
                 .registerUserProcessor(new SudoBrokerProcessor())
-                .registerUserProcessor(new ForwardingMessageWrapperBrokerProcessor())
+                .registerUserProcessor(new ForwardingMessageBrokerProcessor())
                 .registerUserProcessor(new ConnectToServerBrokerProcessor())
                 .registerUserProcessor(new PlayerBukkitConnectedBrokerProcessor())
                 .registerUserProcessor(new PlayerBukkitJoinBrokerProcessor())

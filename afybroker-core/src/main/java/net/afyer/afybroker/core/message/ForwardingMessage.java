@@ -19,7 +19,7 @@ import java.io.Serializable;
 @ToString
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ForwardingMessageWrapper implements Serializable {
+public abstract class ForwardingMessage implements Serializable {
     private static final long serialVersionUID = 7011303487498190975L;
 
     /** 目标broker client 名称 */
@@ -27,7 +27,4 @@ public class ForwardingMessageWrapper implements Serializable {
 
     /** 封装的消息 */
     Serializable message;
-
-    /** 是否有回调（sync callback future） */
-    boolean hasResponse = false;
 }

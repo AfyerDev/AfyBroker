@@ -8,6 +8,8 @@ import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.core.message.RequestBrokerClientInfoMessage;
 
+import java.util.concurrent.Executor;
+
 /**
  * @author Nipuru
  * @since 2022/7/30 17:22
@@ -29,4 +31,8 @@ public class RequestBrokerClientInfoClientProcessor extends SyncUserProcessor<Re
         return RequestBrokerClientInfoMessage.class.getName();
     }
 
+    @Override
+    public Executor getExecutor() {
+        return super.getExecutor();
+    }
 }
