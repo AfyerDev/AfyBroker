@@ -24,12 +24,13 @@ public class KickPlayerBrokerProcessor extends AsyncUserProcessor<KickPlayerMess
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, KickPlayerMessage request) {
         BrokerPlayer player = brokerServer.getPlayer(request.getPlayer());
-        if (player != null) {
-            try {
-                player.getBungeeClientProxy().oneway(request);
-            } catch (RemotingException | InterruptedException e) {
-                log.error(e.getMessage(), e);
-            }
+        if (player == null) {
+            return;
+        }
+        try {
+            player.getBungeeClientProxy().oneway(request);
+        } catch (RemotingException | InterruptedException e) {
+            log.error(e.getMessage(), e);
         }
     }
 

@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.message.ForwardingMessage;
 import net.afyer.afybroker.core.util.AbstractInvokeCallback;
+import net.afyer.afybroker.core.util.BoltUtils;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
@@ -36,7 +37,7 @@ public class ForwardingMessageBrokerProcessor extends AsyncUserProcessor<Forward
 
         try {
             //如果有回调则异步执行 否则直接oneway
-            if (bizCtx.getClientTimeout() > 0) {
+            if (BoltUtils.hasResponse(bizCtx)) {
                 target.invokeWithCallback(message, new AbstractInvokeCallback() {
                     @Override
                     public void onResponse(Object result) {

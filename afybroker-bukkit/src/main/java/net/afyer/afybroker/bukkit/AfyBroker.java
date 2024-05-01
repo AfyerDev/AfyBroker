@@ -5,7 +5,10 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.bukkit.command.BroadcastChatCommand;
 import net.afyer.afybroker.bukkit.listener.PlayerListener;
-import net.afyer.afybroker.bukkit.processor.*;
+import net.afyer.afybroker.bukkit.processor.BroadcastChatBukkitProcessor;
+import net.afyer.afybroker.bukkit.processor.SendPlayerChatBukkitProcessor;
+import net.afyer.afybroker.bukkit.processor.SendPlayerTitleBukkitProcessor;
+import net.afyer.afybroker.bukkit.processor.SudoBukkitProcessor;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
@@ -43,7 +46,6 @@ public class AfyBroker extends JavaPlugin {
                     .registerUserProcessor(new BroadcastChatBukkitProcessor())
                     .registerUserProcessor(new SendPlayerTitleBukkitProcessor())
                     .registerUserProcessor(new SudoBukkitProcessor(this))
-                    .registerUserProcessor(new KickPlayerBukkitProcessor())
                     .build();
 
             Broker.setClient(brokerClient);

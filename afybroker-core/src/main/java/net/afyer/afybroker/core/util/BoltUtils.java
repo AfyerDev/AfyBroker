@@ -1,5 +1,6 @@
 package net.afyer.afybroker.core.util;
 
+import com.alipay.remoting.BizContext;
 import com.alipay.remoting.Protocol;
 import com.alipay.remoting.ProtocolCode;
 import com.alipay.remoting.ProtocolManager;
@@ -60,5 +61,15 @@ public class BoltUtils {
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 判断请求是否有返回结果
+     */
+    public static boolean hasResponse(BizContext bizCtx) {
+        if (bizCtx == null) return false;
+
+        // 通过过期时间判断 过期时间大于0则有返回结果
+        return bizCtx.getClientTimeout() > 0;
     }
 }

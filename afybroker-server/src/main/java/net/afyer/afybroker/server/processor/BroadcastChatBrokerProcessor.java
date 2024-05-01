@@ -11,8 +11,8 @@ import net.afyer.afybroker.core.message.BroadcastChatMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
+import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,15 +27,8 @@ public class BroadcastChatBrokerProcessor extends AsyncUserProcessor<BroadcastCh
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, BroadcastChatMessage request) {
-        List<BrokerClientProxy> brokerClients = new ArrayList<>();
-
-        BrokerClientType type = request.getType();
-
-        for (BrokerClientProxy brokerClient : brokerServer.getBrokerClientProxyManager().list()) {
-            if (brokerClient.getType() == type) {
-                brokerClients.add(brokerClient);
-            }
-        }
+        BrokerClientProxyManager clientProxyManager = brokerServer.getBrokerClientProxyManager();
+        List<BrokerClientProxy> brokerClients = clientProxyManager.getByType(BrokerClientType.BUKKIT);
 
         for (BrokerClientProxy brokerClient : brokerClients) {
             try {

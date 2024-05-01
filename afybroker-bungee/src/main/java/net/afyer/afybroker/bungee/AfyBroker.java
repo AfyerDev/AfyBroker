@@ -6,7 +6,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.bungee.listener.PlayerListener;
-import net.afyer.afybroker.bungee.processor.*;
+import net.afyer.afybroker.bungee.processor.ConnectToServerBungeeProcessor;
+import net.afyer.afybroker.bungee.processor.KickPlayerBungeeProcessor;
+import net.afyer.afybroker.bungee.processor.PlayerHeartbeatValidateBungeeProcessor;
+import net.afyer.afybroker.bungee.processor.SudoBungeeProcessor;
 import net.afyer.afybroker.bungee.processor.connection.CloseEventBungeeProcessor;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
@@ -43,7 +46,6 @@ public class AfyBroker extends Plugin {
                     .name(config.getString("broker.name", "bungee-%unique_id%").replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8)))
                     .type(BrokerClientType.BUNGEE)
                     .addTags(config.getStringList("broker.tags"))
-                    .registerUserProcessor(new BroadcastChatBungeeProcessor())
                     .registerUserProcessor(new SudoBungeeProcessor())
                     .registerUserProcessor(new ConnectToServerBungeeProcessor())
                     .registerUserProcessor(new KickPlayerBungeeProcessor())

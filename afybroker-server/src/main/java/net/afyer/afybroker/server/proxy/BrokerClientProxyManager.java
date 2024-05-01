@@ -4,9 +4,10 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
-import net.afyer.afybroker.server.util.BrokerClientProxies;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -22,7 +23,6 @@ import java.util.function.Predicate;
 public class BrokerClientProxyManager {
 
     final Map<String, BrokerClientProxy> byAddress = new ConcurrentHashMap<>();
-
 
     /** 注册客户端代理 */
     public void register(BrokerClientProxy brokerClientProxy) {
@@ -54,8 +54,8 @@ public class BrokerClientProxyManager {
     }
 
     /** 通过自定义过滤器获取客户端代理 */
-    public BrokerClientProxies getByFilter(Predicate<BrokerClientProxy> filter){
-        BrokerClientProxies list = new BrokerClientProxies();
+    public List<BrokerClientProxy> getByFilter(Predicate<BrokerClientProxy> filter){
+        List<BrokerClientProxy> list = new ArrayList<>();
 
         for(BrokerClientProxy client : byAddress.values()){
             if(filter.test(client)){
@@ -67,36 +67,37 @@ public class BrokerClientProxyManager {
     }
 
     /** 通过标签获取客户端代理 */
-    public BrokerClientProxies getByTag(String tag) {
-        BrokerClientProxies list = new BrokerClientProxies();
+    public List<BrokerClientProxy> getByTag(String tag) {
+        return this.getByFilter(clientProxy -> clientProxy.hasTag(tag));
+    }
 
-        for (BrokerClientProxy brokerClientProxy : byAddress.values()) {
-            if (brokerClientProxy.hasTag(tag)) {
-                list.add(brokerClientProxy);
-            }
-        }
+    /** 通过标签获取客户端代理 */
+    public List<BrokerClientProxy> getByAnyTags(String... tags) {
+        return this.getByFilter(clientProxy -> clientProxy.hasAnyTags(tags));
+    }
 
-        return list;
+    public List<BrokerClientProxy> getByAnyTags(Iterable<String> tags) {
+        return this.getByFilter(clientProxy -> clientProxy.hasAnyTags(tags));
+    }
+
+    public List<BrokerClientProxy> getByAllTags(String... tags) {
+        return this.getByFilter(clientProxy -> clientProxy.hasAllTags(tags));
+    }
+
+    public List<BrokerClientProxy> getByAllTags(Iterable<String> tags) {
+        return this.getByFilter(clientProxy -> clientProxy.hasAllTags(tags));
     }
 
     /** 通过类型获取客户端代理 */
-    public BrokerClientProxies getByType(BrokerClientType type) {
-        BrokerClientProxies list = new BrokerClientProxies();
-
-        for (BrokerClientProxy brokerClientProxy : byAddress.values()) {
-            if (brokerClientProxy.getType() == type) {
-                list.add(brokerClientProxy);
-            }
-        }
-
-        return list;
+    public List<BrokerClientProxy> getByType(BrokerClientType type) {
+        return this.getByFilter(clientProxy -> clientProxy.getType() == type);
     }
 
     /**
      * 获取客户端代理集合
      */
-    public BrokerClientProxies list() {
-        return new BrokerClientProxies(byAddress.values());
+    public List<BrokerClientProxy> list() {
+        return new ArrayList<>(byAddress.values());
     }
 
 }

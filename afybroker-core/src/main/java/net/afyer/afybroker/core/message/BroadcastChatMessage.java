@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import net.afyer.afybroker.core.BrokerClientType;
 
 import java.io.Serializable;
 
@@ -21,11 +20,6 @@ import java.io.Serializable;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BroadcastChatMessage implements Serializable {
     private static final long serialVersionUID = -4901406795508836396L;
-
-    /**
-     * 消息处理端的类型
-     */
-    BrokerClientType type = BrokerClientType.BUKKIT;
 
     /**
      * 消息

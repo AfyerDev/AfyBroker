@@ -36,6 +36,7 @@ public class PlayerHeartbeatValidateTask extends Thread {
         this.running.set(false);
     }
 
+    @SuppressWarnings("BusyWait")
     @Override
     public void run() {
         while (running.get()) {
@@ -73,6 +74,7 @@ public class PlayerHeartbeatValidateTask extends Thread {
             BrokerClientProxy bungeeProxy = entry.getKey();
             try {
                 bungeeProxy.invokeWithCallback(message, new AbstractInvokeCallback() {
+                    @SuppressWarnings("unchecked")
                     @Override
                     public void onResponse(Object result) {
                         List<UUID> response = (List<UUID>) result;

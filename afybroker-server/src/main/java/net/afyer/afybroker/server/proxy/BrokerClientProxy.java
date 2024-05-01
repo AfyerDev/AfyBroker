@@ -50,6 +50,42 @@ public class BrokerClientProxy {
         return tags.contains(tag);
     }
 
+    public boolean hasAnyTags(String... tags) {
+        for (String tag : tags) {
+            if (this.tags.contains(tag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasAnyTags(Iterable<String> tags) {
+        for (String tag : tags) {
+            if (this.tags.contains(tag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasAllTags(String... tags) {
+        for (String tag : tags) {
+            if (!this.tags.contains(tag)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean hasAllTags(Iterable<String> tags) {
+        for (String tag : tags) {
+            if (!this.tags.contains(tag)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public <T> T invokeSync(Object request) throws RemotingException, InterruptedException {
         return invokeSync(request, defaultTimeoutMillis);
     }
