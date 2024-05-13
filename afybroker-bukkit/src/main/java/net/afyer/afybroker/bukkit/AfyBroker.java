@@ -36,10 +36,18 @@ public class AfyBroker extends JavaPlugin {
         try {
             Thread.currentThread().setContextClassLoader(getClassLoader());
 
+            String hostname = System.getenv("HOSTNAME");
+            if (hostname == null) {
+                hostname = "";
+            }
             brokerClient = BrokerClient.newBuilder()
                     .host(getConfig().getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
                     .port(getConfig().getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
-                    .name(getConfig().getString("broker.name", "bukkit-%unique_id%").replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8)))
+                    .name(getConfig().getString("broker.name", "bukkit-%unique_id%")
+                            .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
+                            .replace("%hostname%", hostname)
+                    )
+
                     .addTags(getConfig().getStringList("broker.tags"))
                     .type(BrokerClientType.BUKKIT)
                     .registerUserProcessor(new SendPlayerChatBukkitProcessor())

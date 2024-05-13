@@ -40,10 +40,17 @@ public class AfyBroker extends Plugin {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
+            String hostname = System.getenv("HOSTNAME");
+            if (hostname == null) {
+                hostname = "";
+            }
             brokerClient = BrokerClient.newBuilder()
                     .host(config.getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
                     .port(config.getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
-                    .name(config.getString("broker.name", "bungee-%unique_id%").replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8)))
+                    .name(config.getString("broker.name", "bungee-%unique_id%")
+                            .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
+                            .replace("%hostname%", hostname)
+                    )
                     .type(BrokerClientType.BUNGEE)
                     .addTags(config.getStringList("broker.tags"))
                     .registerUserProcessor(new SudoBungeeProcessor())
