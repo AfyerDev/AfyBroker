@@ -16,6 +16,7 @@ import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.util.BoltUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -29,42 +30,35 @@ public class AfyBroker extends JavaPlugin {
     private BrokerClient brokerClient;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         saveDefaultConfig();
+        brokerClient = BrokerClient.newBuilder()
+                .host(getConfig().getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
+                .port(getConfig().getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
+                .name(getConfig().getString("broker.name", "bukkit-%unique_id%")
+                        .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
+                        .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME"))))
+                .addTags(getConfig().getStringList("broker.tags"))
+                .type(BrokerClientType.BUKKIT)
+                .registerUserProcessor(new SendPlayerChatBukkitProcessor())
+                .registerUserProcessor(new BroadcastChatBukkitProcessor())
+                .registerUserProcessor(new SendPlayerTitleBukkitProcessor())
+                .registerUserProcessor(new SudoBukkitProcessor(this))
+                .build();
+        Broker.setClient(brokerClient);
+    }
 
+    @Override
+    public void onEnable() {
+        BoltUtils.initProtocols();
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClassLoader());
-
-            String hostname = System.getenv("HOSTNAME");
-            if (hostname == null) {
-                hostname = "";
-            }
-            brokerClient = BrokerClient.newBuilder()
-                    .host(getConfig().getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
-                    .port(getConfig().getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
-                    .name(getConfig().getString("broker.name", "bukkit-%unique_id%")
-                            .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
-                            .replace("%hostname%", hostname)
-                    )
-
-                    .addTags(getConfig().getStringList("broker.tags"))
-                    .type(BrokerClientType.BUKKIT)
-                    .registerUserProcessor(new SendPlayerChatBukkitProcessor())
-                    .registerUserProcessor(new BroadcastChatBukkitProcessor())
-                    .registerUserProcessor(new SendPlayerTitleBukkitProcessor())
-                    .registerUserProcessor(new SudoBukkitProcessor(this))
-                    .build();
-
-            Broker.setClient(brokerClient);
-            BoltUtils.ensureRegistered();
-
             brokerClient.startup();
             brokerClient.ping();
         } catch (Exception e) {
             getLogger().severe("Broker client initialization failed!");
             e.printStackTrace();
-            getServer().shutdown();
         } finally {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
@@ -76,7 +70,7 @@ public class AfyBroker extends JavaPlugin {
     @Override
     public void onDisable() {
         brokerClient.shutdown();
-        BoltUtils.ensureUnregistered();
+        BoltUtils.clearProtocols();
     }
 
     private void registerCommands() {

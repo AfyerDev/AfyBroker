@@ -119,13 +119,14 @@ public class BrokerServer {
             this.start = true;
             log.info("Server port: [{}], Starting", this.port);
             long start = System.currentTimeMillis();
-            // 启动 bolt rpc
-            this.rpcServer.startup();
 
             pluginManager.detectPlugins(pluginsFolder);
             pluginManager.loadPlugins();
             pluginManager.enablePlugins();
             playerHeartbeatValidateTask.start();
+
+            // 启动 bolt rpc
+            this.rpcServer.startup();
 
             log.info("Done ({}ms)", System.currentTimeMillis() - start);
         }

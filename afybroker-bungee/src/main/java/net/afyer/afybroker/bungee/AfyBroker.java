@@ -20,6 +20,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.YamlConfiguration;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -33,43 +34,39 @@ public class AfyBroker extends Plugin {
     private BrokerClient brokerClient;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         Configuration config = new BungeeFileConfig("config.yml", this, YamlConfiguration.class).get();
+        brokerClient = BrokerClient.newBuilder()
+                .host(config.getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
+                .port(config.getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
+                .name(config.getString("broker.name", "bungee-%unique_id%")
+                        .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
+                        .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
+                )
+                .type(BrokerClientType.BUNGEE)
+                .addTags(config.getStringList("broker.tags"))
+                .registerUserProcessor(new SudoBungeeProcessor())
+                .registerUserProcessor(new ConnectToServerBungeeProcessor())
+                .registerUserProcessor(new KickPlayerBungeeProcessor())
+                .registerUserProcessor(new PlayerHeartbeatValidateBungeeProcessor())
+                .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBungeeProcessor())
+                .build();
+        Broker.setClient(brokerClient);
+    }
+
+    @Override
+    public void onEnable() {
+
 
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-
-            String hostname = System.getenv("HOSTNAME");
-            if (hostname == null) {
-                hostname = "";
-            }
-            brokerClient = BrokerClient.newBuilder()
-                    .host(config.getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
-                    .port(config.getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
-                    .name(config.getString("broker.name", "bungee-%unique_id%")
-                            .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
-                            .replace("%hostname%", hostname)
-                    )
-                    .type(BrokerClientType.BUNGEE)
-                    .addTags(config.getStringList("broker.tags"))
-                    .registerUserProcessor(new SudoBungeeProcessor())
-                    .registerUserProcessor(new ConnectToServerBungeeProcessor())
-                    .registerUserProcessor(new KickPlayerBungeeProcessor())
-                    .registerUserProcessor(new PlayerHeartbeatValidateBungeeProcessor())
-                    .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBungeeProcessor())
-                    .build();
-
-            Broker.setClient(brokerClient);
-            BoltUtils.ensureRegistered();
-
+            BoltUtils.initProtocols();
             brokerClient.startup();
             brokerClient.ping();
-
         } catch (RemotingException | InterruptedException e) {
             getLogger().severe("Broker client initialization failed!");
             e.printStackTrace();
-            getProxy().stop();
         } finally {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
@@ -80,7 +77,7 @@ public class AfyBroker extends Plugin {
     @Override
     public void onDisable() {
         brokerClient.shutdown();
-        BoltUtils.ensureUnregistered();
+        BoltUtils.clearProtocols();
     }
 
     private void registerListeners() {

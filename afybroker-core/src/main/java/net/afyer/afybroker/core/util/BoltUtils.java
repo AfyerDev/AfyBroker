@@ -25,7 +25,7 @@ public class BoltUtils {
             ProtocolCode.fromBytes(RpcProtocolV2.PROTOCOL_CODE)
     };
 
-    public static void ensureRegistered() {
+    public static void initProtocols() {
         try {
             // 确保调用了静态代码块方法
             Class.forName("com.alipay.remoting.rpc.RpcRemoting");
@@ -35,31 +35,27 @@ public class BoltUtils {
                 needRegister = Objects.isNull(ProtocolManager.getProtocol(protocolCode));
             }
             if (!needRegister) return;
-            ensureUnregistered();
+            clearProtocols();
             RpcProtocolManager.initProtocols();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static void ensureUnregistered() {
-        try {
-            for (ProtocolCode protocolCode : PROTOCOL_CODES) {
-                Protocol protocol = ProtocolManager.unRegisterProtocol(protocolCode.getFirstByte());
-                if (protocol == null) continue;
-                ExecutorService executor = protocol.getCommandHandler().getDefaultExecutor();
-                executor.shutdown();
+    public static void clearProtocols() {
+        for (ProtocolCode protocolCode : PROTOCOL_CODES) {
+            Protocol protocol = ProtocolManager.unRegisterProtocol(protocolCode.getFirstByte());
+            if (protocol == null) continue;
+            ExecutorService executor = protocol.getCommandHandler().getDefaultExecutor();
+            executor.shutdown();
 
-                try {
-                    if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
-                        executor.shutdownNow();
-                    }
-                } catch (InterruptedException e) {
+            try {
+                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
                     executor.shutdownNow();
                 }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
             }
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
         }
     }
 
