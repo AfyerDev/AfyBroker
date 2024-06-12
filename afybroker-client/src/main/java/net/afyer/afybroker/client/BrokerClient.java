@@ -16,6 +16,8 @@ import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 
+import static net.afyer.afybroker.core.util.BoltUtils.loadMessageClass;
+
 /**
  * @author Nipuru
  * @since 2022/7/30 19:15
@@ -25,12 +27,16 @@ import net.afyer.afybroker.core.BrokerGlobalConfig;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClient {
 
-    /** 客户端信息 */
+    /**
+     * 客户端信息
+     */
     BrokerClientInfo clientInfo;
 
     final RpcClient rpcClient;
 
-    /** 默认消息发送超时时间 */
+    /**
+     * 默认消息发送超时时间
+     */
     final int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
 
     BrokerClient() {
@@ -72,10 +78,12 @@ public class BrokerClient {
         return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, timeoutMillis);
     }
 
-    public void registerUserProcessor(UserProcessor<?> processor){
+    public void registerUserProcessor(UserProcessor<?> processor) {
+        loadMessageClass(processor);
         aware(processor);
         rpcClient.registerUserProcessor(processor);
     }
+
     public void addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {
         aware(processor);
         rpcClient.addConnectionEventProcessor(type, processor);

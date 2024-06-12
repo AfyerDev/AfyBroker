@@ -1,0 +1,9 @@
+{
+  "id": "afybroker",
+  "name": "AfyBroker",
+  "version": "$version",
+  "authors": [
+    "Nipuru"
+  ],
+  "main": "net.afyer.afybroker.velocity.AfyBroker"
+}

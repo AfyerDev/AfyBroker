@@ -1,0 +1,39 @@
+package net.afyer.afybroker.velocity.processor;
+
+import com.alipay.remoting.AsyncContext;
+import com.alipay.remoting.BizContext;
+import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
+import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
+import lombok.AllArgsConstructor;
+import net.afyer.afybroker.core.message.ConnectToServerMessage;
+import net.afyer.afybroker.velocity.AfyBroker;
+
+/**
+ * @author Nipuru
+ * @since 2022/9/6 17:35
+ */
+@AllArgsConstructor
+public class ConnectToServerVelocityProcessor extends AsyncUserProcessor<ConnectToServerMessage> {
+
+    private final AfyBroker plugin;
+
+    @Override
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, ConnectToServerMessage message) {
+        ProxyServer server = plugin.getServer();
+
+        RegisteredServer target = server.getServer(message.getServer()).orElse(null);
+        if (target == null) return;
+
+        Player player = server.getPlayer(message.getPlayer()).orElse(null);
+        if (player == null) return;
+
+        player.createConnectionRequest(target).connect();
+    }
+
+    @Override
+    public String interest() {
+        return ConnectToServerMessage.class.getName();
+    }
+}

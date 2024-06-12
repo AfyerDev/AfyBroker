@@ -1,3 +1,4 @@
 name: AfyBroker
 version: '${version}'
 main: net.afyer.afybroker.bungee.AfyBroker
+author: Nipuru

@@ -24,7 +24,6 @@ import java.util.UUID;
  * @since 2022/7/28 7:26
  */
 @Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AfyBroker extends JavaPlugin {
 
     private BrokerClient brokerClient;

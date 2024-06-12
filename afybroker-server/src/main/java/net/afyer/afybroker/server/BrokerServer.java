@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
+import static net.afyer.afybroker.core.util.BoltUtils.loadMessageClass;
+
 /**
  * @author Nipuru
  * @since 2022/7/29 20:13
@@ -91,7 +93,8 @@ public class BrokerServer {
         pluginsFolder.mkdirs();
     }
 
-    public void registerUserProcessor(UserProcessor<?> processor){
+    public void registerUserProcessor(UserProcessor<?> processor) {
+        loadMessageClass(processor);
         aware(processor);
         rpcServer.registerUserProcessor(processor);
     }

@@ -27,7 +27,7 @@ public class PlayerListener extends AbstractListener {
     }
 
     @EventHandler(priority = (byte) 128)
-    public void onConnectNormal(LoginEvent event) {
+    public void onConnect(LoginEvent event) {
         event.registerIntent(plugin);
 
         PendingConnection connection = event.getConnection();

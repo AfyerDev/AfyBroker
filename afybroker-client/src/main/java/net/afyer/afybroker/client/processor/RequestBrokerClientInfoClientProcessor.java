@@ -30,9 +30,4 @@ public class RequestBrokerClientInfoClientProcessor extends SyncUserProcessor<Re
     public String interest() {
         return RequestBrokerClientInfoMessage.class.getName();
     }
-
-    @Override
-    public Executor getExecutor() {
-        return super.getExecutor();
-    }
 }

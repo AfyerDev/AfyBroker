@@ -4,11 +4,11 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.Protocol;
 import com.alipay.remoting.ProtocolCode;
 import com.alipay.remoting.ProtocolManager;
-import com.alipay.remoting.rpc.protocol.RpcProtocol;
-import com.alipay.remoting.rpc.protocol.RpcProtocolManager;
-import com.alipay.remoting.rpc.protocol.RpcProtocolV2;
+import com.alipay.remoting.rpc.protocol.*;
 import lombok.experimental.UtilityClass;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +24,24 @@ public class BoltUtils {
             ProtocolCode.fromBytes(RpcProtocol.PROTOCOL_CODE),
             ProtocolCode.fromBytes(RpcProtocolV2.PROTOCOL_CODE)
     };
+
+    public static void loadMessageClass(UserProcessor<?> userProcessor) {
+        List<String> messageClassNameList = new ArrayList<>();
+        if (userProcessor instanceof MultiInterestUserProcessor) {
+            MultiInterestUserProcessor<?> multiInterestUserProcessor = (MultiInterestUserProcessor<?>) userProcessor;
+            messageClassNameList.add(multiInterestUserProcessor.interest());
+        } else {
+            messageClassNameList.add(userProcessor.interest());
+        }
+        for (String messageClassName : messageClassNameList) {
+            try {
+                Class.forName(messageClassName);
+            } catch (ClassNotFoundException e) {
+                String message = String.format("Message class [%s] not found from processor [%s]", messageClassName, userProcessor.getClass().getName());
+                throw new IllegalArgumentException(message, e);
+            }
+        }
+    }
 
     public static void initProtocols() {
         try {

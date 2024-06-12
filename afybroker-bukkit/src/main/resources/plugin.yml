@@ -4,5 +4,4 @@ main: net.afyer.afybroker.bukkit.AfyBroker
 authors: [ Nipuru ]
 load: STARTUP
 commands:
-  connect:
   broadcast:
