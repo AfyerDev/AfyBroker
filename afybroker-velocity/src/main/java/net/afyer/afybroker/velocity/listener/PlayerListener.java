@@ -8,14 +8,12 @@ import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
 import lombok.AllArgsConstructor;
-import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.PlayerBukkitConnectedMessage;
 import net.afyer.afybroker.core.message.PlayerBungeeConnectMessage;
 import net.afyer.afybroker.core.message.PlayerBungeeDisconnectMessage;
 import net.afyer.afybroker.velocity.AfyBroker;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 
 /**
  * @author Nipuru
@@ -40,7 +38,8 @@ public class PlayerListener {
                 event.setResult(ResultedEvent.ComponentResult.denied(
                         Component.text("登录失败").color(NamedTextColor.RED)));
             }
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            plugin.getLogger().error(e.getMessage(), e);
             event.setResult(ResultedEvent.ComponentResult.denied(
                     Component.text("产生了一个错误").color(NamedTextColor.RED)));
         }
@@ -55,7 +54,7 @@ public class PlayerListener {
         try {
             plugin.getBrokerClient().oneway(msg);
         } catch (RemotingException | InterruptedException e) {
-            e.printStackTrace();
+            plugin.getLogger().error(e.getMessage(), e);
         }
     }
 
@@ -69,7 +68,7 @@ public class PlayerListener {
         try {
             plugin.getBrokerClient().oneway(msg);
         } catch (RemotingException | InterruptedException e) {
-            e.printStackTrace();
+            plugin.getLogger().error(e.getMessage(), e);
         }
     }
 

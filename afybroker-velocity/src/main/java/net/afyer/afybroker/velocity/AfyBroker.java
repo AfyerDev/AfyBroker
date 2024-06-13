@@ -11,6 +11,7 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
+import net.afyer.afybroker.velocity.listener.PlayerListener;
 import net.afyer.afybroker.velocity.processor.ConnectToServerVelocityProcessor;
 import net.afyer.afybroker.velocity.processor.KickPlayerVelocityProcessor;
 import net.afyer.afybroker.velocity.processor.PlayerHeartbeatValidateVelocityProcessor;
@@ -22,6 +23,7 @@ import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.util.BoltUtils;
 import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.slf4j.Logger;
 
@@ -62,7 +64,8 @@ public class AfyBroker {
     public void onProxyInitializeFirst(ProxyInitializeEvent event) {
         Path configPath = dataDirectory.resolve("config.yml");
         if (Files.notExists(configPath)) {
-            try (InputStream in = Objects.requireNonNull(getClass().getResourceAsStream("config.yml"))) {
+            try (InputStream in = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("config.yml"))) {
+                Files.createDirectories(configPath.getParent());
                 Files.copy(in, configPath);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -78,14 +81,14 @@ public class AfyBroker {
         }
 
         brokerClient = BrokerClient.newBuilder()
-                .host(config.getNode("broker.host").getString(BrokerGlobalConfig.BROKER_HOST))
-                .port(config.getNode("broker.port").getInt(BrokerGlobalConfig.BROKER_PORT))
-                .name(config.getNode("broker.name").getString("bungee-%unique_id%")
+                .host(config.getNode("broker", "host").getString(BrokerGlobalConfig.BROKER_HOST))
+                .port(config.getNode("broker", "port").getInt(BrokerGlobalConfig.BROKER_PORT))
+                .name(config.getNode("broker", "name").getString("velocity-%unique_id%")
                         .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
                         .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
                 )
                 .type(BrokerClientType.BUNGEE)
-                .addTags(config.getNode("broker.tags").getList(String::valueOf))
+                .addTags(config.getNode("broker", "tags").getList(String::valueOf))
                 .registerUserProcessor(new SudoVelocityProcessor(this))
                 .registerUserProcessor(new ConnectToServerVelocityProcessor(this))
                 .registerUserProcessor(new KickPlayerVelocityProcessor(this))
@@ -93,6 +96,7 @@ public class AfyBroker {
                 .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventVelocityProcessor(this))
                 .build();
         Broker.setClient(brokerClient);
+        server.getEventManager().register(this, new PlayerListener(this));
     }
 
     @Subscribe(order = PostOrder.LAST)
@@ -111,7 +115,7 @@ public class AfyBroker {
     }
 
     @Subscribe(order = PostOrder.LAST)
-    public void onProxyShutdownLast(ProxyShutdownEvent e) {
+    public void onProxyShutdownLast(ProxyShutdownEvent event) {
         brokerClient.shutdown();
         BoltUtils.clearProtocols();
     }
