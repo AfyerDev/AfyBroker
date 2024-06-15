@@ -35,6 +35,6 @@ public class CloseEventBrokerProcessor implements ConnectionEventProcessor, Brok
             brokerServer.getPluginManager().callEvent(event);
         }
 
-        log.info("BrokerClient:{} disconnect", remoteAddress);
+        log.info("BrokerClient[{}] disconnect", remoteAddress);
     }
 }

@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.server.plugin.Event;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Nipuru
@@ -20,7 +21,11 @@ public class PlayerBukkitJoinEvent extends Event {
     /** 玩家代理 */
     final BrokerPlayer player;
 
-    /** 所在的 bukkit 代理 */
-    final BrokerClientProxy bukkitClient;
+    /** 玩家之前所在的 bukkit 代理 */
+    @Nullable
+    final BrokerClientProxy previous;
+
+    /** 玩家当前所在的 bukkit 代理 */
+    final BrokerClientProxy current;
 
 }

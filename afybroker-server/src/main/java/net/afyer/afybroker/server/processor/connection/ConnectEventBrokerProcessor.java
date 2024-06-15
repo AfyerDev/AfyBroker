@@ -32,7 +32,7 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
 
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
-        log.info("BrokerClient:{} connected, sending request client info message", remoteAddress);
+        log.info("BrokerClient[{}] connected, sending request client info message", remoteAddress);
 
         try {
             brokerServer.getRpcServer().invokeWithCallback(connection, requestBrokerClientInfoMessage, new AbstractInvokeCallback() {

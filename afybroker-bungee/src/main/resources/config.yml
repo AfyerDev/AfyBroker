@@ -3,7 +3,7 @@ broker:
   host: localhost
   #broker 网关服务器端口
   port: 11200
-  #客户端名称 每个客户端（包括bukkit）应该唯一
+  #客户端名称 每个客户端应该唯一
   name: 'bungee-%unique_id%'
   #客户端标签
   tags: []

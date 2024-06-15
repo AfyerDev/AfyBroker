@@ -35,16 +35,14 @@ java -jar afybroker-server-bootstrap-版本号.jar
 
 5、如果 broker-server 与 bukkit、bungee 服务器不在同一台设备上，则需修改 bukkit、bungee 插件目录下 AfyBroker 目录里的 config.yml 文件，将主机 host 改为 broker-server 的网络ip地址，并重启服务器。
 
-5、修改 bukkit 插件目录下 AfyBroker 目录里的 config.yml 文件，将客户端名称 name 改为此 bukkit 服务器在 bungeecord 配置里的名称，最后重启 bukkit 服务器。
-
 ```yaml
 broker:
   #broker 网关服务器地址
   host: localhost
   #broker 网关服务器端口
   port: 11200
-  #客户端名称 必须和bungee内的此服务端名称保持一致，如spawn、lobby等
-  name: 'bukkit'
+  #客户端名称 每个客户端应该唯一 建议和bungee内的此服务端名称保持一致，如spawn1、lobby1等
+  name: 'bukkit-%unique_id%'
   #客户端标签
   tags: []
 ```

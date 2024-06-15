@@ -37,7 +37,7 @@ public class PlayerBungeeConnectBrokerProcessor extends SyncUserProcessor<Player
         }
 
         if (BrokerGlobalConfig.OPEN_LOG) {
-            log.info("Received player bungee connect message (player:{}, bungeeClient:{})",
+            log.info("Received player bungee connect message => player[{}], bungeeClient[{}]",
                     request.getName(), playerBungee.getName());
         }
 

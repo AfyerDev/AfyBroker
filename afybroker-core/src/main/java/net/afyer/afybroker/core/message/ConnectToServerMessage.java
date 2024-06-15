@@ -27,7 +27,7 @@ public class ConnectToServerMessage implements Serializable {
     /** 玩家uid */
     UUID player;
 
-    /** bukkit 服务器名 */
+    /** bukkit 服务器名（在 bungee 中的名字） */
     String server;
 
 }

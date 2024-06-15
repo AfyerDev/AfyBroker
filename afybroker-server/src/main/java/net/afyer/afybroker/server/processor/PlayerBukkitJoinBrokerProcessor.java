@@ -5,6 +5,7 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.PlayerBukkitJoinMessage;
 import net.afyer.afybroker.server.BrokerServer;
@@ -25,18 +26,22 @@ public class PlayerBukkitJoinBrokerProcessor extends AsyncUserProcessor<PlayerBu
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerBukkitJoinMessage request) {
-        BrokerClientProxy bukkitClient = brokerServer.getBrokerClientProxyManager().getByAddress(bizCtx.getRemoteAddress());
-        if (bukkitClient == null) return;
+        BrokerClientProxy currentBukkit = brokerServer.getBrokerClientProxyManager().getByAddress(bizCtx.getRemoteAddress());
+        if (currentBukkit == null) return;
+        if (currentBukkit.getType() != BrokerClientType.BUKKIT) return;
 
         BrokerPlayer player = brokerServer.getPlayer(request.getUniqueId());
         if (player == null) return;
 
         if (BrokerGlobalConfig.OPEN_LOG) {
-            log.info("Received player bukkit join message (player:{}, bukkitClient:{})",
-                    request.getName(), bukkitClient.getName());
+            log.info("Received player bukkit join message => player[{}], bukkitClient[{}]",
+                    request.getName(), currentBukkit.getName());
         }
 
-        brokerServer.getPluginManager().callEvent(new PlayerBukkitJoinEvent(player, bukkitClient));
+        BrokerClientProxy previousBukkit = player.getBukkitClientProxy();
+        player.setBukkitClientProxy(currentBukkit);
+
+        brokerServer.getPluginManager().callEvent(new PlayerBukkitJoinEvent(player, previousBukkit, currentBukkit));
     }
 
     @Override

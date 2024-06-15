@@ -21,11 +21,4 @@ public class PlayerBukkitConnectedEvent extends Event {
     /** 玩家代理 */
     final BrokerPlayer player;
 
-    /** 玩家之前所在的 bukkit 代理 */
-    @Nullable
-    final BrokerClientProxy previous;
-
-    /** 玩家当前所在的 bukkit 代理 */
-    final BrokerClientProxy current;
-
 }

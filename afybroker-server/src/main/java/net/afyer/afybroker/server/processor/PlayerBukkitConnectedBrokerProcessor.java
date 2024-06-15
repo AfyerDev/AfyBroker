@@ -35,25 +35,22 @@ public class PlayerBukkitConnectedBrokerProcessor extends AsyncUserProcessor<Pla
         String bukkitName = request.getServerName();
 
         BrokerClientProxyManager clientProxyManager = brokerServer.getBrokerClientProxyManager();
-        BrokerClientProxy currentBukkit = clientProxyManager.getByName(bukkitName);
-        if (currentBukkit == null) return;
-        if (currentBukkit.getType() != BrokerClientType.BUKKIT) return;
+        BrokerClientProxy bungeeClient = clientProxyManager.getByAddress(bizCtx.getRemoteAddress());
+        if (bungeeClient == null) return;
+        if (bungeeClient.getType() != BrokerClientType.BUNGEE) return;
 
         if (BrokerGlobalConfig.OPEN_LOG) {
-            log.info("Received player bukkit connected message (player:{}, bukkitClient:{})",
-                    playerName, currentBukkit.getName());
+            log.info("Received player bukkit connected message => player[{}], server[{}]",
+                    playerName, bukkitName);
         }
 
         BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
-
         BrokerPlayer brokerPlayer = playerManager.getPlayer(playerUniqueId);
         if (brokerPlayer == null) {
             return;
         }
-        BrokerClientProxy previousBukkit = brokerPlayer.getBukkitClientProxy();
-        brokerPlayer.setBukkitClientProxy(currentBukkit);
 
-        PlayerBukkitConnectedEvent event = new PlayerBukkitConnectedEvent(brokerPlayer, previousBukkit, currentBukkit);
+        PlayerBukkitConnectedEvent event = new PlayerBukkitConnectedEvent(brokerPlayer);
         brokerServer.getPluginManager().callEvent(event);
     }
 
