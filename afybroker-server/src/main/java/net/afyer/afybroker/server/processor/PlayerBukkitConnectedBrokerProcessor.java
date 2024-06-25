@@ -34,8 +34,7 @@ public class PlayerBukkitConnectedBrokerProcessor extends AsyncUserProcessor<Pla
         UUID playerUniqueId = request.getPlayerUniqueId();
         String bukkitName = request.getServerName();
 
-        BrokerClientProxyManager clientProxyManager = brokerServer.getBrokerClientProxyManager();
-        BrokerClientProxy bungeeClient = clientProxyManager.getByAddress(bizCtx.getRemoteAddress());
+        BrokerClientProxy bungeeClient = brokerServer.getClientProxy(bizCtx);
         if (bungeeClient == null) return;
         if (bungeeClient.getType() != BrokerClientType.BUNGEE) return;
 
@@ -44,8 +43,7 @@ public class PlayerBukkitConnectedBrokerProcessor extends AsyncUserProcessor<Pla
                     playerName, bukkitName);
         }
 
-        BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
-        BrokerPlayer brokerPlayer = playerManager.getPlayer(playerUniqueId);
+        BrokerPlayer brokerPlayer = brokerServer.getPlayer(playerUniqueId);
         if (brokerPlayer == null) {
             return;
         }

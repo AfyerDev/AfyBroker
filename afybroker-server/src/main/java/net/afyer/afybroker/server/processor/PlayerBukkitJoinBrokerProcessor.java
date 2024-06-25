@@ -26,7 +26,7 @@ public class PlayerBukkitJoinBrokerProcessor extends AsyncUserProcessor<PlayerBu
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerBukkitJoinMessage request) {
-        BrokerClientProxy currentBukkit = brokerServer.getBrokerClientProxyManager().getByAddress(bizCtx.getRemoteAddress());
+        BrokerClientProxy currentBukkit = brokerServer.getClientProxy(bizCtx);
         if (currentBukkit == null) return;
         if (currentBukkit.getType() != BrokerClientType.BUKKIT) return;
 

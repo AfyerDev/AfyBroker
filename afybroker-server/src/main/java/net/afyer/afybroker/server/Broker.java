@@ -1,8 +1,10 @@
 package net.afyer.afybroker.server;
 
+import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.RpcServer;
 import lombok.Getter;
 import net.afyer.afybroker.server.plugin.PluginManager;
+import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
@@ -96,6 +98,22 @@ public class Broker {
     @Nullable
     public static BrokerPlayer getPlayer(String name) {
         return server.getPlayer(name);
+    }
+
+    /**
+     * 通过名称获取客户端代理
+     */
+    @Nullable
+    public BrokerClientProxy getClientProxy(String name) {
+        return server.getClientProxy(name);
+    }
+
+    /**
+     * 通过 {@link BizContext} 获取玩家代理
+     */
+    @Nullable
+    public BrokerClientProxy getClientProxy(BizContext bizContext) {
+        return server.getClientProxy(bizContext);
     }
 
     /**

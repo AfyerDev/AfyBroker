@@ -27,8 +27,7 @@ public class PlayerBungeeConnectBrokerProcessor extends SyncUserProcessor<Player
 
     @Override
     public Object handleRequest(BizContext bizCtx, PlayerBungeeConnectMessage request) throws Exception {
-        BrokerClientProxyManager clientProxyManager = brokerServer.getBrokerClientProxyManager();
-        BrokerClientProxy playerBungee = clientProxyManager.getByAddress(bizCtx.getRemoteAddress());
+        BrokerClientProxy playerBungee = brokerServer.getClientProxy(bizCtx);
         if (playerBungee == null) {
             return false;
         }

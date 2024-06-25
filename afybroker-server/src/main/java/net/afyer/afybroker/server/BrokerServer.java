@@ -1,5 +1,6 @@
 package net.afyer.afybroker.server;
 
+import com.alipay.remoting.BizContext;
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.rpc.RpcServer;
@@ -15,6 +16,7 @@ import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.command.*;
 import net.afyer.afybroker.server.plugin.Plugin;
 import net.afyer.afybroker.server.plugin.PluginManager;
+import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
@@ -111,6 +113,16 @@ public class BrokerServer {
     @Nullable
     public BrokerPlayer getPlayer(String name) {
         return brokerPlayerManager.getPlayer(name);
+    }
+
+    @Nullable
+    public BrokerClientProxy getClientProxy(String name) {
+        return brokerClientProxyManager.getByName(name);
+    }
+
+    @Nullable
+    public BrokerClientProxy getClientProxy(BizContext bizContext) {
+        return brokerClientProxyManager.getByAddress(bizContext.getRemoteAddress());
     }
 
     public void startup() {

@@ -28,8 +28,7 @@ public class PlayerBungeeDisconnectBrokerProcessor extends AsyncUserProcessor<Pl
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerBungeeDisconnectMessage request) {
-        BrokerClientProxyManager clientProxyManager = brokerServer.getBrokerClientProxyManager();
-        BrokerClientProxy playerBungee = clientProxyManager.getByAddress(bizCtx.getRemoteAddress());
+        BrokerClientProxy playerBungee = brokerServer.getClientProxy(bizCtx);
         if (playerBungee == null) {
             return;
         }
