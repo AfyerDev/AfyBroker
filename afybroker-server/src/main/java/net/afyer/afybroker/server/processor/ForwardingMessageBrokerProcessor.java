@@ -29,9 +29,7 @@ public class ForwardingMessageBrokerProcessor extends AsyncUserProcessor<Forward
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, ForwardingMessage request) {
         BrokerClientProxy target = brokerServer.getClientProxy(request.getClientName());
 
-        if (target == null) {
-            return;
-        }
+        if (target == null) return;
 
         Serializable message = request.getMessage();
 

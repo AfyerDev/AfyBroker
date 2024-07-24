@@ -19,8 +19,8 @@ import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.event.BrokerClientConnectEvent;
 import net.afyer.afybroker.server.event.BrokerClientRegisterEvent;
-import net.afyer.afybroker.server.event.PlayerBungeeLoginEvent;
 import net.afyer.afybroker.server.processor.PlayerBukkitJoinBrokerProcessor;
+import net.afyer.afybroker.server.processor.PlayerBungeeConnectBrokerProcessor;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
@@ -85,7 +85,7 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
 
             @Override
             public void onException(Throwable e) {
-                log.info("BrokerClient:{} registration failed", remoteAddress);
+                log.error("BrokerClient:{} registration failed", remoteAddress);
                 log.error(e.getMessage(), e);
             }
         };
@@ -102,41 +102,31 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
         try {
             clientProxy.invokeWithCallback(requestPlayerInfoMessage, callback);
         } catch (RemotingException | InterruptedException e) {
-            log.info("Request player server info to brokerClient:{} failed", clientProxy.getName());
+            log.error("Request player server info to brokerClient:{} failed", clientProxy.getName());
             log.error(e.getMessage(), e);
         }
     }
 
     private InvokeCallback registerPlayerBungeeCallback(BrokerClientProxy bungeeClient) {
         return new AbstractInvokeCallback() {
-
             @Override
             public void onResponse(Object result) {
                 Map<UUID, String> playerMap = cast(result);
                 playerMap.forEach((uuid, name) -> {
                     BrokerPlayer brokerPlayer = new BrokerPlayer(uuid, name, bungeeClient);
-                    BrokerPlayer player = brokerServer.getBrokerPlayerManager().addPlayer(brokerPlayer);
-                    boolean success = player == null;
-                    if (success) {
-                        brokerServer.getPluginManager().callEvent(new PlayerBungeeLoginEvent(brokerPlayer));
-                    }
+                    if (!PlayerBungeeConnectBrokerProcessor.handlePlayerAdd(brokerServer, brokerPlayer)) return;
                     String bukkitAddress = playerBukkitMap.remove(uuid);
-                    if (bukkitAddress == null) {
-                        return;
-                    }
-
+                    if (bukkitAddress == null) return;
                     BrokerClientProxy bukkitClient = brokerServer.getBrokerClientProxyManager().getByAddress(bukkitAddress);
-                    if (bukkitClient == null) {
-                        return;
-                    }
+                    if (bukkitClient == null) return;
 
-                    PlayerBukkitJoinBrokerProcessor.setBukkitClientProxy(brokerServer, brokerPlayer, bukkitClient);
+                    PlayerBukkitJoinBrokerProcessor.handleBukkitJoin(brokerServer, brokerPlayer, bukkitClient);
                 });
             }
 
             @Override
             public void onException(Throwable e) {
-                log.info("Request player info to bungee brokerClient:{} failed", bungeeClient.getName());
+                log.error("Request player info to bungee brokerClient:{} failed", bungeeClient.getName());
                 log.error(e.getMessage(), e);
             }
 
@@ -149,7 +139,6 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
 
     private InvokeCallback registerPlayerBukkitCallback(BrokerClientProxy bukkitClient) {
         return new AbstractInvokeCallback() {
-
             @Override
             public void onResponse(Object result) {
                 List<UUID> playerList = cast(result);
@@ -159,13 +148,13 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
                         playerBukkitMap.put(uuid, bukkitClient.getAddress());
                         return;
                     }
-                    PlayerBukkitJoinBrokerProcessor.setBukkitClientProxy(brokerServer, brokerPlayer, bukkitClient);
+                    PlayerBukkitJoinBrokerProcessor.handleBukkitJoin(brokerServer, brokerPlayer, bukkitClient);
                 });
             }
 
             @Override
             public void onException(Throwable e) {
-                log.info("Request player info to bukkit brokerClient:{} failed", bukkitClient.getName());
+                log.error("Request player info to bukkit brokerClient:{} failed", bukkitClient.getName());
                 log.error(e.getMessage(), e);
             }
 

@@ -15,6 +15,8 @@ import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 
+import java.util.UUID;
+
 /**
  * @author Nipuru
  * @since 2022/11/21 17:32
@@ -40,11 +42,15 @@ public class PlayerBungeeDisconnectBrokerProcessor extends AsyncUserProcessor<Pl
                     request.getName(), playerBungee.getName());
         }
 
+        handlePlayerRemove(brokerServer, request.getUid());
+    }
+
+    public static void handlePlayerRemove(BrokerServer brokerServer, UUID uniqueId) {
         BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
-        BrokerPlayer brokerPlayer = playerManager.getPlayer(request.getUid());
+        BrokerPlayer brokerPlayer = playerManager.getPlayer(uniqueId);
         if (brokerPlayer != null) {
             brokerServer.getPluginManager().callEvent(new PlayerBungeeLogoutEvent(brokerPlayer));
-            playerManager.removePlayer(request.getUid());
+            playerManager.removePlayer(uniqueId);
         }
     }
 

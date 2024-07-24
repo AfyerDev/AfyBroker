@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
-import static net.afyer.afybroker.core.util.BoltUtils.loadMessageClass;
-
 /**
  * @author Nipuru
  * @since 2022/7/29 20:13

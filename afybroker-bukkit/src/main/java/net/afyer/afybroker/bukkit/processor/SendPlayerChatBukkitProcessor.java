@@ -17,9 +17,7 @@ public class SendPlayerChatBukkitProcessor extends AsyncUserProcessor<SendPlayer
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, SendPlayerMessageMessage request) {
         Player target = Bukkit.getPlayer(request.getUniqueId());
 
-        if (target == null) {
-            return;
-        }
+        if (target == null) return;
 
         target.sendMessage(request.getMessage());
     }

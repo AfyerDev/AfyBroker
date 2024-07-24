@@ -38,13 +38,14 @@ public class PlayerBukkitJoinBrokerProcessor extends AsyncUserProcessor<PlayerBu
                     request.getName(), currentBukkit.getName());
         }
 
-        setBukkitClientProxy(brokerServer, player, currentBukkit);
+        handleBukkitJoin(brokerServer, player, currentBukkit);
     }
 
-    public static void setBukkitClientProxy(BrokerServer server, BrokerPlayer player, BrokerClientProxy bukkitClient) {
+    public static void handleBukkitJoin(BrokerServer server, BrokerPlayer player, BrokerClientProxy bukkitClient) {
+        if (bukkitClient.getType() != BrokerClientType.BUKKIT) return;
+
         BrokerClientProxy previousBukkit = player.getBukkitClientProxy();
         player.setBukkitClientProxy(bukkitClient);
-
         server.getPluginManager().callEvent(new PlayerBukkitJoinEvent(player, previousBukkit, bukkitClient));
     }
 

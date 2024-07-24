@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.message.PlayerHeartbeatValidateMessage;
 import net.afyer.afybroker.core.util.AbstractInvokeCallback;
 import net.afyer.afybroker.server.BrokerServer;
-import net.afyer.afybroker.server.event.PlayerBungeeLogoutEvent;
+import net.afyer.afybroker.server.processor.PlayerBungeeDisconnectBrokerProcessor;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
@@ -74,18 +74,19 @@ public class PlayerHeartbeatValidateTask extends Thread {
             BrokerClientProxy bungeeProxy = entry.getKey();
             try {
                 bungeeProxy.invokeWithCallback(message, new AbstractInvokeCallback() {
-                    @SuppressWarnings("unchecked")
                     @Override
                     public void onResponse(Object result) {
-                        List<UUID> response = (List<UUID>) result;
+                        List<UUID> response = cast(result);
                         if (response.isEmpty()) return;
                         for (UUID uniqueId : response) {
-                            BrokerPlayer brokerPlayer = playerManager.getPlayer(uniqueId);
-                            if (brokerPlayer != null) {
-                                brokerServer.getPluginManager().callEvent(new PlayerBungeeLogoutEvent(brokerPlayer));
-                                playerManager.removePlayer(uniqueId);
-                            }
+                            PlayerBungeeDisconnectBrokerProcessor.handlePlayerRemove(brokerServer, uniqueId);
                         }
+                    }
+
+                    @Override
+                    public void onException(Throwable e) {
+                        log.error("Request player heart beat to bungee brokerClient:{} failed", bungeeProxy.getName());
+                        log.error(e.getMessage(), e);
                     }
                 });
             } catch (RemotingException | InterruptedException ignored) {
