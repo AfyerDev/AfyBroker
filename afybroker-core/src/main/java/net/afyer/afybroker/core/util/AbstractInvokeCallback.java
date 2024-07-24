@@ -21,4 +21,9 @@ public abstract class AbstractInvokeCallback implements InvokeCallback {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T cast(Object object) {
+        return (T) object;
+    }
+
 }

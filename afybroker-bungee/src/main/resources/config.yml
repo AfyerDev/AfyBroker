@@ -7,3 +7,7 @@ broker:
   name: 'bungee-%unique_id%'
   #客户端标签
   tags: []
+
+player:
+  # 在服务器网关断联后是否踢出全部玩家
+  kick-on-close: false

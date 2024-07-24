@@ -3,6 +3,7 @@ package net.afyer.afybroker.client;
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.InvokeCallback;
+import com.alipay.remoting.LifeCycleException;
 import com.alipay.remoting.config.BoltClientOption;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
@@ -89,7 +90,7 @@ public class BrokerClient {
         rpcClient.addConnectionEventProcessor(type, processor);
     }
 
-    public void startup() {
+    public void startup() throws LifeCycleException  {
         rpcClient.startup();
     }
 

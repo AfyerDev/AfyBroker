@@ -11,19 +11,15 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
-import net.afyer.afybroker.velocity.listener.PlayerListener;
-import net.afyer.afybroker.velocity.processor.ConnectToServerVelocityProcessor;
-import net.afyer.afybroker.velocity.processor.KickPlayerVelocityProcessor;
-import net.afyer.afybroker.velocity.processor.PlayerHeartbeatValidateVelocityProcessor;
-import net.afyer.afybroker.velocity.processor.SudoVelocityProcessor;
-import net.afyer.afybroker.velocity.processor.connection.CloseEventVelocityProcessor;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.util.BoltUtils;
+import net.afyer.afybroker.velocity.listener.PlayerListener;
+import net.afyer.afybroker.velocity.processor.*;
+import net.afyer.afybroker.velocity.processor.connection.CloseEventVelocityProcessor;
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.slf4j.Logger;
 
@@ -46,6 +42,7 @@ public class AfyBroker {
     private final CommandManager commandManager;
     private final Path dataDirectory;
     private BrokerClient brokerClient;
+    private ConfigurationNode config;
 
 
     @Inject
@@ -71,7 +68,6 @@ public class AfyBroker {
                 throw new RuntimeException(e);
             }
         }
-        ConfigurationNode config;
         try {
             config = YAMLConfigurationLoader.builder()
                     .setPath(configPath)
@@ -93,6 +89,7 @@ public class AfyBroker {
                 .registerUserProcessor(new ConnectToServerVelocityProcessor(this))
                 .registerUserProcessor(new KickPlayerVelocityProcessor(this))
                 .registerUserProcessor(new PlayerHeartbeatValidateVelocityProcessor(this))
+                .registerUserProcessor(new RequestPlayerInfoVelocityProcessor(this))
                 .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventVelocityProcessor(this))
                 .build();
         Broker.setClient(brokerClient);

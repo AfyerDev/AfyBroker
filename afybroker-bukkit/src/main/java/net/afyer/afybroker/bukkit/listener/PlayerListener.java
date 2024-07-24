@@ -30,6 +30,7 @@ public class PlayerListener extends AbstractListener {
                 plugin.getBrokerClient().oneway(message);
             } catch (RemotingException | InterruptedException e) {
                 e.printStackTrace();
+                Bukkit.getScheduler().runTask(plugin, () -> event.getPlayer().kickPlayer(null));
             }
         });
     }

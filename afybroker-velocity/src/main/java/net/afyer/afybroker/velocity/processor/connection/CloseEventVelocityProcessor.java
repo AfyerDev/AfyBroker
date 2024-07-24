@@ -21,9 +21,13 @@ public class CloseEventVelocityProcessor implements ConnectionEventProcessor {
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
         ProxyServer server = plugin.getServer();
-        TextComponent msg = Component
-                .text("服务器网关已关闭")
-                .color(NamedTextColor.RED);
-        server.getAllPlayers().forEach(player -> player.disconnect(msg));
+
+        if (plugin.getConfig().getNode("player", "kick-on-close").getBoolean(false)) {
+
+            TextComponent msg = Component
+                    .text("服务器网关已关闭")
+                    .color(NamedTextColor.RED);
+            server.getAllPlayers().forEach(player -> player.disconnect(msg));
+        }
     }
 }

@@ -12,9 +12,7 @@ import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.event.PlayerBukkitConnectedEvent;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
-import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
-import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 
 import java.util.UUID;
 

@@ -1,15 +1,13 @@
 package net.afyer.afybroker.bungee;
 
 import com.alipay.remoting.ConnectionEventType;
+import com.alipay.remoting.LifeCycleException;
 import com.alipay.remoting.exception.RemotingException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.bungee.listener.PlayerListener;
-import net.afyer.afybroker.bungee.processor.ConnectToServerBungeeProcessor;
-import net.afyer.afybroker.bungee.processor.KickPlayerBungeeProcessor;
-import net.afyer.afybroker.bungee.processor.PlayerHeartbeatValidateBungeeProcessor;
-import net.afyer.afybroker.bungee.processor.SudoBungeeProcessor;
+import net.afyer.afybroker.bungee.processor.*;
 import net.afyer.afybroker.bungee.processor.connection.CloseEventBungeeProcessor;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
@@ -32,10 +30,11 @@ import java.util.UUID;
 public class AfyBroker extends Plugin {
 
     private BrokerClient brokerClient;
+    private Configuration config;
 
     @Override
     public void onLoad() {
-        Configuration config = new BungeeFileConfig("config.yml", this, YamlConfiguration.class).get();
+        config = new BungeeFileConfig("config.yml", this, YamlConfiguration.class).get();
         brokerClient = BrokerClient.newBuilder()
                 .host(config.getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
                 .port(config.getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
@@ -49,7 +48,8 @@ public class AfyBroker extends Plugin {
                 .registerUserProcessor(new ConnectToServerBungeeProcessor())
                 .registerUserProcessor(new KickPlayerBungeeProcessor())
                 .registerUserProcessor(new PlayerHeartbeatValidateBungeeProcessor())
-                .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBungeeProcessor())
+                .registerUserProcessor(new RequestPlayerInfoBungeeProcessor())
+                .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBungeeProcessor(this))
                 .build();
         Broker.setClient(brokerClient);
     }
@@ -64,8 +64,12 @@ public class AfyBroker extends Plugin {
             BoltUtils.initProtocols();
             brokerClient.startup();
             brokerClient.ping();
+        } catch (LifeCycleException e) {
+            getLogger().severe("Broker client startup failed!");
+            e.printStackTrace();
+            getProxy().stop();
         } catch (RemotingException | InterruptedException e) {
-            getLogger().severe("Broker client initialization failed!");
+            getLogger().severe("Ping to the broker server failed!");
             e.printStackTrace();
         } finally {
             Thread.currentThread().setContextClassLoader(oldLoader);
