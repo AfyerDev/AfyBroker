@@ -17,8 +17,6 @@ import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 
-import static net.afyer.afybroker.core.util.BoltUtils.loadMessageClass;
-
 /**
  * @author Nipuru
  * @since 2022/7/30 19:15
@@ -80,7 +78,6 @@ public class BrokerClient {
     }
 
     public void registerUserProcessor(UserProcessor<?> processor) {
-        loadMessageClass(processor);
         aware(processor);
         rpcClient.registerUserProcessor(processor);
     }

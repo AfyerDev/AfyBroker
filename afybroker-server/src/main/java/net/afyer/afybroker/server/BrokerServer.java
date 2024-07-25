@@ -94,7 +94,6 @@ public class BrokerServer {
     }
 
     public void registerUserProcessor(UserProcessor<?> processor) {
-//        loadMessageClass(processor);
         aware(processor);
         rpcServer.registerUserProcessor(processor);
     }
