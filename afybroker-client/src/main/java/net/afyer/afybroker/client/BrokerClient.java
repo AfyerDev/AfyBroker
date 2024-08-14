@@ -12,6 +12,7 @@ import com.alipay.remoting.rpc.protocol.UserProcessor;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.core.BrokerClientInfo;
@@ -46,6 +47,13 @@ public class BrokerClient {
 
     public boolean hasTag(String tag) {
         return clientInfo.getTags().contains(tag);
+    }
+
+    public void addExtraTag(String tag) {
+        if (rpcClient.isStarted()) {
+            throw new IllegalStateException("Extra tag must be added before the client starts.");
+        }
+        clientInfo.addExtraTag(tag);
     }
 
     public <T> T invokeSync(Object request) throws RemotingException, InterruptedException {

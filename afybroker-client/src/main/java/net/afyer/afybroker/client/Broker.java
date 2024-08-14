@@ -61,6 +61,13 @@ public final class Broker {
     }
 
     /**
+     * 添加额外标签（必须在 onLoad 阶段）
+     */
+    public void addExtraTag(String tag) {
+        client.addExtraTag(tag);
+    }
+
+    /**
      * 发送消息 sync
      */
     public static <T> T invokeSync(Object request) throws RemotingException, InterruptedException {

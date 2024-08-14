@@ -10,7 +10,6 @@ import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerClientType;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -29,13 +28,15 @@ public class BrokerClientInfoMessage implements Serializable {
     String name;
     /** 客户端标签 */
     Set<String> tags;
+    /** 额外标签 */
+    Set<String> extraTags;
     /** 客户端类型 */
     BrokerClientType type;
-    /** 客户端地址 */
+    /** 服务器/客户端 地址 */
     String address;
 
     public BrokerClientInfo build() {
-        return new BrokerClientInfo(name, Collections.unmodifiableSet(tags), type, address);
+        return new BrokerClientInfo(name, tags, extraTags, type, address);
     }
 
 }

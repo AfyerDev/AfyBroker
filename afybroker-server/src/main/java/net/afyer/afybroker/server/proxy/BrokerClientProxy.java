@@ -1,5 +1,7 @@
 package net.afyer.afybroker.server.proxy;
 
+import java.util.Set;
+
 import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcResponseFuture;
@@ -7,12 +9,10 @@ import com.alipay.remoting.rpc.RpcServer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
-
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * 客户端代理
@@ -24,14 +24,8 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClientProxy {
 
-    /** 客户端名称(唯一标识) */
-    final String name;
-    /** 客户端标签 */
-    final Set<String> tags;
-    /** 客户端类型 */
-    final BrokerClientType type;
-    /** 客户端地址 */
-    final String address;
+    /** 客户端信息 */
+    final BrokerClientInfo clientInfo;
 
     final RpcServer rpcServer;
 
@@ -39,51 +33,44 @@ public class BrokerClientProxy {
     final int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
 
     public BrokerClientProxy(BrokerClientInfoMessage clientInfo, RpcServer rpcServer) {
-        this.name = clientInfo.getName();
-        this.tags = Collections.unmodifiableSet(clientInfo.getTags());
-        this.type = clientInfo.getType();
-        this.address = clientInfo.getAddress();
+        this.clientInfo = clientInfo.build();
         this.rpcServer = rpcServer;
     }
 
+    public String getName() {
+        return clientInfo.getName();
+    }
+
+    public String getAddress() {
+        return clientInfo.getAddress();
+    }
+
+    public Set<String> getTags() {
+        return clientInfo.getTagsView();
+    }
+
+    public BrokerClientType getType() {
+        return clientInfo.getType();
+    }
+
     public boolean hasTag(String tag) {
-        return tags.contains(tag);
+        return clientInfo.hasTag(tag);
     }
 
     public boolean hasAnyTags(String... tags) {
-        for (String tag : tags) {
-            if (this.tags.contains(tag)) {
-                return true;
-            }
-        }
-        return false;
+        return clientInfo.hasAnyTags(tags);
     }
 
     public boolean hasAnyTags(Iterable<String> tags) {
-        for (String tag : tags) {
-            if (this.tags.contains(tag)) {
-                return true;
-            }
-        }
-        return false;
+        return clientInfo.hasAnyTags(tags);
     }
 
     public boolean hasAllTags(String... tags) {
-        for (String tag : tags) {
-            if (!this.tags.contains(tag)) {
-                return false;
-            }
-        }
-        return true;
+        return clientInfo.hasAllTags(tags);
     }
 
     public boolean hasAllTags(Iterable<String> tags) {
-        for (String tag : tags) {
-            if (!this.tags.contains(tag)) {
-                return false;
-            }
-        }
-        return true;
+        return clientInfo.hasAllTags(tags);
     }
 
     public <T> T invokeSync(Object request) throws RemotingException, InterruptedException {
@@ -92,11 +79,11 @@ public class BrokerClientProxy {
 
     @SuppressWarnings("unchecked")
     public <T> T invokeSync(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
-        return (T) rpcServer.invokeSync(address, request, timeoutMillis);
+        return (T) rpcServer.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
     }
 
     public void oneway(Object request) throws RemotingException, InterruptedException {
-        rpcServer.oneway(address, request);
+        rpcServer.oneway(clientInfo.getAddress(), request);
     }
 
     public void invokeWithCallback(Object request, InvokeCallback invokeCallback) throws RemotingException, InterruptedException {
@@ -104,7 +91,7 @@ public class BrokerClientProxy {
     }
 
     public void invokeWithCallback(Object request, InvokeCallback invokeCallback, int timeoutMillis) throws RemotingException, InterruptedException {
-        rpcServer.invokeWithCallback(address, request, invokeCallback, timeoutMillis);
+        rpcServer.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
     }
 
     public RpcResponseFuture invokeWithFuture(Object request) throws RemotingException, InterruptedException {
@@ -112,16 +99,6 @@ public class BrokerClientProxy {
     }
 
     public RpcResponseFuture invokeWithFuture(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
-        return rpcServer.invokeWithFuture(address, request, timeoutMillis);
-    }
-
-    @Override
-    public String toString() {
-        return "BrokerClientProxy{" +
-                "name='" + name + '\'' +
-                ", tags='" + tags + '\'' +
-                ", type=" + type +
-                ", address='" + address + '\'' +
-                '}';
+        return rpcServer.invokeWithFuture(clientInfo.getAddress(), request, timeoutMillis);
     }
 }
