@@ -50,6 +50,9 @@ public class BrokerClientBuilder {
     /** 客户端标签 */
     final Set<String> tags = new HashSet<>();
 
+    /** 额外标签 */
+    final Set<String> extraTags = new HashSet<>();
+
     /** 用户处理器 */
     final List<UserProcessor<?>> processorList = new ArrayList<>();
 
@@ -70,6 +73,7 @@ public class BrokerClientBuilder {
                 .setName(name)
                 .setType(type)
                 .setTags(tags)
+                .setExtraTags(extraTags)
                 .setAddress(address.getAddress());
 
         BrokerClient brokerClient = new BrokerClient();
