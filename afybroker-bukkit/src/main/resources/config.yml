@@ -5,5 +5,3 @@ broker:
   port: 11200
   #客户端名称 每个客户端应该唯一 建议和bungee内的此服务端名称保持一致，如spawn1、lobby1等
   name: 'bukkit-%unique_id%'
-  #客户端标签
-  tags: []

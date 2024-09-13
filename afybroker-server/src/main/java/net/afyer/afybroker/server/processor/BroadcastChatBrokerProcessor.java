@@ -28,7 +28,7 @@ public class BroadcastChatBrokerProcessor extends AsyncUserProcessor<BroadcastCh
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, BroadcastChatMessage request) {
         BrokerClientProxyManager clientProxyManager = brokerServer.getBrokerClientProxyManager();
-        List<BrokerClientProxy> brokerClients = clientProxyManager.getByType(BrokerClientType.BUKKIT);
+        List<BrokerClientProxy> brokerClients = clientProxyManager.getByType(BrokerClientType.SERVER);
 
         for (BrokerClientProxy brokerClient : brokerClients) {
             try {

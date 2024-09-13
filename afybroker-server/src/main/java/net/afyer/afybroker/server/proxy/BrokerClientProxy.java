@@ -1,7 +1,5 @@
 package net.afyer.afybroker.server.proxy;
 
-import java.util.Set;
-
 import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcResponseFuture;
@@ -10,9 +8,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerClientInfo;
-import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 客户端代理
@@ -46,11 +47,20 @@ public class BrokerClientProxy {
     }
 
     public Set<String> getTags() {
-        return clientInfo.getTagsView();
+        return clientInfo.getTags();
     }
 
-    public BrokerClientType getType() {
+    public String getType() {
         return clientInfo.getType();
+    }
+
+    public Map<String, String> getMetadata() {
+        return clientInfo.getMetadata();
+    }
+
+    @Nullable
+    public String getMetadata(String key) {
+        return clientInfo.getMetadata(key);
     }
 
     public boolean hasTag(String tag) {

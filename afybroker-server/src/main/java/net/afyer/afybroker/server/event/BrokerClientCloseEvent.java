@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
-import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.plugin.Event;
 
 import java.util.Set;
@@ -29,6 +28,6 @@ public class BrokerClientCloseEvent extends Event {
     final Set<String> tags;
 
     /** 客户端类型 */
-    final BrokerClientType type;
+    final String type;
 
 }

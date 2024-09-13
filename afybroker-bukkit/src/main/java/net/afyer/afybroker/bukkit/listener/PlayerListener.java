@@ -6,13 +6,14 @@ import net.afyer.afybroker.core.message.PlayerBukkitJoinMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
  * @author Nipuru
  * @since 2023/09/29 12:05
  */
-public class PlayerListener extends AbstractListener {
+public class PlayerListener implements Listener {
 
     private final AfyBroker plugin;
 

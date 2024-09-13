@@ -3,7 +3,6 @@ package net.afyer.afybroker.server.proxy;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import net.afyer.afybroker.core.BrokerClientType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -89,7 +88,7 @@ public class BrokerClientProxyManager {
     }
 
     /** 通过类型获取客户端代理 */
-    public List<BrokerClientProxy> getByType(BrokerClientType type) {
+    public List<BrokerClientProxy> getByType(String type) {
         return this.getByFilter(clientProxy -> clientProxy.getType() == type);
     }
 

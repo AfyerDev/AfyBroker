@@ -14,6 +14,8 @@ import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 
+import java.util.Objects;
+
 /**
  * @author Nipuru
  * @since 2022/8/1 11:41
@@ -30,7 +32,7 @@ public class PlayerBungeeConnectBrokerProcessor extends SyncUserProcessor<Player
         if (playerBungee == null) {
             return false;
         }
-        if (playerBungee.getType() != BrokerClientType.BUNGEE) {
+        if (!Objects.equals(playerBungee.getType(), BrokerClientType.PROXY)) {
             return false;
         }
 

@@ -93,9 +93,9 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
 
     private void registerPlayer(BrokerClientProxy clientProxy) {
         InvokeCallback callback = null;
-        if (clientProxy.getType() == BrokerClientType.BUNGEE) {
+        if (clientProxy.getType() == BrokerClientType.PROXY) {
             callback = registerPlayerBungeeCallback(clientProxy);
-        } else if (clientProxy.getType() == BrokerClientType.BUKKIT) {
+        } else if (clientProxy.getType() == BrokerClientType.SERVER) {
             callback = registerPlayerBukkitCallback(clientProxy);
         }
         if (callback == null) return;

@@ -2,6 +2,8 @@ package net.afyer.afybroker.client;
 
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
+import com.alipay.remoting.config.BoltClientOption;
+import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import lombok.AccessLevel;
 import lombok.Setter;
@@ -12,6 +14,7 @@ import net.afyer.afybroker.client.processor.connection.CloseEventClientProcessor
 import net.afyer.afybroker.client.processor.connection.ConnectEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ConnectFailedEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ExceptionEventClientProcessor;
+import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
@@ -35,7 +38,7 @@ public class BrokerClientBuilder {
     /**
      * 客户端类型
      */
-    BrokerClientType type;
+    String type = BrokerClientType.UNKNOWN;
 
     /**
      * broker 服务端主机
@@ -47,11 +50,14 @@ public class BrokerClientBuilder {
      */
     int port = BrokerGlobalConfig.BROKER_PORT;
 
+    /** 消息发送超时时间 */
+    int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
+
     /** 客户端标签 */
     final Set<String> tags = new HashSet<>();
 
-    /** 额外标签 */
-    final Set<String> extraTags = new HashSet<>();
+    /** 客户端元数据 */
+    final Map<String, String> metadata = new HashMap<>();
 
     /** 用户处理器 */
     final List<UserProcessor<?>> processorList = new ArrayList<>();
@@ -69,19 +75,26 @@ public class BrokerClientBuilder {
 
         BrokerAddress address = new BrokerAddress(host, port);
 
-        BrokerClientInfoMessage clientInfoMessage = new BrokerClientInfoMessage()
+        BrokerClientInfo clientInfo = new BrokerClientInfoMessage()
                 .setName(name)
                 .setType(type)
                 .setTags(tags)
-                .setExtraTags(extraTags)
-                .setAddress(address.getAddress());
+                .setMetadata(metadata)
+                .setAddress(address.getAddress())
+                .build();
+
+        RpcClient rpcClient = new RpcClient();
+        rpcClient.option(BoltClientOption.CONN_RECONNECT_SWITCH, true);
+        rpcClient.option(BoltClientOption.CONN_MONITOR_SWITCH, true);
 
         BrokerClient brokerClient = new BrokerClient();
+        brokerClient.setClientInfo(clientInfo);
+        brokerClient.setRpcClient(rpcClient);
+        brokerClient.setDefaultTimeoutMillis(defaultTimeoutMillis);
 
-        brokerClient.setClientInfo(clientInfoMessage.build());
 
-        this.processorList.forEach(brokerClient::registerUserProcessor);
-        this.connectionEventProcessorMap.forEach(brokerClient::addConnectionEventProcessor);
+        this.processorList.forEach(rpcClient::registerUserProcessor);
+        this.connectionEventProcessorMap.forEach(rpcClient::addConnectionEventProcessor);
 
         return brokerClient;
     }
@@ -168,6 +181,36 @@ public class BrokerClientBuilder {
     public BrokerClientBuilder clearProcessors() {
         this.processorList.clear();
         this.connectionEventProcessorMap.clear();
+        return this;
+    }
+
+    /**
+     * 添加客户端元数据
+     *
+     * @return this
+     */
+    public BrokerClientBuilder addMetadata(String key, String value) {
+        this.metadata.put(key, value);
+        return this;
+    }
+
+    /**
+     * 添加客户端元数据
+     *
+     * @return this
+     */
+    public BrokerClientBuilder addMetadata(Map<String, String> metadata) {
+        this.metadata.putAll(metadata);
+        return this;
+    }
+
+    /**
+     * 移除所有客户端元数据
+     *
+     * @return this
+     */
+    public BrokerClientBuilder clearMetadata() {
+        this.metadata.clear();
         return this;
     }
 

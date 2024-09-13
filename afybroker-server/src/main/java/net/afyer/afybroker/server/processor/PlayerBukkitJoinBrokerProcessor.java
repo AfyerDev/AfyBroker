@@ -14,6 +14,8 @@ import net.afyer.afybroker.server.event.PlayerBukkitJoinEvent;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
+import java.util.Objects;
+
 /**
  * @author Nipuru
  * @since 2023/09/29 12:16
@@ -28,7 +30,7 @@ public class PlayerBukkitJoinBrokerProcessor extends AsyncUserProcessor<PlayerBu
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerBukkitJoinMessage request) {
         BrokerClientProxy currentBukkit = brokerServer.getClientProxy(bizCtx);
         if (currentBukkit == null) return;
-        if (currentBukkit.getType() != BrokerClientType.BUKKIT) return;
+        if (!Objects.equals(currentBukkit.getType(), BrokerClientType.SERVER)) return;
 
         BrokerPlayer player = brokerServer.getPlayer(request.getUniqueId());
         if (player == null) return;
@@ -42,7 +44,7 @@ public class PlayerBukkitJoinBrokerProcessor extends AsyncUserProcessor<PlayerBu
     }
 
     public static void handleBukkitJoin(BrokerServer server, BrokerPlayer player, BrokerClientProxy bukkitClient) {
-        if (bukkitClient.getType() != BrokerClientType.BUKKIT) return;
+        if (!Objects.equals(bukkitClient.getType(), BrokerClientType.SERVER)) return;
 
         BrokerClientProxy previousBukkit = player.getBukkitClientProxy();
         player.setBukkitClientProxy(bukkitClient);

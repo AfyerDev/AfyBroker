@@ -5,8 +5,6 @@ broker:
   port: 11200
   #客户端名称 每个客户端应该唯一
   name: 'bungee-%unique_id%'
-  #客户端标签
-  tags: []
 
 player:
   # 在服务器网关断联后是否踢出全部玩家

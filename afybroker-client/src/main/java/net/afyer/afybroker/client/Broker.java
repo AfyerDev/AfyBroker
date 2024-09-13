@@ -1,26 +1,29 @@
 package net.afyer.afybroker.client;
 
-import com.alipay.remoting.ConnectionEventProcessor;
-import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.exception.RemotingException;
-import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.RpcResponseFuture;
-import com.alipay.remoting.rpc.protocol.UserProcessor;
 import lombok.Getter;
 import net.afyer.afybroker.core.BrokerClientInfo;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
+
 /**
+ * brokerClient 全局单例
+ *
  * @author Nipuru
  * @since 2022/9/19 23:30
  */
 public final class Broker {
 
-    /**
-     * broker 客户端
-     */
+    /** broker 客户端 */
     @Getter
     private static BrokerClient client;
+
+    private static List<Consumer<BrokerClientBuilder>> buildActions;
 
     private Broker() {}
 
@@ -29,6 +32,7 @@ public final class Broker {
         if (Broker.client != null) {
             throw new UnsupportedOperationException("Cannot redefine singleton instance");
         }
+        Broker.buildActions = null;
         Broker.client = client;
     }
 
@@ -37,13 +41,6 @@ public final class Broker {
      */
     public static BrokerClientInfo getClientInfo() {
         return client.getClientInfo();
-    }
-
-    /**
-     * 获取 rpc 客户端
-     */
-    public static RpcClient getRpcClient() {
-        return client.getRpcClient();
     }
 
     /**
@@ -58,13 +55,6 @@ public final class Broker {
      */
     public static boolean hasTag(String tag) {
         return client.hasTag(tag);
-    }
-
-    /**
-     * 添加额外标签（必须在 onLoad 阶段）
-     */
-    public void addExtraTag(String tag) {
-        client.addExtraTag(tag);
     }
 
     /**
@@ -116,21 +106,6 @@ public final class Broker {
         return client.invokeWithFuture(request, timeoutMillis);
     }
 
-
-    /**
-     * 注册用户消息处理器
-     */
-    public static void registerUserProcessor(UserProcessor<?> processor) {
-        client.registerUserProcessor(processor);
-    }
-
-    /**
-     * 注册连接处理器
-     */
-    public static void addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {
-        client.addConnectionEventProcessor(type, processor);
-    }
-
     /**
      * 注入 brokerClient
      *
@@ -138,5 +113,22 @@ public final class Broker {
      */
     public static void aware(Object object) {
         client.aware(object);
+    }
+
+    /**
+     * 添加 brokerClient 构建方法
+     */
+    public static void buildAction(Consumer<BrokerClientBuilder> action) {
+        if (Broker.client != null) {
+            throw new UnsupportedOperationException("Broker client singleton has already been defined.");
+        }
+        if (buildActions == null) {
+            buildActions = new ArrayList<>();
+        }
+        buildActions.add(action);
+    }
+
+    public static List<Consumer<BrokerClientBuilder>> getBuildActions() {
+        return buildActions == null ? Collections.emptyList() : buildActions;
     }
 }

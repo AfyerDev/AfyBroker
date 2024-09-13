@@ -15,6 +15,7 @@ import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -33,7 +34,7 @@ public class PlayerBungeeDisconnectBrokerProcessor extends AsyncUserProcessor<Pl
         if (playerBungee == null) {
             return;
         }
-        if (playerBungee.getType() != BrokerClientType.BUNGEE) {
+        if (!Objects.equals(playerBungee.getType(), BrokerClientType.PROXY)) {
             return;
         }
 

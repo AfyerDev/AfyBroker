@@ -4,11 +4,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 /**
  * @author Nipuru
@@ -22,47 +22,41 @@ public class BrokerClientInfo {
     final String name;
     /** 客户端标签 */
     final Set<String> tags;
-    /** 额外标签 */
-    final Set<String> extraTags;
-    /** 标签视图 */
-    final Set<String> tagsView;
     /** 客户端类型 */
-    final BrokerClientType type;
+    final String type;
     /** 客户端地址 */
     final String address;
+    /** 客户端元数据 */
+    final Map<String, String> metadata;
 
-    public BrokerClientInfo(String name, Set<String> tags, Set<String> extraTags, BrokerClientType type, String address) {
+    public BrokerClientInfo(String name, Set<String> tags, String type, String address, Map<String, String> metadata) {
         this.name = name;
         this.tags = tags;
-        this.extraTags = extraTags;
-        this.tagsView = Sets.union(tags, extraTags);
         this.type = type;
         this.address = address;
-    }
-
-    public void addExtraTag(String tag) {
-        if (hasTag(tag)) {
-            throw new IllegalArgumentException(String.format("tag '%s' is already exists", tag));
-        }
-        extraTags.add(tag);
+        this.metadata = metadata;
     }
 
     public Set<String> getTags() {
         return Collections.unmodifiableSet(tags);
     }
 
-    public Set<String> getExtraTags() {
-        return Collections.unmodifiableSet(extraTags);
+    @Nullable
+    public String getMetadata(String key) {
+        return metadata.get(key);
+    }
+
+    public Map<String, String> getMetadata() {
+        return Collections.unmodifiableMap(metadata);
     }
 
     public boolean hasTag(String tag) {
-        return tagsView.contains(tag);
+        return tags.contains(tag);
     }
 
     public boolean hasAnyTags(String... tags) {
-        
         for (String tag : tags) {
-            if (this.tagsView.contains(tag)) {
+            if (this.tags.contains(tag)) {
                 return true;
             }
         }
@@ -71,7 +65,7 @@ public class BrokerClientInfo {
 
     public boolean hasAnyTags(Iterable<String> tags) {
         for (String tag : tags) {
-            if (this.tagsView.contains(tag)) {
+            if (this.tags.contains(tag)) {
                 return true;
             }
         }
@@ -80,7 +74,7 @@ public class BrokerClientInfo {
 
     public boolean hasAllTags(String... tags) {
         for (String tag : tags) {
-            if (!this.tagsView.contains(tag)) {
+            if (!this.tags.contains(tag)) {
                 return false;
             }
         }
@@ -89,7 +83,7 @@ public class BrokerClientInfo {
 
     public boolean hasAllTags(Iterable<String> tags) {
         for (String tag : tags) {
-            if (!this.tagsView.contains(tag)) {
+            if (!this.tags.contains(tag)) {
                 return false;
             }
         }
@@ -100,8 +94,8 @@ public class BrokerClientInfo {
         return new BrokerClientInfoMessage()
                 .setName(name)
                 .setTags(tags)
-                .setExtraTags(extraTags)
                 .setType(type)
-                .setAddress(address);
+                .setAddress(address)
+                .setMetadata(metadata);
     }
 }

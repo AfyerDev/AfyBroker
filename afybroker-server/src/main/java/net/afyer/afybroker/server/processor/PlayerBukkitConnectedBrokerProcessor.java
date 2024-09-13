@@ -14,6 +14,7 @@ import net.afyer.afybroker.server.event.PlayerBukkitConnectedEvent;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -34,7 +35,7 @@ public class PlayerBukkitConnectedBrokerProcessor extends AsyncUserProcessor<Pla
 
         BrokerClientProxy bungeeClient = brokerServer.getClientProxy(bizCtx);
         if (bungeeClient == null) return;
-        if (bungeeClient.getType() != BrokerClientType.BUNGEE) return;
+        if (!Objects.equals(bungeeClient.getType(), BrokerClientType.PROXY)) return;
 
         if (BrokerGlobalConfig.OPEN_LOG) {
             log.info("Received player bukkit connected message => player[{}], server[{}]",

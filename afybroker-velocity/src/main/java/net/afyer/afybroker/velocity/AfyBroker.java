@@ -13,11 +13,15 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
+import net.afyer.afybroker.client.BrokerClientBuilder;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.util.BoltUtils;
 import net.afyer.afybroker.velocity.listener.PlayerListener;
-import net.afyer.afybroker.velocity.processor.*;
+import net.afyer.afybroker.velocity.processor.ConnectToServerVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.KickPlayerVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.PlayerHeartbeatValidateVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.RequestPlayerInfoVelocityProcessor;
 import net.afyer.afybroker.velocity.processor.connection.CloseEventVelocityProcessor;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
@@ -29,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * @author Nipuru
@@ -44,7 +49,6 @@ public class AfyBroker {
     private BrokerClient brokerClient;
     private ConfigurationNode config;
 
-
     @Inject
     public AfyBroker(
             ProxyServer server,
@@ -57,49 +61,47 @@ public class AfyBroker {
         this.dataDirectory = dataDirectory;
     }
 
-    @Subscribe(order = PostOrder.FIRST)
-    public void onProxyInitializeFirst(ProxyInitializeEvent event) {
-        Path configPath = dataDirectory.resolve("config.yml");
-        if (Files.notExists(configPath)) {
-            try (InputStream in = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("config.yml"))) {
-                Files.createDirectories(configPath.getParent());
-                Files.copy(in, configPath);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        try {
-            config = YAMLConfigurationLoader.builder()
-                    .setPath(configPath)
-                    .build().load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        brokerClient = BrokerClient.newBuilder()
-                .host(config.getNode("broker", "host").getString(BrokerGlobalConfig.BROKER_HOST))
-                .port(config.getNode("broker", "port").getInt(BrokerGlobalConfig.BROKER_PORT))
-                .name(config.getNode("broker", "name").getString("velocity-%unique_id%")
-                        .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
-                        .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
-                )
-                .type(BrokerClientType.BUNGEE)
-                .addTags(config.getNode("broker", "tags").getList(String::valueOf))
-                .registerUserProcessor(new SudoVelocityProcessor(this))
-                .registerUserProcessor(new ConnectToServerVelocityProcessor(this))
-                .registerUserProcessor(new KickPlayerVelocityProcessor(this))
-                .registerUserProcessor(new PlayerHeartbeatValidateVelocityProcessor(this))
-                .registerUserProcessor(new RequestPlayerInfoVelocityProcessor(this))
-                .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventVelocityProcessor(this))
-                .build();
-        Broker.setClient(brokerClient);
-        server.getEventManager().register(this, new PlayerListener(this));
-    }
-
     @Subscribe(order = PostOrder.LAST)
     public void onProxyInitializeLast(ProxyInitializeEvent event) {
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
+            Path configPath = dataDirectory.resolve("config.yml");
+            if (Files.notExists(configPath)) {
+                try (InputStream in = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("config.yml"))) {
+                    Files.createDirectories(configPath.getParent());
+                    Files.copy(in, configPath);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            try {
+                config = YAMLConfigurationLoader.builder()
+                        .setPath(configPath)
+                        .build().load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            BrokerClientBuilder brokerClientBuilder = BrokerClient.newBuilder()
+                    .host(config.getNode("broker", "host").getString(BrokerGlobalConfig.BROKER_HOST))
+                    .port(config.getNode("broker", "port").getInt(BrokerGlobalConfig.BROKER_PORT))
+                    .name(config.getNode("broker", "name").getString("velocity-%unique_id%")
+                            .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
+                            .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
+                    )
+                    .type(BrokerClientType.PROXY)
+
+                    .registerUserProcessor(new ConnectToServerVelocityProcessor(this))
+                    .registerUserProcessor(new KickPlayerVelocityProcessor(this))
+                    .registerUserProcessor(new PlayerHeartbeatValidateVelocityProcessor(this))
+                    .registerUserProcessor(new RequestPlayerInfoVelocityProcessor(this))
+                    .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventVelocityProcessor(this));
+
+            for (Consumer<BrokerClientBuilder> buildAction : Broker.getBuildActions()) {
+                buildAction.accept(brokerClientBuilder);
+            }
+            brokerClient = brokerClientBuilder.build();
+            Broker.setClient(brokerClient);
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             BoltUtils.initProtocols();
             brokerClient.startup();
@@ -109,6 +111,12 @@ public class AfyBroker {
         } finally {
             Thread.currentThread().setContextClassLoader(oldLoader);
         }
+
+        registerListeners();
+    }
+
+    private void registerListeners() {
+        server.getEventManager().register(this, new PlayerListener(this));
     }
 
     @Subscribe(order = PostOrder.LAST)

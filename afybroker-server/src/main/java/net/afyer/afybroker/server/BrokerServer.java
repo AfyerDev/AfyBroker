@@ -83,7 +83,6 @@ public class BrokerServer {
         this.pluginManager.registerCommand(null, new CommandStop(this));
         this.pluginManager.registerCommand(null, new CommandList(this));
         this.pluginManager.registerCommand(null, new CommandListPlayer(this));
-        this.pluginManager.registerCommand(null, new CommandSudo(this));
         this.pluginManager.registerCommand(null, new CommandKick(this));
     }
 

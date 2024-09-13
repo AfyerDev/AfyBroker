@@ -6,15 +6,15 @@ package net.afyer.afybroker.core;
  * @author Nipuru
  * @since 2022/7/30 16:15
  */
-public enum BrokerClientType {
+public interface BrokerClientType {
 
-    /** BungeeCord客户端 */
-    BUNGEE,
+    /** BungeeCord 客户端 */
+    String PROXY = "proxy";
 
-    /** Bukkit客户端 */
-    BUKKIT,
+    /** Bukkit 客户端 */
+    String SERVER = "server";
 
-    /** 其他类型的客户端 如Mirai */
-    OTHER
+    /** 未知类型的客户端 */
+    String UNKNOWN = "unknown";
 
 }

@@ -12,13 +12,14 @@ import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 /**
  * @author Nipuru
  * @since 2022/7/30 18:44
  */
-public class PlayerListener extends AbstractListener {
+public class PlayerListener implements Listener {
 
     private final AfyBroker plugin;
 
