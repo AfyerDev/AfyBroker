@@ -93,8 +93,10 @@ public class BrokerClientBuilder {
         brokerClient.setDefaultTimeoutMillis(defaultTimeoutMillis);
 
 
+        this.processorList.forEach(brokerClient::aware);
         this.processorList.forEach(rpcClient::registerUserProcessor);
         this.connectionEventProcessorMap.forEach(rpcClient::addConnectionEventProcessor);
+        this.connectionEventProcessorMap.values().forEach(brokerClient::aware);
 
         return brokerClient;
     }
