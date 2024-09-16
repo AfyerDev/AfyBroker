@@ -32,7 +32,6 @@ import java.util.concurrent.ExecutorService;
 public abstract class AbstractRemotingProcessor<T extends RemotingCommand> implements
         RemotingProcessor<T> {
     private static final Logger logger = BoltLoggerFactory.getLogger("CommonDefault");
-    private ExecutorService executor;
     private CommandFactory commandFactory;
 
     /**
@@ -47,26 +46,6 @@ public abstract class AbstractRemotingProcessor<T extends RemotingCommand> imple
      */
     public AbstractRemotingProcessor(CommandFactory commandFactory) {
         this.commandFactory = commandFactory;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param executor ExecutorService
-     */
-    public AbstractRemotingProcessor(ExecutorService executor) {
-        this.executor = executor;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param commandFactory CommandFactory
-     * @param executor       ExecutorService
-     */
-    public AbstractRemotingProcessor(CommandFactory commandFactory, ExecutorService executor) {
-        this.commandFactory = commandFactory;
-        this.executor = executor;
     }
 
     /**
@@ -88,39 +67,11 @@ public abstract class AbstractRemotingProcessor<T extends RemotingCommand> imple
     public void process(RemotingContext ctx, T msg, ExecutorService defaultExecutor)
             throws Exception {
         ProcessTask task = new ProcessTask(ctx, msg);
-        if (this.getExecutor() != null) {
-            this.getExecutor().execute(task);
-        } else {
-            defaultExecutor.execute(task);
-        }
-    }
-
-    /**
-     * Getter method for property <tt>executor</tt>.
-     *
-     * @return property value of executor
-     */
-    @Override
-    public ExecutorService getExecutor() {
-        return executor;
-    }
-
-    /**
-     * Setter method for property <tt>executor</tt>.
-     *
-     * @param executor value to be assigned to property executor
-     */
-    @Override
-    public void setExecutor(ExecutorService executor) {
-        this.executor = executor;
+        defaultExecutor.execute(task);
     }
 
     public CommandFactory getCommandFactory() {
         return commandFactory;
-    }
-
-    public void setCommandFactory(CommandFactory commandFactory) {
-        this.commandFactory = commandFactory;
     }
 
     /**

@@ -47,7 +47,7 @@ public interface UserProcessor<T> extends LifeCycle {
      * @param asyncCtx async context
      * @param request  request
      */
-    void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request);
+    void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request) throws Exception;
 
     /**
      * Handle request in sync way.

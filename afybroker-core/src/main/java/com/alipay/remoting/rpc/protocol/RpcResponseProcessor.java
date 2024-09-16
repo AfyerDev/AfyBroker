@@ -21,8 +21,6 @@ import com.alipay.remoting.log.BoltLoggerFactory;
 import com.alipay.remoting.util.RemotingUtil;
 import org.slf4j.Logger;
 
-import java.util.concurrent.ExecutorService;
-
 /**
  * Processor to process RpcResponse.
  *
@@ -38,13 +36,6 @@ public class RpcResponseProcessor extends AbstractRemotingProcessor<RemotingComm
      */
     public RpcResponseProcessor() {
 
-    }
-
-    /**
-     * Constructor.
-     */
-    public RpcResponseProcessor(ExecutorService executor) {
-        super(executor);
     }
 
     /**

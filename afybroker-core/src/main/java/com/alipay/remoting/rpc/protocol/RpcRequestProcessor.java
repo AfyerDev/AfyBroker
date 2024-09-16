@@ -45,23 +45,10 @@ public class RpcRequestProcessor extends AbstractRemotingProcessor<RpcRequestCom
     private static final Logger logger = BoltLoggerFactory.getLogger("RpcRemoting");
 
     /**
-     * Default constructor.
-     */
-    public RpcRequestProcessor() {
-    }
-
-    /**
      * Constructor.
      */
     public RpcRequestProcessor(CommandFactory commandFactory) {
         super(commandFactory);
-    }
-
-    /**
-     * Constructor.
-     */
-    public RpcRequestProcessor(ExecutorService executor) {
-        super(executor);
     }
 
     /**
@@ -112,7 +99,7 @@ public class RpcRequestProcessor extends AbstractRemotingProcessor<RpcRequestCom
 
         // Till now, if executor still null, then try default
         if (executor == null) {
-            executor = (this.getExecutor() == null ? defaultExecutor : this.getExecutor());
+            executor = defaultExecutor;
         }
 
         cmd.setBeforeEnterQueueTime(System.nanoTime());
@@ -123,7 +110,6 @@ public class RpcRequestProcessor extends AbstractRemotingProcessor<RpcRequestCom
     /**
      * @see AbstractRemotingProcessor#doProcess(RemotingContext, RemotingCommand)
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void doProcess(final RemotingContext ctx, RpcRequestCommand cmd) throws Exception {
         long currentTimestamp = System.currentTimeMillis();
@@ -138,7 +124,63 @@ public class RpcRequestProcessor extends AbstractRemotingProcessor<RpcRequestCom
         if (!deserializeRequestCommand(ctx, cmd, RpcDeserializeLevel.DESERIALIZE_ALL)) {
             return;
         }
-        dispatchToUserProcessor(ctx, cmd);
+        final int id = cmd.getId();
+        final byte type = cmd.getType();
+        // processor here must not be null, for it have been checked before
+        UserProcessor processor = ctx.getUserProcessor(cmd.getRequestClass());
+
+        ClassLoader classLoader = null;
+        try {
+            ClassLoader bizClassLoader = processor.getBizClassLoader();
+            if (bizClassLoader != null) {
+                classLoader = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(bizClassLoader);
+            }
+
+            if (processor instanceof AsyncUserProcessor
+                    || processor instanceof AsyncMultiInterestUserProcessor) {
+                try {
+                    processor.handleRequest(
+                            processor.preHandleRequest(ctx, cmd.getRequestObject()),
+                            new RpcAsyncContext(ctx, cmd, this), cmd.getRequestObject());
+                } catch (RejectedExecutionException e) {
+                    logger
+                            .warn("RejectedExecutionException occurred when do ASYNC process in RpcRequestProcessor");
+                    sendResponseIfNecessary(ctx, type, this.getCommandFactory()
+                            .createExceptionResponse(id, ResponseStatus.SERVER_THREADPOOL_BUSY));
+                } catch (Throwable t) {
+                    String errMsg = "AYSNC process rpc request failed in RpcRequestProcessor, id="
+                            + id;
+                    logger.error(errMsg, t);
+                    sendResponseIfNecessary(ctx, type, this.getCommandFactory()
+                            .createExceptionResponse(id, t, errMsg));
+                }
+            } else {
+                try {
+                    Object responseObject = processor.handleRequest(
+                            processor.preHandleRequest(ctx, cmd.getRequestObject()),
+                            cmd.getRequestObject());
+
+                    sendResponseIfNecessary(ctx, type,
+                            this.getCommandFactory().createResponse(responseObject, cmd));
+                } catch (RejectedExecutionException e) {
+                    logger
+                            .warn("RejectedExecutionException occurred when do SYNC process in RpcRequestProcessor");
+                    sendResponseIfNecessary(ctx, type, this.getCommandFactory()
+                            .createExceptionResponse(id, ResponseStatus.SERVER_THREADPOOL_BUSY));
+                } catch (Throwable t) {
+                    String errMsg = "SYNC process rpc request failed in RpcRequestProcessor, id="
+                            + id;
+                    logger.error(errMsg, t);
+                    sendResponseIfNecessary(ctx, type, this.getCommandFactory()
+                            .createExceptionResponse(id, t, errMsg));
+                }
+            }
+        } finally {
+            if (classLoader != null) {
+                Thread.currentThread().setContextClassLoader(classLoader);
+            }
+        }
     }
 
     /**
@@ -204,75 +246,7 @@ public class RpcRequestProcessor extends AbstractRemotingProcessor<RpcRequestCom
             });
         } else {
             if (logger.isDebugEnabled()) {
-                logger.debug("Oneway rpc request received, do not send response, id=" + id
-                        + ", the address is "
-                        + RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
-            }
-        }
-    }
-
-    /**
-     * dispatch request command to user processor
-     *
-     * @param ctx remoting context
-     * @param cmd rpc request command
-     */
-    private void dispatchToUserProcessor(RemotingContext ctx, RpcRequestCommand cmd) {
-        final int id = cmd.getId();
-        final byte type = cmd.getType();
-        // processor here must not be null, for it have been checked before
-        UserProcessor processor = ctx.getUserProcessor(cmd.getRequestClass());
-
-        ClassLoader classLoader = null;
-        try {
-            ClassLoader bizClassLoader = processor.getBizClassLoader();
-            if (bizClassLoader != null) {
-                classLoader = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader(bizClassLoader);
-            }
-
-            if (processor instanceof AsyncUserProcessor
-                    || processor instanceof AsyncMultiInterestUserProcessor) {
-                try {
-                    processor.handleRequest(
-                            processor.preHandleRequest(ctx, cmd.getRequestObject()),
-                            new RpcAsyncContext(ctx, cmd, this), cmd.getRequestObject());
-                } catch (RejectedExecutionException e) {
-                    logger
-                            .warn("RejectedExecutionException occurred when do ASYNC process in RpcRequestProcessor");
-                    sendResponseIfNecessary(ctx, type, this.getCommandFactory()
-                            .createExceptionResponse(id, ResponseStatus.SERVER_THREADPOOL_BUSY));
-                } catch (Throwable t) {
-                    String errMsg = "AYSNC process rpc request failed in RpcRequestProcessor, id="
-                            + id;
-                    logger.error(errMsg, t);
-                    sendResponseIfNecessary(ctx, type, this.getCommandFactory()
-                            .createExceptionResponse(id, t, errMsg));
-                }
-            } else {
-                try {
-                    Object responseObject = processor.handleRequest(
-                            processor.preHandleRequest(ctx, cmd.getRequestObject()),
-                            cmd.getRequestObject());
-
-                    sendResponseIfNecessary(ctx, type,
-                            this.getCommandFactory().createResponse(responseObject, cmd));
-                } catch (RejectedExecutionException e) {
-                    logger
-                            .warn("RejectedExecutionException occurred when do SYNC process in RpcRequestProcessor");
-                    sendResponseIfNecessary(ctx, type, this.getCommandFactory()
-                            .createExceptionResponse(id, ResponseStatus.SERVER_THREADPOOL_BUSY));
-                } catch (Throwable t) {
-                    String errMsg = "SYNC process rpc request failed in RpcRequestProcessor, id="
-                            + id;
-                    logger.error(errMsg, t);
-                    sendResponseIfNecessary(ctx, type, this.getCommandFactory()
-                            .createExceptionResponse(id, t, errMsg));
-                }
-            }
-        } finally {
-            if (classLoader != null) {
-                Thread.currentThread().setContextClassLoader(classLoader);
+                logger.debug("Oneway rpc request received, do not send response, id={}, the address is {}", id, RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
             }
         }
     }

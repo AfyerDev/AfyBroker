@@ -33,7 +33,7 @@ public class BrokerClientBuilder {
     /**
      * 客户端名称(唯一标识)
      */
-    String name = UUID.randomUUID().toString();
+    String name;
 
     /**
      * 客户端类型
@@ -102,6 +102,11 @@ public class BrokerClientBuilder {
     }
 
     private void check() {
+        if (name == null || name.isEmpty()) {
+            name = String.format("%s-%s", BrokerClientType.UNKNOWN,
+                    UUID.randomUUID().toString().substring(0, 8));
+        }
+
         if (type == null) {
             throw new RuntimeException("BrokerClientType cannot be null");
         }

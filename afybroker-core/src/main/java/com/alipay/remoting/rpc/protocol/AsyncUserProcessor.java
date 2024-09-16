@@ -42,7 +42,7 @@ public abstract class AsyncUserProcessor<T> extends AbstractUserProcessor<T> {
      * @see UserProcessor#handleRequest(BizContext, AsyncContext, Object)
      */
     @Override
-    public abstract void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request);
+    public abstract void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request) throws Exception;
 
     /**
      * @see UserProcessor#interest()
