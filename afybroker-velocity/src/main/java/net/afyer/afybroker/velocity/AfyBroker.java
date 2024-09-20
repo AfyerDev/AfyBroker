@@ -18,10 +18,7 @@ import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.util.BoltUtils;
 import net.afyer.afybroker.velocity.listener.PlayerListener;
-import net.afyer.afybroker.velocity.processor.ConnectToServerVelocityProcessor;
-import net.afyer.afybroker.velocity.processor.KickPlayerVelocityProcessor;
-import net.afyer.afybroker.velocity.processor.PlayerHeartbeatValidateVelocityProcessor;
-import net.afyer.afybroker.velocity.processor.RequestPlayerInfoVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.*;
 import net.afyer.afybroker.velocity.processor.connection.CloseEventVelocityProcessor;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
@@ -48,6 +45,7 @@ public class AfyBroker {
     private final Path dataDirectory;
     private BrokerClient brokerClient;
     private ConfigurationNode config;
+    private boolean syncEnable;
 
     @Inject
     public AfyBroker(
@@ -82,6 +80,7 @@ public class AfyBroker {
                 throw new RuntimeException(e);
             }
 
+            syncEnable = config.getNode("server", "sync-enable").getBoolean(false);
             BrokerClientBuilder brokerClientBuilder = BrokerClient.newBuilder()
                     .host(config.getNode("broker", "host").getString(BrokerGlobalConfig.BROKER_HOST))
                     .port(config.getNode("broker", "port").getInt(BrokerGlobalConfig.BROKER_PORT))
@@ -95,6 +94,8 @@ public class AfyBroker {
                     .registerUserProcessor(new KickPlayerVelocityProcessor(this))
                     .registerUserProcessor(new PlayerHeartbeatValidateVelocityProcessor(this))
                     .registerUserProcessor(new RequestPlayerInfoVelocityProcessor(this))
+                    .registerUserProcessor(new SyncServerVelocityProcessor(this))
+
                     .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventVelocityProcessor(this));
 
             for (Consumer<BrokerClientBuilder> buildAction : Broker.getBuildActions()) {

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
@@ -89,7 +90,7 @@ public class BrokerClientProxyManager {
 
     /** 通过类型获取客户端代理 */
     public List<BrokerClientProxy> getByType(String type) {
-        return this.getByFilter(clientProxy -> clientProxy.getType() == type);
+        return this.getByFilter(clientProxy -> Objects.equals(clientProxy.getType(), type));
     }
 
     /**

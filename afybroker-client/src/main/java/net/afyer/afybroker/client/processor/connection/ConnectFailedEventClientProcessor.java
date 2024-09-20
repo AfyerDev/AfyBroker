@@ -13,8 +13,8 @@ import net.afyer.afybroker.core.BrokerGlobalConfig;
 public class ConnectFailedEventClientProcessor implements ConnectionEventProcessor {
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
-        if (BrokerGlobalConfig.OPEN_LOG) {
-            log.info("Connection failed! remoteAddress {}", remoteAddress);
+        if (log.isDebugEnabled()) {
+            log.debug("Connection failed! remoteAddress {}", remoteAddress);
         }
     }
 }

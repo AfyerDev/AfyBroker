@@ -35,8 +35,8 @@ public class PlayerBukkitJoinBrokerProcessor extends AsyncUserProcessor<PlayerBu
         BrokerPlayer player = brokerServer.getPlayer(request.getUniqueId());
         if (player == null) return;
 
-        if (BrokerGlobalConfig.OPEN_LOG) {
-            log.info("Received player bukkit join message => player[{}], bukkitClient[{}]",
+        if (log.isDebugEnabled()) {
+            log.debug("Received player bukkit join message => player[{}], bukkitClient[{}]",
                     request.getName(), currentBukkit.getName());
         }
 

@@ -37,8 +37,8 @@ public class PlayerBukkitConnectedBrokerProcessor extends AsyncUserProcessor<Pla
         if (bungeeClient == null) return;
         if (!Objects.equals(bungeeClient.getType(), BrokerClientType.PROXY)) return;
 
-        if (BrokerGlobalConfig.OPEN_LOG) {
-            log.info("Received player bukkit connected message => player[{}], server[{}]",
+        if (log.isDebugEnabled()) {
+            log.debug("Received player bukkit connected message => player[{}], server[{}]",
                     playerName, bukkitName);
         }
 

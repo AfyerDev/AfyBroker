@@ -1,11 +1,16 @@
 broker:
-  #broker 网关服务器地址
+  # broker 网关服务器地址
   host: localhost
-  #broker 网关服务器端口
+  # broker 网关服务器端口
   port: 11200
-  #客户端名称 每个客户端应该唯一
+  # 客户端名称 每个客户端应该唯一
   name: 'velocity-%unique_id%'
 
 player:
   # 在服务器网关断联后是否踢出全部玩家
   kick-on-close: false
+
+server:
+  # 是否开启 mc 游戏服务器自动注册到 proxy 的功能
+  # 若要开启则先确认 broker-bukkit 插件的 config.yml
+  sync-enable: false

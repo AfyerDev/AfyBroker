@@ -11,9 +11,11 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.MetadataKeys;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.message.RequestBrokerClientInfoMessage;
 import net.afyer.afybroker.core.message.RequestPlayerInfoMessage;
+import net.afyer.afybroker.core.message.SyncServerMessage;
 import net.afyer.afybroker.core.util.AbstractInvokeCallback;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
@@ -24,10 +26,7 @@ import net.afyer.afybroker.server.processor.PlayerBungeeConnectBrokerProcessor;
 import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -45,12 +44,15 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
     final RequestBrokerClientInfoMessage requestBrokerClientInfoMessage = new RequestBrokerClientInfoMessage();
     final RequestPlayerInfoMessage requestPlayerInfoMessage = new RequestPlayerInfoMessage();
     final Map<UUID, String> playerBukkitMap = new HashMap<>(); // single thread access
-    final Executor playerRegistrationThread = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
-            .setNameFormat("Player-Registration-Thread").build());
+    final Executor connectionThread = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
+            .setNameFormat("Broker-Connection-Thread").build());
 
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
         log.info("BrokerClient[{}] connected, sending request client info message", remoteAddress);
+
+        BrokerClientConnectEvent event = new BrokerClientConnectEvent(remoteAddress, connection);
+        brokerServer.getPluginManager().callEvent(event);
 
         InvokeCallback callback = registerBrokerClientCallback(remoteAddress);
         int timeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
@@ -60,9 +62,6 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
             log.info("Request client info to BrokerClient:{} failed", remoteAddress);
             log.error(e.getMessage(), e);
         }
-
-        BrokerClientConnectEvent event = new BrokerClientConnectEvent(remoteAddress, connection);
-        brokerServer.getPluginManager().callEvent(event);
     }
 
     private InvokeCallback registerBrokerClientCallback(String remoteAddress) {
@@ -78,6 +77,7 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
                 BrokerClientRegisterEvent event = new BrokerClientRegisterEvent(clientInfoMessage, brokerClientProxy);
                 brokerServer.getPluginManager().callEvent(event);
 
+                syncServer(brokerClientProxy);
                 registerPlayer(brokerClientProxy);
 
                 log.info("BrokerClient:{} registration successful", remoteAddress);
@@ -88,14 +88,19 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
                 log.error("BrokerClient:{} registration failed", remoteAddress);
                 log.error(e.getMessage(), e);
             }
+
+            @Override
+            public Executor getExecutor() {
+                return connectionThread;
+            }
         };
     }
 
     private void registerPlayer(BrokerClientProxy clientProxy) {
         InvokeCallback callback = null;
-        if (clientProxy.getType() == BrokerClientType.PROXY) {
+        if (Objects.equals(clientProxy.getType(), BrokerClientType.PROXY)) {
             callback = registerPlayerBungeeCallback(clientProxy);
-        } else if (clientProxy.getType() == BrokerClientType.SERVER) {
+        } else if (Objects.equals(clientProxy.getType(), BrokerClientType.SERVER)) {
             callback = registerPlayerBukkitCallback(clientProxy);
         }
         if (callback == null) return;
@@ -132,7 +137,7 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
 
             @Override
             public Executor getExecutor() {
-                return playerRegistrationThread;
+                return connectionThread;
             }
         };
     }
@@ -160,9 +165,43 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
 
             @Override
             public Executor getExecutor() {
-                return playerRegistrationThread;
+                return connectionThread;
             }
         };
+    }
+
+    private void syncServer(BrokerClientProxy clientProxy) {
+        // 如果是 mc 服务器则同步至所有 proxy 服务器
+        if (clientProxy.getType().equals(BrokerClientType.SERVER)) {
+            Map<String, String> servers = new HashMap<>();
+            servers.put(clientProxy.getName(), clientProxy.getMetadata(MetadataKeys.MC_SERVER_ADDRESS));
+            SyncServerMessage message = new SyncServerMessage()
+                    .setServers(servers);
+            List<BrokerClientProxy> proxyType = brokerServer.getBrokerClientProxyManager().getByType(BrokerClientType.PROXY);
+            for (BrokerClientProxy proxy : proxyType) {
+                try {
+                    proxy.oneway(message);
+                } catch (RemotingException | InterruptedException e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }
+        // 如果是 proxy 服务器则发送当前连接的 mc 服务器
+        if (clientProxy.getType().equals(BrokerClientType.PROXY)) {
+            List<BrokerClientProxy> serverType = brokerServer.getBrokerClientProxyManager().getByType(BrokerClientType.SERVER);
+            if (serverType.isEmpty()) return;
+            Map<String, String> servers = new HashMap<>();
+            for (BrokerClientProxy server : serverType) {
+                servers.put(server.getName(), server.getMetadata(MetadataKeys.MC_SERVER_ADDRESS));
+            }
+            SyncServerMessage message = new SyncServerMessage()
+                    .setServers(servers);
+            try {
+                clientProxy.oneway(message);
+            } catch (RemotingException | InterruptedException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
     }
 
 }

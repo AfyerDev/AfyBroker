@@ -24,9 +24,4 @@ public class BrokerGlobalConfig {
      */
     public final int DEFAULT_TIMEOUT_MILLIS = 3000;
 
-    /**
-     * true 开启日志
-     */
-    public final boolean OPEN_LOG = true;
-
 }

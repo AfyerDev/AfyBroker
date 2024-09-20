@@ -38,8 +38,8 @@ public class PlayerBungeeDisconnectBrokerProcessor extends AsyncUserProcessor<Pl
             return;
         }
 
-        if (BrokerGlobalConfig.OPEN_LOG) {
-            log.info("Received player bungee disconnect message => player[{}], bungeeClient[{}]",
+        if (log.isDebugEnabled()) {
+            log.debug("Received player bungee disconnect message => player[{}], bungeeClient[{}]",
                     request.getName(), playerBungee.getName());
         }
 

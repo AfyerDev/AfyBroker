@@ -7,10 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.bungee.listener.PlayerListener;
-import net.afyer.afybroker.bungee.processor.ConnectToServerBungeeProcessor;
-import net.afyer.afybroker.bungee.processor.KickPlayerBungeeProcessor;
-import net.afyer.afybroker.bungee.processor.PlayerHeartbeatValidateBungeeProcessor;
-import net.afyer.afybroker.bungee.processor.RequestPlayerInfoBungeeProcessor;
+import net.afyer.afybroker.bungee.processor.*;
 import net.afyer.afybroker.bungee.processor.connection.CloseEventBungeeProcessor;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
@@ -37,12 +34,14 @@ public class AfyBroker extends Plugin {
 
     private BrokerClient brokerClient;
     private Configuration config;
+    private boolean syncEnable;
 
     @Override
     public void onEnable() {
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
             config = new BungeeFileConfig("config.yml", this, YamlConfiguration.class).get();
+            syncEnable = config.getBoolean("server.sync-enable", false);
             BrokerClientBuilder brokerClientBuilder = BrokerClient.newBuilder()
                     .host(config.getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
                     .port(config.getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
@@ -55,6 +54,7 @@ public class AfyBroker extends Plugin {
                     .registerUserProcessor(new KickPlayerBungeeProcessor())
                     .registerUserProcessor(new PlayerHeartbeatValidateBungeeProcessor())
                     .registerUserProcessor(new RequestPlayerInfoBungeeProcessor())
+                    .registerUserProcessor(new SyncServerBungeeProcessor(this))
                     .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBungeeProcessor(this));
             for (Consumer<BrokerClientBuilder> buildAction : Broker.getBuildActions()) {
                 buildAction.accept(brokerClientBuilder);
