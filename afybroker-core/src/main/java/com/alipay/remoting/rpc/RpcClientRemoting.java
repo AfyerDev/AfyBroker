@@ -28,9 +28,9 @@ import com.alipay.remoting.util.RemotingUtil;
  */
 public class RpcClientRemoting extends RpcRemoting {
 
-    public RpcClientRemoting(RemotingAddressParser addressParser,
+    public RpcClientRemoting(CommandFactory commandFactory, RemotingAddressParser addressParser,
                              ConnectionManager connectionManager) {
-        super(addressParser, connectionManager);
+        super(commandFactory, addressParser, connectionManager);
     }
 
     /**

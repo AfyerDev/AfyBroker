@@ -115,7 +115,7 @@ public class RpcClient extends AbstractBoltClient {
             defaultConnectionManager.startup();
             this.connectionManager = defaultConnectionManager;
         }
-        this.rpcRemoting = new RpcClientRemoting(this.addressParser,
+        this.rpcRemoting = new RpcClientRemoting(new RpcCommandFactory(), this.addressParser,
                 this.connectionManager);
         this.taskScanner.add(this.connectionManager);
         this.taskScanner.startup();

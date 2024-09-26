@@ -57,8 +57,9 @@ public abstract class RpcRemoting extends BaseRemoting {
      * @param addressParser
      * @param connectionManager
      */
-    public RpcRemoting(RemotingAddressParser addressParser,
+    public RpcRemoting(CommandFactory commandFactory, RemotingAddressParser addressParser,
                        ConnectionManager connectionManager) {
+        super(commandFactory);
         this.addressParser = addressParser;
         this.connectionManager = connectionManager;
     }

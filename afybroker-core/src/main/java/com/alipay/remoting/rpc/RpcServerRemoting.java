@@ -32,9 +32,9 @@ public class RpcServerRemoting extends RpcRemoting {
      * @param addressParser
      * @param connectionManager
      */
-    public RpcServerRemoting(RemotingAddressParser addressParser,
+    public RpcServerRemoting(CommandFactory commandFactory, RemotingAddressParser addressParser,
                              DefaultConnectionManager connectionManager) {
-        super(addressParser, connectionManager);
+        super(commandFactory, addressParser, connectionManager);
     }
 
     /**

@@ -476,7 +476,7 @@ public class RpcServer extends AbstractRemotingServer {
      * init rpc remoting
      */
     protected void initRpcRemoting() {
-        this.rpcRemoting = new RpcServerRemoting(this.addressParser,
+        this.rpcRemoting = new RpcServerRemoting(new RpcCommandFactory(), this.addressParser,
                 this.connectionManager);
     }
 

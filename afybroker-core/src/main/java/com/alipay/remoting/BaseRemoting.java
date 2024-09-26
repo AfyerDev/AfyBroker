@@ -39,7 +39,10 @@ public abstract class BaseRemoting {
             .getLogger("CommonDefault");
     private final static long ABANDONING_REQUEST_THRESHOLD = 0L;
 
-    public BaseRemoting() {
+    private final CommandFactory      defalutCommandFactory;
+
+    public BaseRemoting(CommandFactory commandFactory) {
+        this.defalutCommandFactory = commandFactory;
     }
 
     /**
@@ -332,11 +335,11 @@ public abstract class BaseRemoting {
 
     protected CommandFactory getCommandFactory(ProtocolCode protocolCode) {
         if (protocolCode == null) {
-            throw new RuntimeException("Protocol for code: " + protocolCode + " is not exists!");
+            return defalutCommandFactory;
         }
         Protocol protocol = ProtocolManager.getProtocol(protocolCode);
         if (protocol == null) {
-            throw new RuntimeException("Protocol for code: " + protocolCode + " is not exists!");
+            return defalutCommandFactory;
         }
         return protocol.getCommandFactory();
     }
