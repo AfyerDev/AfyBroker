@@ -45,7 +45,7 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
     final RequestPlayerInfoMessage requestPlayerInfoMessage = new RequestPlayerInfoMessage();
     final Map<UUID, String> playerBukkitMap = new HashMap<>(); // single thread access
     final Executor connectionThread = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
-            .setNameFormat("Broker-Connection-Thread").build());
+            .setNameFormat("Broker-connection-thread").build());
 
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
