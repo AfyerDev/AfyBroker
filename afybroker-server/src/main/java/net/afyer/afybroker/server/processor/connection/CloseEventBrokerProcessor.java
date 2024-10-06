@@ -8,9 +8,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.event.BrokerClientCloseEvent;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
-import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
+import net.afyer.afybroker.server.event.ClientCloseEvent;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
+import net.afyer.afybroker.server.proxy.BrokerClientManager;
 
 /**
  * @author Nipuru
@@ -26,12 +26,12 @@ public class CloseEventBrokerProcessor implements ConnectionEventProcessor, Brok
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
 
-        BrokerClientProxyManager clientProxyManager = brokerServer.getBrokerClientProxyManager();
-        BrokerClientProxy brokerClientProxy = clientProxyManager.getByAddress(remoteAddress);
+        BrokerClientManager clientProxyManager = brokerServer.getClientManager();
+        BrokerClientItem brokerClientItem = clientProxyManager.getByAddress(remoteAddress);
         clientProxyManager.remove(remoteAddress);
 
-        if (brokerClientProxy != null) {
-            BrokerClientCloseEvent event = new BrokerClientCloseEvent(remoteAddress, brokerClientProxy.getName(), brokerClientProxy.getTags(), brokerClientProxy.getType());
+        if (brokerClientItem != null) {
+            ClientCloseEvent event = new ClientCloseEvent(remoteAddress, brokerClientItem.getName(), brokerClientItem.getTags(), brokerClientItem.getType());
             brokerServer.getPluginManager().callEvent(event);
         }
 

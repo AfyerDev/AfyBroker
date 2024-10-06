@@ -45,7 +45,7 @@ public class CommandKick extends Command {
                 .setMessage(messageBuilder.toString());
 
         try {
-            player.getBungeeClientProxy().oneway(message);
+            player.getProxy().oneway(message);
         } catch (RemotingException | InterruptedException e) {
             log.error(e.getMessage(), e);
         }

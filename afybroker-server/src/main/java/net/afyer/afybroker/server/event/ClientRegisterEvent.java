@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.server.plugin.Event;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
 
 /**
  * 当 BrokerClient 注册到 BrokerServer之后触发此事件
@@ -17,11 +17,11 @@ import net.afyer.afybroker.server.proxy.BrokerClientProxy;
 @Getter
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BrokerClientRegisterEvent extends Event {
+public class ClientRegisterEvent extends Event {
 
     /** 客户端信息 */
     final BrokerClientInfoMessage brokerClientInfo;
 
     /** 客户端代理 */
-    final BrokerClientProxy brokerClientProxy;
+    final BrokerClientItem brokerClientItem;
 }

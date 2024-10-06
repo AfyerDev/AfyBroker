@@ -14,7 +14,7 @@ import net.afyer.afybroker.server.proxy.BrokerPlayer;
 @Getter
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerBungeeLogoutEvent extends Event {
+public class PlayerProxyLogoutEvent extends Event {
 
     /** 玩家代理 */
     final BrokerPlayer player;

@@ -5,12 +5,11 @@ import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
-import net.afyer.afybroker.core.BrokerGlobalConfig;
-import net.afyer.afybroker.core.message.PlayerBungeeConnectMessage;
+import net.afyer.afybroker.core.message.PlayerProxyConnectMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.event.PlayerBungeeLoginEvent;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
+import net.afyer.afybroker.server.event.PlayerProxyLoginEvent;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 
@@ -21,14 +20,14 @@ import java.util.Objects;
  * @since 2022/8/1 11:41
  */
 @Slf4j
-public class PlayerBungeeConnectBrokerProcessor extends SyncUserProcessor<PlayerBungeeConnectMessage> implements BrokerServerAware {
+public class PlayerProxyConnectBrokerProcessor extends SyncUserProcessor<PlayerProxyConnectMessage> implements BrokerServerAware {
 
     @Setter
     BrokerServer brokerServer;
 
     @Override
-    public Object handleRequest(BizContext bizCtx, PlayerBungeeConnectMessage request) throws Exception {
-        BrokerClientProxy playerBungee = brokerServer.getClientProxy(bizCtx);
+    public Object handleRequest(BizContext bizCtx, PlayerProxyConnectMessage request) throws Exception {
+        BrokerClientItem playerBungee = brokerServer.getClient(bizCtx);
         if (playerBungee == null) {
             return false;
         }
@@ -41,23 +40,23 @@ public class PlayerBungeeConnectBrokerProcessor extends SyncUserProcessor<Player
                     request.getName(), playerBungee.getName());
         }
 
-        BrokerPlayer brokerPlayer = new BrokerPlayer(request.getUid(), request.getName(), playerBungee);
+        BrokerPlayer brokerPlayer = new BrokerPlayer(request.getUniqueId(), request.getName(), playerBungee);
         return handlePlayerAdd(brokerServer, brokerPlayer);
     }
 
     public static boolean handlePlayerAdd(BrokerServer brokerServer, BrokerPlayer brokerPlayer) {
-        BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
+        BrokerPlayerManager playerManager = brokerServer.getPlayerManager();
         BrokerPlayer player = playerManager.addPlayer(brokerPlayer);
         boolean success = player == null;
         if (success) {
-            brokerServer.getPluginManager().callEvent(new PlayerBungeeLoginEvent(brokerPlayer));
+            brokerServer.getPluginManager().callEvent(new PlayerProxyLoginEvent(brokerPlayer));
         }
         return success;
     }
 
     @Override
     public String interest() {
-        return PlayerBungeeConnectMessage.class.getName();
+        return PlayerProxyConnectMessage.class.getName();
     }
 
 }

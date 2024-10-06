@@ -7,7 +7,7 @@ import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.Broker;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.plugin.Command;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
 import java.util.*;
@@ -28,13 +28,13 @@ public class CommandListPlayer extends Command {
 
     @Override
     public void execute(String[] args) {
-        List<BrokerPlayer> players = new ArrayList<>(server.getBrokerPlayerManager().getPlayers());
+        List<BrokerPlayer> players = new ArrayList<>(server.getPlayerManager().getPlayers());
 
         Map<String, TreeSet<BrokerPlayer>> bungeeMap = Maps.newTreeMap();
         Broker.getBrokerClientProxyManager().getByType(BrokerClientType.PROXY)
                 .forEach(client -> bungeeMap.put(client.getName(), Sets.newTreeSet(Comparator.comparing(BrokerPlayer::getName))));
         for (BrokerPlayer player : players) {
-            String bungeeName = player.getBungeeClientProxy().getName();
+            String bungeeName = player.getProxy().getName();
             bungeeMap.get(bungeeName).add(player);
         }
 
@@ -45,7 +45,7 @@ public class CommandListPlayer extends Command {
 
             for (BrokerPlayer player : set) {
                 builder.append(player.getName());
-                BrokerClientProxy bukkit = player.getBukkitClientProxy();
+                BrokerClientItem bukkit = player.getServer();
                 if (bukkit != null) {
                     builder.append("(").append(bukkit.getName()).append(")");
                 }

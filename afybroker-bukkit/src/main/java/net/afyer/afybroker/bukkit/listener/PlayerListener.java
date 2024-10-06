@@ -2,7 +2,7 @@ package net.afyer.afybroker.bukkit.listener;
 
 import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.bukkit.AfyBroker;
-import net.afyer.afybroker.core.message.PlayerBukkitJoinMessage;
+import net.afyer.afybroker.core.message.PlayerServerJoinMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,7 +24,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent event) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            PlayerBukkitJoinMessage message = new PlayerBukkitJoinMessage()
+            PlayerServerJoinMessage message = new PlayerServerJoinMessage()
                     .setName(event.getPlayer().getName())
                     .setUniqueId(event.getPlayer().getUniqueId());
             try {

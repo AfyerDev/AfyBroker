@@ -23,10 +23,10 @@ public class ConnectToServerVelocityProcessor extends AsyncUserProcessor<Connect
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, ConnectToServerMessage message) {
         ProxyServer server = plugin.getServer();
 
-        RegisteredServer target = server.getServer(message.getServer()).orElse(null);
+        RegisteredServer target = server.getServer(message.getServerName()).orElse(null);
         if (target == null) return;
 
-        Player player = server.getPlayer(message.getPlayer()).orElse(null);
+        Player player = server.getPlayer(message.getUniqueId()).orElse(null);
         if (player == null) return;
 
         player.createConnectionRequest(target).connect();

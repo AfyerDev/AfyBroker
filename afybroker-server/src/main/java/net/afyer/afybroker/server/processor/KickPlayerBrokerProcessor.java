@@ -28,7 +28,7 @@ public class KickPlayerBrokerProcessor extends AsyncUserProcessor<KickPlayerMess
             return;
         }
         try {
-            player.getBungeeClientProxy().oneway(request);
+            player.getProxy().oneway(request);
         } catch (RemotingException | InterruptedException e) {
             log.error(e.getMessage(), e);
         }

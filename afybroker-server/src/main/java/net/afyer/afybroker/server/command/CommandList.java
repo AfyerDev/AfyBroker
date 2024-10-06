@@ -3,7 +3,7 @@ package net.afyer.afybroker.server.command;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.plugin.Command;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +24,9 @@ public class CommandList extends Command {
 
     @Override
     public void execute(String[] args) {
-        List<BrokerClientProxy> clients = new ArrayList<>(server.getBrokerClientProxyManager().list());
+        List<BrokerClientItem> clients = new ArrayList<>(server.getClientManager().list());
 
-        for (BrokerClientProxy client : clients) {
+        for (BrokerClientItem client : clients) {
             log.info("BrokerClient(type={}, address={}, name={}, tags={})",
                     client.getType(), client.getAddress(), client.getName(), client.getTags());
         }

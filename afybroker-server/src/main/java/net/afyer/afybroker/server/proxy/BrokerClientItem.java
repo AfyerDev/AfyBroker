@@ -16,14 +16,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 客户端代理
+ * 客户端信息
  *
  * @author Nipuru
  * @since 2022/7/30 16:15
  */
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BrokerClientProxy {
+public class BrokerClientItem {
 
     /** 客户端信息 */
     final BrokerClientInfo clientInfo;
@@ -33,7 +33,7 @@ public class BrokerClientProxy {
     /** 默认消息发送超时时间 */
     final int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
 
-    public BrokerClientProxy(BrokerClientInfoMessage clientInfo, RpcServer rpcServer) {
+    public BrokerClientItem(BrokerClientInfoMessage clientInfo, RpcServer rpcServer) {
         this.clientInfo = clientInfo.build();
         this.rpcServer = rpcServer;
     }

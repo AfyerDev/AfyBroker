@@ -4,8 +4,8 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.RpcServer;
 import lombok.Getter;
 import net.afyer.afybroker.server.plugin.PluginManager;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
-import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
+import net.afyer.afybroker.server.proxy.BrokerClientManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
@@ -73,15 +73,15 @@ public class Broker {
     /**
      * 获取客户端代理管理器
      */
-    public static BrokerClientProxyManager getBrokerClientProxyManager() {
-        return server.getBrokerClientProxyManager();
+    public static BrokerClientManager getBrokerClientProxyManager() {
+        return server.getClientManager();
     }
 
     /**
      * 获取玩家代理管理器
      */
     public static BrokerPlayerManager getBrokerPlayerManager() {
-        return server.getBrokerPlayerManager();
+        return server.getPlayerManager();
     }
 
     /**
@@ -104,16 +104,16 @@ public class Broker {
      * 通过名称获取客户端代理
      */
     @Nullable
-    public BrokerClientProxy getClientProxy(String name) {
-        return server.getClientProxy(name);
+    public BrokerClientItem getClientProxy(String name) {
+        return server.getClient(name);
     }
 
     /**
      * 通过 {@link BizContext} 获取玩家代理
      */
     @Nullable
-    public BrokerClientProxy getClientProxy(BizContext bizContext) {
-        return server.getClientProxy(bizContext);
+    public BrokerClientItem getClientProxy(BizContext bizContext) {
+        return server.getClient(bizContext);
     }
 
     /**

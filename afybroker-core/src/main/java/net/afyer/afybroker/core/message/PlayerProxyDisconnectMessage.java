@@ -11,21 +11,21 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
+ * 玩家从 proxy 断开连接的消息
  * @author Nipuru
- * @since 2023/09/29 12:04
+ * @since 2022/11/21 17:30
  */
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerBukkitJoinMessage implements Serializable {
-    private static final long serialVersionUID = -1132388839270494188L;
+public class PlayerProxyDisconnectMessage implements Serializable {
+    private static final long serialVersionUID = -5160344925177364814L;
 
-    /** 玩家uniqueId */
+    /** 玩家uuid */
     UUID uniqueId;
 
     /** 玩家名 */
     String name;
-
 }

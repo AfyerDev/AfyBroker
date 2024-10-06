@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.message.SendPlayerMessageMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
 /**
@@ -26,7 +26,7 @@ public class SendPlayerChatBrokerProcessor extends AsyncUserProcessor<SendPlayer
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, SendPlayerMessageMessage request) {
         BrokerPlayer brokerPlayer = brokerServer.getPlayer(request.getUniqueId());
         if (brokerPlayer == null) return;
-        BrokerClientProxy clientProxy = brokerPlayer.getBukkitClientProxy();
+        BrokerClientItem clientProxy = brokerPlayer.getServer();
         if (clientProxy == null) return;
         try {
             clientProxy.oneway(request);

@@ -16,7 +16,7 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BrokerClientCloseEvent extends Event {
+public class ClientCloseEvent extends Event {
 
     /** 客户端地址 */
     final String remoteAddress;

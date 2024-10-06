@@ -6,12 +6,11 @@ import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
-import net.afyer.afybroker.core.BrokerGlobalConfig;
-import net.afyer.afybroker.core.message.PlayerBukkitConnectedMessage;
+import net.afyer.afybroker.core.message.PlayerServerConnectedMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.event.PlayerBukkitConnectedEvent;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
+import net.afyer.afybroker.server.event.PlayerServerConnectedEvent;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
 import java.util.Objects;
@@ -22,18 +21,18 @@ import java.util.UUID;
  * @since 2022/9/12 12:33
  */
 @Slf4j
-public class PlayerBukkitConnectedBrokerProcessor extends AsyncUserProcessor<PlayerBukkitConnectedMessage> implements BrokerServerAware {
+public class PlayerServerConnectedBrokerProcessor extends AsyncUserProcessor<PlayerServerConnectedMessage> implements BrokerServerAware {
 
     @Setter
     BrokerServer brokerServer;
 
     @Override
-    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerBukkitConnectedMessage request) {
-        String playerName = request.getPlayerName();
-        UUID playerUniqueId = request.getPlayerUniqueId();
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerServerConnectedMessage request) {
+        String playerName = request.getName();
+        UUID playerUniqueId = request.getUniqueId();
         String bukkitName = request.getServerName();
 
-        BrokerClientProxy bungeeClient = brokerServer.getClientProxy(bizCtx);
+        BrokerClientItem bungeeClient = brokerServer.getClient(bizCtx);
         if (bungeeClient == null) return;
         if (!Objects.equals(bungeeClient.getType(), BrokerClientType.PROXY)) return;
 
@@ -47,12 +46,12 @@ public class PlayerBukkitConnectedBrokerProcessor extends AsyncUserProcessor<Pla
             return;
         }
 
-        PlayerBukkitConnectedEvent event = new PlayerBukkitConnectedEvent(brokerPlayer);
+        PlayerServerConnectedEvent event = new PlayerServerConnectedEvent(brokerPlayer);
         brokerServer.getPluginManager().callEvent(event);
     }
 
     @Override
     public String interest() {
-        return PlayerBukkitConnectedMessage.class.getName();
+        return PlayerServerConnectedMessage.class.getName();
     }
 }

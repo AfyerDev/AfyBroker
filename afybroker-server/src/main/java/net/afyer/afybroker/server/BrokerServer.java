@@ -16,8 +16,8 @@ import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.command.*;
 import net.afyer.afybroker.server.plugin.Plugin;
 import net.afyer.afybroker.server.plugin.PluginManager;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
-import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
+import net.afyer.afybroker.server.proxy.BrokerClientManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
@@ -61,11 +61,11 @@ public class BrokerServer {
     /**
      * 客户端代理 管理器
      */
-    final BrokerClientProxyManager brokerClientProxyManager;
+    final BrokerClientManager clientManager;
     /**
      * 玩家代理 管理器
      */
-    final BrokerPlayerManager brokerPlayerManager;
+    final BrokerPlayerManager playerManager;
 
     final PlayerHeartbeatValidateTask playerHeartbeatValidateTask;
 
@@ -77,8 +77,8 @@ public class BrokerServer {
         this.pluginManager = new PluginManager(this);
         this.scheduler = new BrokerScheduler(this);
         this.pluginsFolder = new File("plugins");
-        this.brokerClientProxyManager = new BrokerClientProxyManager();
-        this.brokerPlayerManager = new BrokerPlayerManager();
+        this.clientManager = new BrokerClientManager();
+        this.playerManager = new BrokerPlayerManager();
         this.playerHeartbeatValidateTask = new PlayerHeartbeatValidateTask(this);
         this.pluginManager.registerCommand(null, new CommandStop(this));
         this.pluginManager.registerCommand(null, new CommandList(this));
@@ -103,22 +103,22 @@ public class BrokerServer {
 
     @Nullable
     public BrokerPlayer getPlayer(UUID uuid) {
-        return brokerPlayerManager.getPlayer(uuid);
+        return playerManager.getPlayer(uuid);
     }
 
     @Nullable
     public BrokerPlayer getPlayer(String name) {
-        return brokerPlayerManager.getPlayer(name);
+        return playerManager.getPlayer(name);
     }
 
     @Nullable
-    public BrokerClientProxy getClientProxy(String name) {
-        return brokerClientProxyManager.getByName(name);
+    public BrokerClientItem getClient(String name) {
+        return clientManager.getByName(name);
     }
 
     @Nullable
-    public BrokerClientProxy getClientProxy(BizContext bizContext) {
-        return brokerClientProxyManager.getByAddress(bizContext.getRemoteAddress());
+    public BrokerClientItem getClient(BizContext bizContext) {
+        return clientManager.getByAddress(bizContext.getRemoteAddress());
     }
 
     public void startup() {

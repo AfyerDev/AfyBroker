@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * 让玩家连接到某个 bukkit 服务器
+ * 让玩家连接到某个 minecraft 服务器
  *
  * @author Nipuru
  * @since 2022/9/6 17:33
@@ -24,10 +24,10 @@ import java.util.UUID;
 public class ConnectToServerMessage implements Serializable {
     private static final long serialVersionUID = -2031147618861482881L;
 
-    /** 玩家uid */
-    UUID player;
+    /** 玩家uuid */
+    UUID uniqueId;
 
-    /** bukkit 服务器名（在 bungee 中的名字） */
-    String server;
+    /** minecraft 服务器名（在 proxy 中的名字） */
+    String serverName;
 
 }

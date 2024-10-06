@@ -9,12 +9,12 @@ import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
 /**
  * @author Nipuru
- * @since 2022/12/4 21:15
+ * @since 2022/8/13 9:20
  */
 @Getter
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerBukkitConnectedEvent extends Event {
+public class PlayerProxyLoginEvent extends Event {
 
     /** 玩家代理 */
     final BrokerPlayer player;

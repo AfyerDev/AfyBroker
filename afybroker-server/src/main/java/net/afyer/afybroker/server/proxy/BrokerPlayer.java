@@ -24,17 +24,17 @@ public class BrokerPlayer {
     final UUID uid;
     /** 玩家名字 */
     final String name;
-    /** 玩家所在的 Bungeecord 服务器客户端代理 */
-    final BrokerClientProxy bungeeClientProxy;
+    /** 玩家所在的 Proxy 服务器客户端代理 */
+    final BrokerClientItem proxy;
 
-    /** 玩家所在的 Bukkit 服务器客户端代理 */
+    /** 玩家所在的 Minecraft 服务器客户端代理 */
     @Nullable
-    BrokerClientProxy bukkitClientProxy;
+    BrokerClientItem server;
 
-    public BrokerPlayer(UUID uid, String name, BrokerClientProxy bungeeClientProxy) {
+    public BrokerPlayer(UUID uid, String name, BrokerClientItem proxy) {
         this.uid = uid;
         this.name = name;
-        this.bungeeClientProxy = bungeeClientProxy;
+        this.proxy = proxy;
     }
 
     @Override
@@ -55,8 +55,8 @@ public class BrokerPlayer {
         return "BrokerPlayer{" +
                 ", uid=" + uid +
                 ", name='" + name + '\'' +
-                ", bungeeProxy='" + bungeeClientProxy + '\'' +
-                ", bukkitServer='" + bungeeClientProxy + '\'' +
+                ", bungeeProxy='" + proxy + '\'' +
+                ", bukkitServer='" + proxy + '\'' +
                 '}';
     }
 }

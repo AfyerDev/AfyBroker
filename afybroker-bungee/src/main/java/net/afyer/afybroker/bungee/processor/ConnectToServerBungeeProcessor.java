@@ -25,10 +25,10 @@ public class ConnectToServerBungeeProcessor extends AsyncUserProcessor<ConnectTo
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, ConnectToServerMessage message) {
         ProxyServer bungee = ProxyServer.getInstance();
 
-        ServerInfo target = bungee.getServerInfo(message.getServer());
+        ServerInfo target = bungee.getServerInfo(message.getServerName());
         if (target == null) return;
 
-        ProxiedPlayer player = bungee.getPlayer(message.getPlayer());
+        ProxiedPlayer player = bungee.getPlayer(message.getUniqueId());
         if (player == null) return;
 
         synchronized (player) {

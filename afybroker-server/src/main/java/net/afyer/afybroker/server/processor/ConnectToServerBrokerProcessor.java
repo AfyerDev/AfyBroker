@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.message.ConnectToServerMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
 /**
@@ -24,10 +24,10 @@ public class ConnectToServerBrokerProcessor extends AsyncUserProcessor<ConnectTo
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, ConnectToServerMessage message) {
-        BrokerPlayer brokerPlayer = brokerServer.getBrokerPlayerManager().getPlayer(message.getPlayer());
+        BrokerPlayer brokerPlayer = brokerServer.getPlayerManager().getPlayer(message.getUniqueId());
         if (brokerPlayer == null) return;
 
-        BrokerClientProxy playerBungee = brokerPlayer.getBungeeClientProxy();
+        BrokerClientItem playerBungee = brokerPlayer.getProxy();
         if (playerBungee == null) return;
 
         try {

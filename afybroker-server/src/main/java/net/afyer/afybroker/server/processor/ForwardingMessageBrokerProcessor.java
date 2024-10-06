@@ -11,7 +11,7 @@ import net.afyer.afybroker.core.util.AbstractInvokeCallback;
 import net.afyer.afybroker.core.util.BoltUtils;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
 
 import java.io.Serializable;
 
@@ -27,7 +27,7 @@ public class ForwardingMessageBrokerProcessor extends AsyncUserProcessor<Forward
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, ForwardingMessage request) {
-        BrokerClientProxy target = brokerServer.getClientProxy(request.getClientName());
+        BrokerClientItem target = brokerServer.getClient(request.getClientName());
 
         if (target == null) return;
 

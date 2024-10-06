@@ -24,7 +24,7 @@ public class SendPlayerTitleMessage implements Serializable {
     /**
      * 玩家名
      */
-    String player;
+    String name;
 
     /**
      * title

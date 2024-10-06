@@ -10,8 +10,8 @@ import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.message.BroadcastChatMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
-import net.afyer.afybroker.server.proxy.BrokerClientProxyManager;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
+import net.afyer.afybroker.server.proxy.BrokerClientManager;
 
 import java.util.List;
 
@@ -27,10 +27,10 @@ public class BroadcastChatBrokerProcessor extends AsyncUserProcessor<BroadcastCh
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, BroadcastChatMessage request) {
-        BrokerClientProxyManager clientProxyManager = brokerServer.getBrokerClientProxyManager();
-        List<BrokerClientProxy> brokerClients = clientProxyManager.getByType(BrokerClientType.SERVER);
+        BrokerClientManager clientProxyManager = brokerServer.getClientManager();
+        List<BrokerClientItem> brokerClients = clientProxyManager.getByType(BrokerClientType.SERVER);
 
-        for (BrokerClientProxy brokerClient : brokerClients) {
+        for (BrokerClientItem brokerClient : brokerClients) {
             try {
                 brokerClient.oneway(request);
             } catch (RemotingException | InterruptedException e) {

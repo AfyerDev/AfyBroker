@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * broker-server发出，由 proxy 类型的服务器处理
+ * broker-server 发出，由 proxy 类型的服务器处理
  */
 @Getter
 @Setter

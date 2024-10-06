@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.message.PlayerHeartbeatValidateMessage;
 import net.afyer.afybroker.core.util.AbstractInvokeCallback;
 import net.afyer.afybroker.server.BrokerServer;
-import net.afyer.afybroker.server.processor.PlayerBungeeDisconnectBrokerProcessor;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
+import net.afyer.afybroker.server.processor.PlayerProxyDisconnectBrokerProcessor;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
 
@@ -59,19 +59,19 @@ public class PlayerHeartbeatValidateTask extends Thread {
     }
 
     private void validate() {
-        BrokerPlayerManager playerManager = brokerServer.getBrokerPlayerManager();
+        BrokerPlayerManager playerManager = brokerServer.getPlayerManager();
         Collection<BrokerPlayer> brokerPlayers = playerManager.getPlayers();
         if (brokerPlayers.isEmpty()) return;
-        Map<BrokerClientProxy, List<UUID>> map = new IdentityHashMap<>();
+        Map<BrokerClientItem, List<UUID>> map = new IdentityHashMap<>();
         for (BrokerPlayer player : brokerPlayers) {
-            BrokerClientProxy bungeeProxy = player.getBungeeClientProxy();
+            BrokerClientItem bungeeProxy = player.getProxy();
             map.computeIfAbsent(bungeeProxy, k -> new ArrayList<>())
                     .add(player.getUid());
         }
-        for (Map.Entry<BrokerClientProxy, List<UUID>> entry : map.entrySet()) {
+        for (Map.Entry<BrokerClientItem, List<UUID>> entry : map.entrySet()) {
             PlayerHeartbeatValidateMessage message = new PlayerHeartbeatValidateMessage()
                     .setUniqueIdList(entry.getValue());
-            BrokerClientProxy bungeeProxy = entry.getKey();
+            BrokerClientItem bungeeProxy = entry.getKey();
             try {
                 bungeeProxy.invokeWithCallback(message, new AbstractInvokeCallback() {
                     @Override
@@ -79,7 +79,7 @@ public class PlayerHeartbeatValidateTask extends Thread {
                         List<UUID> response = cast(result);
                         if (response.isEmpty()) return;
                         for (UUID uniqueId : response) {
-                            PlayerBungeeDisconnectBrokerProcessor.handlePlayerRemove(brokerServer, uniqueId);
+                            PlayerProxyDisconnectBrokerProcessor.handlePlayerRemove(brokerServer, uniqueId);
                         }
                     }
 

@@ -137,15 +137,15 @@ public class BrokerServerBuilder {
                 .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBrokerProcessor());
 
         this
-                .registerUserProcessor(new PlayerBungeeConnectBrokerProcessor())
-                .registerUserProcessor(new PlayerBungeeDisconnectBrokerProcessor())
+                .registerUserProcessor(new PlayerProxyConnectBrokerProcessor())
+                .registerUserProcessor(new PlayerProxyDisconnectBrokerProcessor())
                 .registerUserProcessor(new SendPlayerChatBrokerProcessor())
                 .registerUserProcessor(new BroadcastChatBrokerProcessor())
                 .registerUserProcessor(new SendPlayerTitleBrokerProcessor())
                 .registerUserProcessor(new ForwardingMessageBrokerProcessor())
                 .registerUserProcessor(new ConnectToServerBrokerProcessor())
-                .registerUserProcessor(new PlayerBukkitConnectedBrokerProcessor())
-                .registerUserProcessor(new PlayerBukkitJoinBrokerProcessor())
+                .registerUserProcessor(new PlayerServerConnectedBrokerProcessor())
+                .registerUserProcessor(new PlayerServerJoinBrokerProcessor())
                 .registerUserProcessor(new KickPlayerBrokerProcessor());
 
     }

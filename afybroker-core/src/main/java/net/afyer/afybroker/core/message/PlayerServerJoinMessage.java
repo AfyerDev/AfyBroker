@@ -11,25 +11,21 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * 玩家与 bukkit 连接状态变化的消息
  * @author Nipuru
- * @since 2022/9/12 12:21
+ * @since 2023/09/29 12:04
  */
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerBukkitConnectedMessage implements Serializable {
-    private static final long serialVersionUID = 5436035428469761938L;
+public class PlayerServerJoinMessage implements Serializable {
+    private static final long serialVersionUID = -1132388839270494188L;
 
-    /** 玩家uid */
-    UUID playerUniqueId;
+    /** 玩家uuid */
+    UUID uniqueId;
 
     /** 玩家名 */
-    String playerName;
-
-    /** 服务器名 */
-    String serverName;
+    String name;
 
 }

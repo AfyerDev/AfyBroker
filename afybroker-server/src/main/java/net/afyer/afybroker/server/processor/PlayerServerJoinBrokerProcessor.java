@@ -6,12 +6,11 @@ import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
-import net.afyer.afybroker.core.BrokerGlobalConfig;
-import net.afyer.afybroker.core.message.PlayerBukkitJoinMessage;
+import net.afyer.afybroker.core.message.PlayerServerJoinMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.event.PlayerBukkitJoinEvent;
-import net.afyer.afybroker.server.proxy.BrokerClientProxy;
+import net.afyer.afybroker.server.event.PlayerServerJoinEvent;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
 import java.util.Objects;
@@ -21,14 +20,14 @@ import java.util.Objects;
  * @since 2023/09/29 12:16
  */
 @Slf4j
-public class PlayerBukkitJoinBrokerProcessor extends AsyncUserProcessor<PlayerBukkitJoinMessage> implements BrokerServerAware {
+public class PlayerServerJoinBrokerProcessor extends AsyncUserProcessor<PlayerServerJoinMessage> implements BrokerServerAware {
 
     @Setter
     BrokerServer brokerServer;
 
     @Override
-    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerBukkitJoinMessage request) {
-        BrokerClientProxy currentBukkit = brokerServer.getClientProxy(bizCtx);
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerServerJoinMessage request) {
+        BrokerClientItem currentBukkit = brokerServer.getClient(bizCtx);
         if (currentBukkit == null) return;
         if (!Objects.equals(currentBukkit.getType(), BrokerClientType.SERVER)) return;
 
@@ -43,17 +42,17 @@ public class PlayerBukkitJoinBrokerProcessor extends AsyncUserProcessor<PlayerBu
         handleBukkitJoin(brokerServer, player, currentBukkit);
     }
 
-    public static void handleBukkitJoin(BrokerServer server, BrokerPlayer player, BrokerClientProxy bukkitClient) {
+    public static void handleBukkitJoin(BrokerServer server, BrokerPlayer player, BrokerClientItem bukkitClient) {
         if (!Objects.equals(bukkitClient.getType(), BrokerClientType.SERVER)) return;
 
-        BrokerClientProxy previousBukkit = player.getBukkitClientProxy();
-        player.setBukkitClientProxy(bukkitClient);
-        server.getPluginManager().callEvent(new PlayerBukkitJoinEvent(player, previousBukkit, bukkitClient));
+        BrokerClientItem previousBukkit = player.getServer();
+        player.setServer(bukkitClient);
+        server.getPluginManager().callEvent(new PlayerServerJoinEvent(player, previousBukkit, bukkitClient));
     }
 
     @Override
     public String interest() {
-        return PlayerBukkitJoinMessage.class.getName();
+        return PlayerServerJoinMessage.class.getName();
     }
 
 }

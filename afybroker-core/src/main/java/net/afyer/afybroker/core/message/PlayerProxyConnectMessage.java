@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * 玩家连接至 bungee 的消息
+ * 玩家连接至 proxy 的消息
  *
  * @author Nipuru
  * @since 2022/8/1 11:32
@@ -21,11 +21,11 @@ import java.util.UUID;
 @ToString
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerBungeeConnectMessage implements Serializable {
+public class PlayerProxyConnectMessage implements Serializable {
     private static final long serialVersionUID = 1791475059445212432L;
 
-    /** 玩家uid */
-    UUID uid;
+    /** 玩家uuid */
+    UUID uniqueId;
 
     /** 玩家名 */
     String name;
