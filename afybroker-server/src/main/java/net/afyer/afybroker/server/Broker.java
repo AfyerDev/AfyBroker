@@ -73,14 +73,14 @@ public class Broker {
     /**
      * 获取客户端代理管理器
      */
-    public static BrokerClientManager getBrokerClientProxyManager() {
+    public static BrokerClientManager getClientManager() {
         return server.getClientManager();
     }
 
     /**
      * 获取玩家代理管理器
      */
-    public static BrokerPlayerManager getBrokerPlayerManager() {
+    public static BrokerPlayerManager getPlayerManager() {
         return server.getPlayerManager();
     }
 

@@ -31,7 +31,7 @@ public class CommandListPlayer extends Command {
         List<BrokerPlayer> players = new ArrayList<>(server.getPlayerManager().getPlayers());
 
         Map<String, TreeSet<BrokerPlayer>> bungeeMap = Maps.newTreeMap();
-        Broker.getBrokerClientProxyManager().getByType(BrokerClientType.PROXY)
+        Broker.getClientManager().getByType(BrokerClientType.PROXY)
                 .forEach(client -> bungeeMap.put(client.getName(), Sets.newTreeSet(Comparator.comparing(BrokerPlayer::getName))));
         for (BrokerPlayer player : players) {
             String bungeeName = player.getProxy().getName();
