@@ -66,7 +66,7 @@ public class PlayerHeartbeatValidateTask extends Thread {
         for (BrokerPlayer player : brokerPlayers) {
             BrokerClientItem bungeeProxy = player.getProxy();
             map.computeIfAbsent(bungeeProxy, k -> new ArrayList<>())
-                    .add(player.getUid());
+                    .add(player.getUniqueId());
         }
         for (Map.Entry<BrokerClientItem, List<UUID>> entry : map.entrySet()) {
             PlayerHeartbeatValidateMessage message = new PlayerHeartbeatValidateMessage()

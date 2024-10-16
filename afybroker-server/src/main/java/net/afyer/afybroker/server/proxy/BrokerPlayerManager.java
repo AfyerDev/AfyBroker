@@ -29,7 +29,7 @@ public class BrokerPlayerManager {
 
     @Nullable
     public BrokerPlayer addPlayer(BrokerPlayer player) {
-        UUID uid = player.getUid();
+        UUID uid = player.getUniqueId();
         BrokerPlayer absent = byUid.putIfAbsent(uid, player);
         if (absent == null) {
             byName.put(player.getName(), player);

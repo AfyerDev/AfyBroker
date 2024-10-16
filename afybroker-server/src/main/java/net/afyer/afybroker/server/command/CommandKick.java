@@ -41,7 +41,7 @@ public class CommandKick extends Command {
         }
 
         KickPlayerMessage message = new KickPlayerMessage()
-                .setPlayer(playerName)
+                .setUniqueId(player.getUniqueId())
                 .setMessage(messageBuilder.toString());
 
         try {

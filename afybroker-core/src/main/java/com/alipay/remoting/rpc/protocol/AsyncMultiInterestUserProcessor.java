@@ -44,7 +44,7 @@ public abstract class AsyncMultiInterestUserProcessor<T> extends
      * @see UserProcessor#handleRequest(BizContext, AsyncContext, Object)
      */
     @Override
-    public abstract void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request);
+    public abstract void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request) throws Exception;
 
     /**
      * @see MultiInterestUserProcessor#multiInterest()

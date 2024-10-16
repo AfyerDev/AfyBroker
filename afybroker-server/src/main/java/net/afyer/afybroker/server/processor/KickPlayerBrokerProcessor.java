@@ -2,7 +2,6 @@ package net.afyer.afybroker.server.processor;
 
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
-import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,16 +21,12 @@ public class KickPlayerBrokerProcessor extends AsyncUserProcessor<KickPlayerMess
     BrokerServer brokerServer;
 
     @Override
-    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, KickPlayerMessage request) {
-        BrokerPlayer player = brokerServer.getPlayer(request.getPlayer());
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, KickPlayerMessage request) throws Exception {
+        BrokerPlayer player = brokerServer.getPlayer(request.getUniqueId());
         if (player == null) {
             return;
         }
-        try {
-            player.getProxy().oneway(request);
-        } catch (RemotingException | InterruptedException e) {
-            log.error(e.getMessage(), e);
-        }
+        player.kick(request.getMessage());
     }
 
     @Override

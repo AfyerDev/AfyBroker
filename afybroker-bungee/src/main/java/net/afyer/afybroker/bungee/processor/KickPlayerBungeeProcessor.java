@@ -17,14 +17,19 @@ public class KickPlayerBungeeProcessor extends AsyncUserProcessor<KickPlayerMess
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, KickPlayerMessage request) {
-        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(request.getPlayer());
+        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(request.getUniqueId());
 
         if (player == null) {
             return;
         }
 
-        BaseComponent[] baseComponents = TextComponent.fromLegacyText(request.getMessage());
-        player.disconnect(baseComponents);
+        if (request.getMessage() != null) {
+            BaseComponent[] baseComponents = TextComponent.fromLegacyText(request.getMessage());
+            player.disconnect(baseComponents);
+        } else {
+            player.disconnect();
+        }
+
     }
 
     @Override

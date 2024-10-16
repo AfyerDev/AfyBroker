@@ -19,7 +19,7 @@ public class KickPlayerVelocityProcessor extends AsyncUserProcessor<KickPlayerMe
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, KickPlayerMessage request) {
-        plugin.getServer().getPlayer(request.getPlayer())
+        plugin.getServer().getPlayer(request.getUniqueId())
                 .ifPresent(player -> player.disconnect(Component.text(request.getMessage())));
     }
 

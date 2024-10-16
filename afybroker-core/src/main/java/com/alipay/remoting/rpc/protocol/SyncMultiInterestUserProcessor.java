@@ -42,7 +42,7 @@ public abstract class SyncMultiInterestUserProcessor<T> extends
      * @see UserProcessor#handleRequest(BizContext, AsyncContext, Object)
      */
     @Override
-    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request) {
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request) throws Exception {
         throw new UnsupportedOperationException(
                 "ASYNC handle request is unsupported in SyncMultiInterestUserProcessor!");
     }

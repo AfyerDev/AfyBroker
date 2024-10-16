@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * 踢出玩家消息
@@ -24,8 +25,8 @@ public class KickPlayerMessage implements Serializable {
     private static final long serialVersionUID = 225514412094976346L;
 
     /** 玩家名 */
-    String player;
+    UUID uniqueId;
 
     /** 踢出消息 */
-    String message = "";
+    String message;
 }
