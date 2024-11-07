@@ -1,13 +1,11 @@
 plugins {
     java
-    `maven-publish`
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
 
 subprojects {
 
     apply(plugin = "java")
-    apply(plugin = "maven-publish")
 
     group = "net.afyer.afybroker"
     version = "2.2"
@@ -38,18 +36,6 @@ subprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
-    }
-
-    publishing {
-        repositories {
-            maven("http://101.34.76.125:8081/repository/maven-releases/") {
-                isAllowInsecureProtocol = true
-                credentials {
-                    username = project.findProperty("afyerUser").toString()
-                    password = project.findProperty("afyerPassword").toString()
-                }
-            }
-        }
     }
 }
 

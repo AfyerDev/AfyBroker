@@ -12,18 +12,8 @@ dependencies {
     }
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveClassifier.set("")
-}
-
 tasks.build {
     dependsOn(tasks.shadowJar)
-}
-
-configure<PublishingExtension> {
-    publications.create<MavenPublication>("maven") {
-        artifact(tasks.shadowJar)
-    }
 }
 
 tasks.processResources {

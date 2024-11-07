@@ -1,9 +1,24 @@
+@file:Suppress("UnstableApiUsage")
+
 rootProject.name = "afybroker"
 
-include("afybroker-core")
-include("afybroker-server")
-include("afybroker-server-bootstrap")
-include("afybroker-client")
-include("afybroker-bukkit")
-include("afybroker-bungee")
-include("afybroker-velocity")
+pluginManagement {
+    includeBuild("build-logic")
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+sequenceOf(
+    "core",
+    "server",
+    "server-bootstrap",
+    "client",
+    "bukkit",
+    "bungee",
+    "velocity"
+).forEach {
+    val project = ":afybroker-$it"
+    include(project)
+}

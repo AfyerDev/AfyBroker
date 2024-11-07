@@ -1,16 +1,13 @@
 plugins {
     `java-library`
+    `maven-publish`
+    id("afybroker-publish")
 }
+
 dependencies {
     api(project(":afybroker-core"))
 }
 
 java {
     withSourcesJar()
-}
-
-configure<PublishingExtension> {
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
-    }
 }
