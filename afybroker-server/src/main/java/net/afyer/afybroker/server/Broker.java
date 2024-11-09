@@ -104,7 +104,7 @@ public class Broker {
      * 通过名称获取客户端代理
      */
     @Nullable
-    public static BrokerClientItem getClientProxy(String name) {
+    public static BrokerClientItem getClient(String name) {
         return server.getClient(name);
     }
 
@@ -112,7 +112,7 @@ public class Broker {
      * 通过 {@link BizContext} 获取玩家代理
      */
     @Nullable
-    public static BrokerClientItem getClientProxy(BizContext bizContext) {
+    public static BrokerClientItem getClient(BizContext bizContext) {
         return server.getClient(bizContext);
     }
 
