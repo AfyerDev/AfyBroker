@@ -5,7 +5,7 @@ plugins {
 
 extensions.configure<PublishingExtension> {
     repositories {
-        maven("http://101.34.76.125:8081/repository/maven-releases/") {
+        maven("http://repo.afyer.net/repository/maven-releases/") {
             credentials(PasswordCredentials::class.java)
             isAllowInsecureProtocol = true
         }
