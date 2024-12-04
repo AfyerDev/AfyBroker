@@ -55,6 +55,7 @@ public class AfyBroker extends Plugin {
                     .registerUserProcessor(new PlayerHeartbeatValidateBungeeProcessor())
                     .registerUserProcessor(new RequestPlayerInfoBungeeProcessor())
                     .registerUserProcessor(new SyncServerBungeeProcessor(this))
+                    .registerUserProcessor(new PlayerProfilePropertyBungeeProcessor())
                     .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBungeeProcessor(this));
             for (Consumer<BrokerClientBuilder> buildAction : Broker.getBuildActions()) {
                 buildAction.accept(brokerClientBuilder);

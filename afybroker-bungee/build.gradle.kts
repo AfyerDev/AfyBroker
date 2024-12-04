@@ -3,7 +3,8 @@ plugins {
 }
 
 dependencies {
-    compileOnly("net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT")
+    compileOnly("net.md-5:bungeecord-proxy:1.19-R0.1-SNAPSHOT")
     implementation(project(":afybroker-client")) {
         exclude(group = "io.netty", module = "netty-all")
         exclude(group = "org.slf4j", module = "slf4j-api")

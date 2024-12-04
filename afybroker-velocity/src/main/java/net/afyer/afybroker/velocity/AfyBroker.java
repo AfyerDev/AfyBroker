@@ -89,15 +89,13 @@ public class AfyBroker {
                             .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
                     )
                     .type(BrokerClientType.PROXY)
-
                     .registerUserProcessor(new ConnectToServerVelocityProcessor(this))
                     .registerUserProcessor(new KickPlayerVelocityProcessor(this))
                     .registerUserProcessor(new PlayerHeartbeatValidateVelocityProcessor(this))
                     .registerUserProcessor(new RequestPlayerInfoVelocityProcessor(this))
                     .registerUserProcessor(new SyncServerVelocityProcessor(this))
-
+                    .registerUserProcessor(new PlayerProfilePropertyVelocityProcessor(this))
                     .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventVelocityProcessor(this));
-
             for (Consumer<BrokerClientBuilder> buildAction : Broker.getBuildActions()) {
                 buildAction.accept(brokerClientBuilder);
             }

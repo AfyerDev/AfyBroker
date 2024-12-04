@@ -8,7 +8,7 @@ subprojects {
     apply(plugin = "java")
 
     group = "net.afyer.afybroker"
-    version = "2.2"
+    version = "2.3"
 
     repositories {
         mavenCentral()
@@ -16,6 +16,7 @@ subprojects {
         maven("https://repo.tabooproject.org/repository/releases/")
         maven("https://oss.sonatype.org/content/groups/public/")
         maven("https://repo.papermc.io/repository/maven-public/")
+        maven("https://repo.minebench.de/")
     }
 
     dependencies {
