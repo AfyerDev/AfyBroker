@@ -16,13 +16,13 @@
  */
 package com.alipay.remoting;
 
-import io.netty.util.Timeout;
-
 import java.net.InetSocketAddress;
+
+import io.netty.util.Timeout;
 
 /**
  * The future of an invocation.
- *
+ * 
  * @author jiangping
  * @version $Id: InvokeFuture.java, v 0.1 2015-9-21 PM5:30:35 tao Exp $
  */
@@ -61,7 +61,6 @@ public interface InvokeFuture {
 
     /**
      * Get the id of the invocation.
-     *
      * @return invoke id
      */
     int invokeId();
@@ -83,14 +82,12 @@ public interface InvokeFuture {
 
     /**
      * Get the cause of exception of the future.
-     *
      * @return the cause
      */
     Throwable getCause();
 
     /**
      * Get the application callback of the future.
-     *
      * @return get invoke callback
      */
     InvokeCallback getInvokeCallback();
@@ -107,21 +104,18 @@ public interface InvokeFuture {
 
     /**
      * Whether the future is done.
-     *
      * @return true if the future is done
      */
     boolean isDone();
 
     /**
      * Get application classloader.
-     *
      * @return application classloader
      */
     ClassLoader getAppClassLoader();
 
     /**
      * Get the protocol code of command.
-     *
      * @return protocol code
      */
     byte getProtocolCode();
@@ -133,7 +127,6 @@ public interface InvokeFuture {
 
     /**
      * Get invoke context.
-     *
      * @return the invoke context
      */
     InvokeContext getInvokeContext();

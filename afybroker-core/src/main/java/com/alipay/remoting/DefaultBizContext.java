@@ -17,6 +17,7 @@
 package com.alipay.remoting;
 
 import com.alipay.remoting.util.RemotingUtil;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -30,7 +31,7 @@ public class DefaultBizContext implements BizContext {
     /**
      * remoting context
      */
-    private final RemotingContext remotingCtx;
+    private RemotingContext remotingCtx;
 
     /**
      * Constructor with RemotingContext
@@ -51,7 +52,7 @@ public class DefaultBizContext implements BizContext {
     }
 
     /**
-     * @see BizContext#getRemoteAddress()
+     * @see com.alipay.remoting.BizContext#getRemoteAddress()
      */
     @Override
     public String getRemoteAddress() {
@@ -66,7 +67,7 @@ public class DefaultBizContext implements BizContext {
     }
 
     /**
-     * @see BizContext#getRemoteHost()
+     * @see com.alipay.remoting.BizContext#getRemoteHost()
      */
     @Override
     public String getRemoteHost() {
@@ -81,7 +82,7 @@ public class DefaultBizContext implements BizContext {
     }
 
     /**
-     * @see BizContext#getRemotePort()
+     * @see com.alipay.remoting.BizContext#getRemotePort()
      */
     @Override
     public int getRemotePort() {
@@ -107,7 +108,7 @@ public class DefaultBizContext implements BizContext {
     }
 
     /**
-     * @see BizContext#isRequestTimeout()
+     * @see com.alipay.remoting.BizContext#isRequestTimeout()
      */
     @Override
     public boolean isRequestTimeout() {
@@ -135,14 +136,14 @@ public class DefaultBizContext implements BizContext {
     }
 
     /**
-     * @see BizContext#put(String, String)
+     * @see com.alipay.remoting.BizContext#put(java.lang.String, java.lang.String)
      */
     @Override
     public void put(String key, String value) {
     }
 
     /**
-     * @see BizContext#get(String)
+     * @see com.alipay.remoting.BizContext#get(java.lang.String)
      */
     @Override
     public String get(String key) {

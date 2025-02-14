@@ -16,7 +16,12 @@
  */
 package com.alipay.remoting.rpc.protocol;
 
-import com.alipay.remoting.*;
+import com.alipay.remoting.CommandDecoder;
+import com.alipay.remoting.CommandEncoder;
+import com.alipay.remoting.CommandFactory;
+import com.alipay.remoting.CommandHandler;
+import com.alipay.remoting.HeartbeatTrigger;
+import com.alipay.remoting.Protocol;
 import com.alipay.remoting.rpc.RpcCommandFactory;
 
 /**
@@ -31,7 +36,7 @@ import com.alipay.remoting.rpc.RpcCommandFactory;
  * +                                                                                                +
  * |                               ... ...                                  | CRC32(optional)       |
  * +------------------------------------------------------------------------------------------------+
- * <p>
+ * 
  * proto: code for protocol
  * ver1: version for protocol
  * type: request/response/request oneway
@@ -43,7 +48,7 @@ import com.alipay.remoting.rpc.RpcCommandFactory;
  * headerLen: length of header
  * contentLen: length of content
  * CRC32: CRC32 of the frame(Exists when ver1 > 1)
- * <p>
+ *
  * Response command protocol for v2
  * 0     1     2     3     4           6           8          10     11    12          14          16
  * +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+------+-----+-----+-----+-----+
@@ -56,34 +61,30 @@ import com.alipay.remoting.rpc.RpcCommandFactory;
  * |                               ... ...                                  | CRC32(optional)       |
  * +------------------------------------------------------------------------------------------------+
  * respstatus: response status
- *
+ * 
  * @author jiangping
  * @version $Id: RpcProtocolV2.java, v 0.1 2017-05-27 PM7:04:04 tao Exp $
  */
 public class RpcProtocolV2 implements Protocol {
     /* because the design defect, the version is neglected in RpcProtocol, so we design RpcProtocolV2 and add protocol version. */
-    public static final byte PROTOCOL_CODE = (byte) 2;
-    /**
-     * version 1, is the same with RpcProtocol
-     */
-    public static final byte PROTOCOL_VERSION_1 = (byte) 1;
-    /**
-     * version 2, is the protocol version for RpcProtocolV2
-     */
-    public static final byte PROTOCOL_VERSION_2 = (byte) 2;
+    public static final byte PROTOCOL_CODE       = (byte) 2;
+    /** version 1, is the same with RpcProtocol */
+    public static final byte PROTOCOL_VERSION_1  = (byte) 1;
+    /** version 2, is the protocol version for RpcProtocolV2 */
+    public static final byte PROTOCOL_VERSION_2  = (byte) 2;
 
     /**
      * in contrast to protocol v1,
      * one more byte is used as protocol version,
      * and another one is userd as protocol switch
      */
-    private static final int REQUEST_HEADER_LEN = 22 + 2;
+    private static final int REQUEST_HEADER_LEN  = 22 + 2;
     private static final int RESPONSE_HEADER_LEN = 20 + 2;
-    private final CommandEncoder encoder;
-    private final CommandDecoder decoder;
-    private final HeartbeatTrigger heartbeatTrigger;
-    private final CommandHandler commandHandler;
-    private final CommandFactory commandFactory;
+    private CommandEncoder   encoder;
+    private CommandDecoder   decoder;
+    private HeartbeatTrigger heartbeatTrigger;
+    private CommandHandler   commandHandler;
+    private CommandFactory   commandFactory;
 
     public RpcProtocolV2() {
         this.encoder = new RpcCommandEncoderV2();

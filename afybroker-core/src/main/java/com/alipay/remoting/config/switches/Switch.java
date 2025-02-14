@@ -32,7 +32,6 @@ public interface Switch {
 
     /**
      * api for user to turn off a feature
-     *
      * @param index the switch index of feature
      */
     void turnOff(int index);

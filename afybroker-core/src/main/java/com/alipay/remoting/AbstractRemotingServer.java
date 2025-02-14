@@ -16,13 +16,19 @@
  */
 package com.alipay.remoting;
 
+import java.net.InetSocketAddress;
+
 import com.alipay.remoting.config.BoltOption;
 import com.alipay.remoting.config.BoltOptions;
+import com.alipay.remoting.config.BoltServerOption;
 import com.alipay.remoting.config.Configuration;
-import com.alipay.remoting.log.BoltLoggerFactory;
+import com.alipay.remoting.config.ConfigurableInstance;
+import com.alipay.remoting.config.configs.ConfigContainer;
+import com.alipay.remoting.config.configs.DefaultConfigContainer;
+import com.alipay.remoting.config.switches.GlobalSwitch;
 import org.slf4j.Logger;
 
-import java.net.InetSocketAddress;
+import com.alipay.remoting.log.BoltLoggerFactory;
 
 /**
  * Server template for remoting.
@@ -30,14 +36,17 @@ import java.net.InetSocketAddress;
  * @author jiangping
  * @version $Id: AbstractRemotingServer.java, v 0.1 2015-9-5 PM7:37:48 tao Exp $
  */
-public abstract class AbstractRemotingServer extends AbstractLifeCycle implements RemotingServer {
+public abstract class AbstractRemotingServer extends AbstractLifeCycle implements RemotingServer,
+                                                                      ConfigurableInstance {
 
-    private static final Logger logger = BoltLoggerFactory.getLogger("CommonDefault");
+    private static final Logger   logger = BoltLoggerFactory.getLogger("CommonDefault");
 
-    private final String ip;
-    private int port;
+    private String                ip;
+    private int                   port;
 
-    private final BoltOptions options;
+    private final BoltOptions     options;
+    private final GlobalSwitch    globalSwitch;
+    private final ConfigContainer configContainer;
 
     public AbstractRemotingServer(int port) {
         this(new InetSocketAddress(port).getAddress().getHostAddress(), port);
@@ -46,12 +55,34 @@ public abstract class AbstractRemotingServer extends AbstractLifeCycle implement
     public AbstractRemotingServer(String ip, int port) {
         if (port < 0 || port > 65535) {
             throw new IllegalArgumentException(String.format(
-                    "Illegal port value: %d, which should between 0 and 65535.", port));
+                "Illegal port value: %d, which should between 0 and 65535.", port));
         }
         this.ip = ip;
         this.port = port;
 
         this.options = new BoltOptions();
+        this.globalSwitch = new GlobalSwitch();
+        this.configContainer = new DefaultConfigContainer();
+    }
+
+    @Override
+    @Deprecated
+    public void init() {
+        // Do not call this method, it will be removed in the next version
+    }
+
+    @Override
+    @Deprecated
+    public boolean start() {
+        startup();
+        return true;
+    }
+
+    @Override
+    @Deprecated
+    public boolean stop() {
+        shutdown();
+        return true;
     }
 
     @Override
@@ -94,7 +125,6 @@ public abstract class AbstractRemotingServer extends AbstractLifeCycle implement
 
     /**
      * override the random port zero with the actual binding port value.
-     *
      * @param port local binding port
      */
     protected void setLocalBindingPort(int port) {
@@ -120,4 +150,31 @@ public abstract class AbstractRemotingServer extends AbstractLifeCycle implement
         return this;
     }
 
+    @Override
+    @Deprecated
+    public ConfigContainer conf() {
+        return this.configContainer;
+    }
+
+    @Override
+    @Deprecated
+    public GlobalSwitch switches() {
+        return this.globalSwitch;
+    }
+
+    @Override
+    public void initWriteBufferWaterMark(int low, int high) {
+        option(BoltServerOption.NETTY_BUFFER_LOW_WATER_MARK, low);
+        option(BoltServerOption.NETTY_BUFFER_HIGH_WATER_MARK, high);
+    }
+
+    @Override
+    public int netty_buffer_low_watermark() {
+        return option(BoltServerOption.NETTY_BUFFER_LOW_WATER_MARK);
+    }
+
+    @Override
+    public int netty_buffer_high_watermark() {
+        return option(BoltServerOption.NETTY_BUFFER_HIGH_WATER_MARK);
+    }
 }

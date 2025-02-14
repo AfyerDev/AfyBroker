@@ -20,7 +20,6 @@ import com.alipay.remoting.CommandCode;
 
 /**
  * Command code for rpc remoting command.
- *
  * @author jiangping
  * @version $Id: RpcCommandCode.java, v 0.1 2015-9-21 PM5:05:59 tao Exp $
  */
@@ -28,7 +27,7 @@ public enum RpcCommandCode implements CommandCode {
 
     RPC_REQUEST((short) 1), RPC_RESPONSE((short) 2);
 
-    private final short value;
+    private short value;
 
     RpcCommandCode(short value) {
         this.value = value;

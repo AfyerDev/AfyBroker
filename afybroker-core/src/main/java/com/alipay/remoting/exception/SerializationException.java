@@ -28,7 +28,7 @@ public class SerializationException extends CodecException {
      */
     private static final long serialVersionUID = 5668965722686668067L;
 
-    private boolean serverSide = false;
+    private boolean           serverSide       = false;
 
     /**
      * Constructor.

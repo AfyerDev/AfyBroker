@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BoltOptions {
 
-    private final ConcurrentHashMap<BoltOption<?>, Object> options = new ConcurrentHashMap<BoltOption<?>, Object>();
+    private ConcurrentHashMap<BoltOption<?>, Object> options = new ConcurrentHashMap<BoltOption<?>, Object>();
 
     /**
      * Get the optioned value.
@@ -49,7 +49,7 @@ public class BoltOptions {
      * Use a value of {@code null} to remove a previous set {@link BoltOption}.
      *
      * @param option target option
-     * @param value  option value, null for remove a previous set {@link BoltOption}.
+     * @param value option value, null for remove a previous set {@link BoltOption}.
      * @return this BoltOptions instance
      */
     public <T> BoltOptions option(BoltOption<T> option, T value) {

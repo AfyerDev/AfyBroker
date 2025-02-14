@@ -18,12 +18,13 @@ package com.alipay.remoting.util;
 
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.InvokeFuture;
+
 import io.netty.channel.Channel;
 import io.netty.util.Attribute;
 
 /**
  * connection util
- *
+ * 
  * @author yunliang.shi
  * @version $Id: ConnectionUtil.java, v 0.1 Mar 10, 2016 11:36:40 AM yunliang.shi Exp $
  */

@@ -16,15 +16,15 @@
  */
 package com.alipay.remoting.util;
 
-import io.netty.channel.Channel;
-
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
+import io.netty.channel.Channel;
+
 /**
  * Some utilities for remoting.
- *
+ * 
  * @author jiangping
  * @version $Id: RemotingUtil.java, v 0.1 Mar 30, 2016 11:51:02 AM jiangping Exp $
  */
@@ -32,7 +32,7 @@ public class RemotingUtil {
 
     /**
      * Parse the remote address of the channel.
-     *
+     * 
      * @param channel
      * @return
      */
@@ -46,7 +46,7 @@ public class RemotingUtil {
 
     /**
      * Parse the local address of the channel.
-     *
+     * 
      * @param channel
      * @return
      */
@@ -60,7 +60,7 @@ public class RemotingUtil {
 
     /**
      * Parse the remote host ip of the channel.
-     *
+     * 
      * @param channel
      * @return
      */
@@ -77,7 +77,7 @@ public class RemotingUtil {
 
     /**
      * Parse the remote hostname of the channel.
-     * <p>
+     * 
      * Note: take care to use this method, for a reverse name lookup takes uncertain time in {@link InetAddress#getHostName}.
      *
      * @param channel
@@ -96,7 +96,7 @@ public class RemotingUtil {
 
     /**
      * Parse the local host ip of the channel.
-     *
+     * 
      * @param channel
      * @return
      */
@@ -113,7 +113,7 @@ public class RemotingUtil {
 
     /**
      * Parse the remote host port of the channel.
-     *
+     * 
      * @param channel
      * @return int
      */
@@ -130,7 +130,7 @@ public class RemotingUtil {
 
     /**
      * Parse the local host port of the channel.
-     *
+     * 
      * @param channel
      * @return int
      */
@@ -147,10 +147,10 @@ public class RemotingUtil {
 
     /**
      * Parse the socket address, omit the leading "/" if present.
-     * <p>
+     * 
      * e.g.1 /127.0.0.1:1234 -> 127.0.0.1:1234
      * e.g.2 sofatest-2.stack.alipay.net/10.209.155.54:12200 -> 10.209.155.54:12200
-     *
+     * 
      * @param socketAddress
      * @return String
      */
@@ -163,9 +163,9 @@ public class RemotingUtil {
 
     /**
      * Parse the host ip of socket address.
-     * <p>
+     * 
      * e.g. /127.0.0.1:1234 -> 127.0.0.1
-     *
+     * 
      * @param socketAddress
      * @return String
      */
@@ -185,7 +185,7 @@ public class RemotingUtil {
      * <li>if an address starts with a '/', skip it.
      * <li>if an address contains a '/', substring it.
      * </ol>
-     *
+     * 
      * @param addr
      * @return
      */

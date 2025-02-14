@@ -24,14 +24,14 @@ import com.alipay.remoting.connection.ConnectionFactory;
  * @author chengyi (mark.lx@antfin.com) 2019-03-07 14:27
  */
 public class DefaultClientConnectionManager extends DefaultConnectionManager implements
-        ClientConnectionManager {
+                                                                            ClientConnectionManager {
 
     public DefaultClientConnectionManager(ConnectionSelectStrategy connectionSelectStrategy,
                                           ConnectionFactory connectionFactory,
                                           ConnectionEventHandler connectionEventHandler,
                                           ConnectionEventListener connectionEventListener) {
         super(connectionSelectStrategy, connectionFactory, connectionEventHandler,
-                connectionEventListener);
+            connectionEventListener);
     }
 
     @Override

@@ -26,76 +26,76 @@ public class RpcConfigs {
     /**
      * Protocol key in url.
      */
-    public static final String URL_PROTOCOL = "_PROTOCOL";
+    public static final String URL_PROTOCOL                                  = "_PROTOCOL";
 
     /**
      * Version key in url.
      */
-    public static final String URL_VERSION = "_VERSION";
+    public static final String URL_VERSION                                   = "_VERSION";
 
     /**
      * Connection timeout key in url.
      */
-    public static final String CONNECT_TIMEOUT_KEY = "_CONNECTTIMEOUT";
+    public static final String CONNECT_TIMEOUT_KEY                           = "_CONNECTTIMEOUT";
 
     /**
      * Connection number key of each address
      */
-    public static final String CONNECTION_NUM_KEY = "_CONNECTIONNUM";
+    public static final String CONNECTION_NUM_KEY                            = "_CONNECTIONNUM";
 
     /**
      * whether need to warm up connections
      */
-    public static final String CONNECTION_WARMUP_KEY = "_CONNECTIONWARMUP";
+    public static final String CONNECTION_WARMUP_KEY                         = "_CONNECTIONWARMUP";
 
     /**
      * Whether to dispatch message list in default executor.
      */
-    public static final String DISPATCH_MSG_LIST_IN_DEFAULT_EXECUTOR = "bolt.rpc.dispatch-msg-list-in-default-executor";
+    public static final String DISPATCH_MSG_LIST_IN_DEFAULT_EXECUTOR         = "bolt.rpc.dispatch-msg-list-in-default-executor";
     public static final String DISPATCH_MSG_LIST_IN_DEFAULT_EXECUTOR_DEFAULT = "true";
 
     /**
      * Whether to enable server SSL support, default is false(disabled).
      */
-    public static final String SRV_SSL_ENABLE = "bolt.server.ssl.enable";
+    public static final String SRV_SSL_ENABLE                                = "bolt.server.ssl.enable";
     /**
      * Whether to enable server SSL client auth, default is false(disabled).
      */
-    public static final String SRV_SSL_NEED_CLIENT_AUTH = "bolt.server.ssl.clientAuth";
+    public static final String SRV_SSL_NEED_CLIENT_AUTH                      = "bolt.server.ssl.clientAuth";
     /**
      * Server SSL keystore file path
      */
-    public static final String SRV_SSL_KEYSTORE = "bolt.server.ssl.keystore";
+    public static final String SRV_SSL_KEYSTORE                              = "bolt.server.ssl.keystore";
     /**
      * Server SSL keystore password
      */
-    public static final String SRV_SSL_KEYSTORE_PASS = "bolt.server.ssl.keystore.password";
+    public static final String SRV_SSL_KEYSTORE_PASS                         = "bolt.server.ssl.keystore.password";
     /**
-     * Server SSL keystore type, JKS or pkcs12 for example.
-     */
-    public static final String SRV_SSL_KEYTSTORE_YPE = "bolt.server.ssl.keystore.type";
+    * Server SSL keystore type, JKS or pkcs12 for example.
+    */
+    public static final String SRV_SSL_KEYTSTORE_YPE                         = "bolt.server.ssl.keystore.type";
     /**
      * Server SSL KeyManagerFactory algorithm.
      */
-    public static final String SRV_SSL_KMF_ALGO = "bolt.server.ssl.kmf.algorithm";
+    public static final String SRV_SSL_KMF_ALGO                              = "bolt.server.ssl.kmf.algorithm";
     /**
      * Whether to enable client SSL support, default is false(disabled).
      */
-    public static final String CLI_SSL_ENABLE = "bolt.client.ssl.enable";
+    public static final String CLI_SSL_ENABLE                                = "bolt.client.ssl.enable";
     /**
      * Client SSL keystore file path
      */
-    public static final String CLI_SSL_KEYSTORE = "bolt.client.ssl.keystore";
+    public static final String CLI_SSL_KEYSTORE                              = "bolt.client.ssl.keystore";
     /**
      * Client SSL keystore password
      */
-    public static final String CLI_SSL_KEYSTORE_PASS = "bolt.client.ssl.keystore.password";
+    public static final String CLI_SSL_KEYSTORE_PASS                         = "bolt.client.ssl.keystore.password";
     /**
-     * Client SSL keystore type, JKS pkcs12 for example.
-     */
-    public static final String CLI_SSL_KEYTSTORE_YPE = "bolt.client.ssl.keystore.type";
+    * Client SSL keystore type, JKS pkcs12 for example.
+    */
+    public static final String CLI_SSL_KEYTSTORE_YPE                         = "bolt.client.ssl.keystore.type";
     /**
      * Client SSL TrustManagerFactory algorithm.
      */
-    public static final String CLI_SSL_TMF_ALGO = "bolt.client.ssl.tmf.algorithm";
+    public static final String CLI_SSL_TMF_ALGO                              = "bolt.client.ssl.tmf.algorithm";
 }

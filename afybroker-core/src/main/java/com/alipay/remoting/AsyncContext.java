@@ -18,21 +18,20 @@ package com.alipay.remoting;
 
 /**
  * Async context for biz.
- *
+ * 
  * @author xiaomin.cxm
  * @version $Id: AsyncContext.java, v 0.1 May 19, 2016 2:19:05 PM xiaomin.cxm Exp $
  */
 public interface AsyncContext {
     /**
      * send response back
-     *
+     * 
      * @param responseObject response object
      */
     void sendResponse(Object responseObject);
 
     /**
      * send exception back
-     *
      * @param ex response exception
      */
     default void sendException(Throwable ex) {

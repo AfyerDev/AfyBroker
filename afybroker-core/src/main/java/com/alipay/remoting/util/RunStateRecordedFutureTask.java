@@ -23,12 +23,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A customized FutureTask which can record whether the run method has been called.
- *
  * @author tsui
  * @version $Id: RunStateRecordedFutureTask.java, v 0.1 2017-07-31 16:28 tsui Exp $
  */
 public class RunStateRecordedFutureTask<V> extends FutureTask<V> {
-    private final AtomicBoolean hasRun = new AtomicBoolean();
+    private AtomicBoolean hasRun = new AtomicBoolean();
 
     public RunStateRecordedFutureTask(Callable<V> callable) {
         super(callable);
@@ -41,7 +40,7 @@ public class RunStateRecordedFutureTask<V> extends FutureTask<V> {
     }
 
     public V getAfterRun() throws InterruptedException, ExecutionException,
-            FutureTaskNotRunYetException, FutureTaskNotCompleted {
+                          FutureTaskNotRunYetException, FutureTaskNotCompleted {
         if (!hasRun.get()) {
             throw new FutureTaskNotRunYetException();
         }

@@ -20,18 +20,17 @@ import java.util.zip.CRC32;
 
 /**
  * CRC32 utility.
- *
  * @author jiangping
  * @version $Id: CrcUtil2, v 0.1 2017-06-05 11:29 Timo Exp $
  */
 public class CrcUtil {
 
     private static final ThreadLocal<CRC32> CRC_32_THREAD_LOCAL = new ThreadLocal<CRC32>() {
-        @Override
-        protected CRC32 initialValue() {
-            return new CRC32();
-        }
-    };
+                                                                    @Override
+                                                                    protected CRC32 initialValue() {
+                                                                        return new CRC32();
+                                                                    }
+                                                                };
 
     /**
      * Compute CRC32 code for byte[].

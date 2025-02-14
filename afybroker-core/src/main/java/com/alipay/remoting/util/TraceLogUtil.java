@@ -16,20 +16,19 @@
  */
 package com.alipay.remoting.util;
 
-import com.alipay.remoting.InvokeContext;
 import org.slf4j.Logger;
 
-/**
- *
+import com.alipay.remoting.InvokeContext;
+
+/** 
  * Trace log util
  *
- * @author tsui
+ * @author tsui 
  * @version $Id: TraceLogUtil.java, v 0.1 2016-08-02 17:31 tsui Exp $
  */
 public class TraceLogUtil {
     /**
      * print trace log
-     *
      * @param traceId
      * @param invokeContext
      */

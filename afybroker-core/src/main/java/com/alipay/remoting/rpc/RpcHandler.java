@@ -16,25 +16,31 @@
  */
 package com.alipay.remoting.rpc;
 
-import com.alipay.remoting.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.alipay.remoting.Connection;
+import com.alipay.remoting.InvokeContext;
+import com.alipay.remoting.Protocol;
+import com.alipay.remoting.ProtocolCode;
+import com.alipay.remoting.ProtocolManager;
+import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
+
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * Dispatch messages to corresponding protocol.
- *
+ * 
  * @author jiangping
  * @version $Id: RpcHandler.java, v 0.1 2015-12-14 PM4:01:37 tao Exp $
  */
 @ChannelHandler.Sharable
 public class RpcHandler extends ChannelInboundHandlerAdapter {
-    private final boolean serverSide;
+    private boolean                                     serverSide;
 
-    private final ConcurrentHashMap<String, UserProcessor<?>> userProcessors;
+    private ConcurrentHashMap<String, UserProcessor<?>> userProcessors;
 
     public RpcHandler(ConcurrentHashMap<String, UserProcessor<?>> userProcessors) {
         serverSide = false;
@@ -51,7 +57,7 @@ public class RpcHandler extends ChannelInboundHandlerAdapter {
         ProtocolCode protocolCode = ctx.channel().attr(Connection.PROTOCOL).get();
         Protocol protocol = ProtocolManager.getProtocol(protocolCode);
         protocol.getCommandHandler().handleCommand(
-                new RemotingContext(ctx, new InvokeContext(), serverSide, userProcessors), msg);
+            new RemotingContext(ctx, new InvokeContext(), serverSide, userProcessors), msg);
         ctx.fireChannelRead(msg);
     }
 }

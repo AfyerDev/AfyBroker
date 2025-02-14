@@ -16,9 +16,10 @@
  */
 package com.alipay.remoting;
 
-import com.alipay.remoting.util.RunStateRecordedFutureTask;
-
+import java.util.List;
 import java.util.Map;
+
+import com.alipay.remoting.util.RunStateRecordedFutureTask;
 
 /**
  * The strategy of connection monitor
@@ -27,6 +28,16 @@ import java.util.Map;
  * @version $Id: ConnectionMonitorStrategy.java, v 0.1 2017-02-21 12:06 tsui Exp $
  */
 public interface ConnectionMonitorStrategy {
+
+    /**
+     * Filter connections to monitor
+     *
+     * Deprecated this method, this should be a private method.
+     *
+     * @param connections connections from a connection pool
+     */
+    @Deprecated
+    Map<String, List<Connection>> filter(List<Connection> connections);
 
     /**
      * Add a set of connections to monitor.

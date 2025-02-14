@@ -23,12 +23,10 @@ package com.alipay.remoting.exception;
  * @version $Id: DeserializationException.java, v 0.1 2017-07-26 16:13 tsui Exp $
  */
 public class DeserializationException extends CodecException {
-    /**
-     * For serialization
-     */
+    /** For serialization */
     private static final long serialVersionUID = 310446237157256052L;
 
-    private boolean serverSide = false;
+    private boolean           serverSide       = false;
 
     /**
      * Constructor.

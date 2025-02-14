@@ -28,7 +28,7 @@ import com.alipay.remoting.BizContext;
  */
 public abstract class SyncUserProcessor<T> extends AbstractUserProcessor<T> {
     /**
-     * @see UserProcessor#handleRequest(BizContext, Object)
+     * @see com.alipay.remoting.rpc.protocol.UserProcessor#handleRequest(com.alipay.remoting.BizContext, java.lang.Object)
      */
     @Override
     public abstract Object handleRequest(BizContext bizCtx, T request) throws Exception;
@@ -36,16 +36,16 @@ public abstract class SyncUserProcessor<T> extends AbstractUserProcessor<T> {
     /**
      * unsupported here!
      *
-     * @see UserProcessor#handleRequest(BizContext, AsyncContext, Object)
+     * @see com.alipay.remoting.rpc.protocol.UserProcessor#handleRequest(com.alipay.remoting.BizContext, com.alipay.remoting.AsyncContext, java.lang.Object)
      */
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request) {
         throw new UnsupportedOperationException(
-                "ASYNC handle request is unsupported in SyncUserProcessor!");
+            "ASYNC handle request is unsupported in SyncUserProcessor!");
     }
 
     /**
-     * @see UserProcessor#interest()
+     * @see com.alipay.remoting.rpc.protocol.UserProcessor#interest()
      */
     @Override
     public abstract String interest();

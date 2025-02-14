@@ -40,7 +40,7 @@ public class ProtocolManager {
     public static void registerProtocol(Protocol protocol, ProtocolCode protocolCode) {
         if (null == protocolCode || null == protocol) {
             throw new RuntimeException("Protocol: " + protocol + " and protocol code:"
-                    + protocolCode + " should not be null!");
+                                       + protocolCode + " should not be null!");
         }
         Protocol exists = ProtocolManager.protocols.putIfAbsent(protocolCode, protocol);
         if (exists != null) {

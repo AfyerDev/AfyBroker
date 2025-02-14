@@ -16,60 +16,71 @@
  */
 package com.alipay.remoting.rpc;
 
-import com.alipay.remoting.*;
-import com.alipay.remoting.log.BoltLoggerFactory;
-import io.netty.util.Timeout;
-import org.slf4j.Logger;
-
 import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.slf4j.Logger;
+
+import com.alipay.remoting.CommandFactory;
+import com.alipay.remoting.CommandHandler;
+import com.alipay.remoting.InvokeCallback;
+import com.alipay.remoting.InvokeCallbackListener;
+import com.alipay.remoting.InvokeContext;
+import com.alipay.remoting.InvokeFuture;
+import com.alipay.remoting.Protocol;
+import com.alipay.remoting.ProtocolCode;
+import com.alipay.remoting.ProtocolManager;
+import com.alipay.remoting.RemotingCommand;
+import com.alipay.remoting.log.BoltLoggerFactory;
+
+import io.netty.util.Timeout;
+
 /**
  * The default implementation of InvokeFuture.
- *
+ * 
  * @author jiangping
  * @version $Id: DefaultInvokeFuture.java, v 0.1 2015-9-27 PM6:30:22 tao Exp $
  */
 public class DefaultInvokeFuture implements InvokeFuture {
 
-    private static final Logger logger = BoltLoggerFactory
-            .getLogger("RpcRemoting");
+    private static final Logger      logger                  = BoltLoggerFactory
+                                                                 .getLogger("RpcRemoting");
 
-    private final int invokeId;
+    private int                      invokeId;
 
-    private final InvokeCallbackListener callbackListener;
+    private InvokeCallbackListener   callbackListener;
 
-    private final InvokeCallback callback;
+    private InvokeCallback           callback;
 
     private volatile ResponseCommand responseCommand;
 
-    private final CountDownLatch countDownLatch = new CountDownLatch(1);
+    private final CountDownLatch     countDownLatch          = new CountDownLatch(1);
 
-    private final AtomicBoolean executeCallbackOnlyOnce = new AtomicBoolean(false);
+    private final AtomicBoolean      executeCallbackOnlyOnce = new AtomicBoolean(false);
 
-    private Timeout timeout;
+    private Timeout                  timeout;
 
-    private Throwable cause;
+    private Throwable                cause;
 
-    private final ClassLoader classLoader;
+    private ClassLoader              classLoader;
 
-    private final byte protocol;
+    private byte                     protocol;
 
-    private InvokeContext invokeContext;
+    private InvokeContext            invokeContext;
 
-    private final CommandFactory commandFactory;
+    private CommandFactory           commandFactory;
 
     /**
      * Constructor.
      *
-     * @param invokeId         invoke id
+     * @param invokeId invoke id
      * @param callbackListener callback listener
-     * @param callback         callback
-     * @param protocol         protocol code
-     * @param commandFactory   command factory
+     * @param callback callback
+     * @param protocol protocol code
+     * @param commandFactory command factory
      */
     public DefaultInvokeFuture(int invokeId, InvokeCallbackListener callbackListener,
                                InvokeCallback callback, byte protocol, CommandFactory commandFactory) {
@@ -84,12 +95,12 @@ public class DefaultInvokeFuture implements InvokeFuture {
     /**
      * Constructor.
      *
-     * @param invokeId         invoke id
+     * @param invokeId invoke id
      * @param callbackListener callback listener
-     * @param callback         callback
-     * @param protocol         protocol
-     * @param commandFactory   command factory
-     * @param invokeContext    invoke context
+     * @param callback callback
+     * @param protocol protocol
+     * @param commandFactory command factory
+     * @param invokeContext invoke context
      */
     public DefaultInvokeFuture(int invokeId, InvokeCallbackListener callbackListener,
                                InvokeCallback callback, byte protocol,
@@ -115,8 +126,8 @@ public class DefaultInvokeFuture implements InvokeFuture {
         return this.commandFactory.createConnectionClosedResponse(responseHost, null);
     }
 
-    /**
-     * @see InvokeFuture#putResponse(RemotingCommand)
+    /** 
+     * @see com.alipay.remoting.InvokeFuture#putResponse(com.alipay.remoting.RemotingCommand)
      */
     @Override
     public void putResponse(RemotingCommand response) {
@@ -125,7 +136,8 @@ public class DefaultInvokeFuture implements InvokeFuture {
     }
 
     /**
-     * @see InvokeFuture#isDone()
+     * 
+     * @see com.alipay.remoting.InvokeFuture#isDone()
      */
     @Override
     public boolean isDone() {
@@ -137,8 +149,8 @@ public class DefaultInvokeFuture implements InvokeFuture {
         return this.classLoader;
     }
 
-    /**
-     * @see InvokeFuture#invokeId()
+    /** 
+     * @see com.alipay.remoting.InvokeFuture#invokeId()
      */
     @Override
     public int invokeId() {
@@ -154,24 +166,24 @@ public class DefaultInvokeFuture implements InvokeFuture {
         }
     }
 
-    /**
-     * @see InvokeFuture#getInvokeCallback()
+    /** 
+     * @see com.alipay.remoting.InvokeFuture#getInvokeCallback()
      */
     @Override
     public InvokeCallback getInvokeCallback() {
         return this.callback;
     }
 
-    /**
-     * @see InvokeFuture#addTimeout(Timeout)
+    /** 
+     * @see com.alipay.remoting.InvokeFuture#addTimeout(io.netty.util.Timeout)
      */
     @Override
     public void addTimeout(Timeout timeout) {
         this.timeout = timeout;
     }
 
-    /**
-     * @see InvokeFuture#cancelTimeout()
+    /** 
+     * @see com.alipay.remoting.InvokeFuture#cancelTimeout()
      */
     @Override
     public void cancelTimeout() {
@@ -180,24 +192,24 @@ public class DefaultInvokeFuture implements InvokeFuture {
         }
     }
 
-    /**
-     * @see InvokeFuture#setCause(Throwable)
+    /** 
+     * @see com.alipay.remoting.InvokeFuture#setCause(java.lang.Throwable)
      */
     @Override
     public void setCause(Throwable cause) {
         this.cause = cause;
     }
 
-    /**
-     * @see InvokeFuture#getCause()
+    /** 
+     * @see com.alipay.remoting.InvokeFuture#getCause()
      */
     @Override
     public Throwable getCause() {
         return this.cause;
     }
 
-    /**
-     * @see InvokeFuture#getProtocolCode()
+    /** 
+     * @see com.alipay.remoting.InvokeFuture#getProtocolCode()
      */
     @Override
     public byte getProtocolCode() {
@@ -220,8 +232,8 @@ public class DefaultInvokeFuture implements InvokeFuture {
         return invokeContext;
     }
 
-    /**
-     * @see InvokeFuture#tryAsyncExecuteInvokeCallbackAbnormally()
+    /** 
+     * @see com.alipay.remoting.InvokeFuture#tryAsyncExecuteInvokeCallbackAbnormally()
      */
     @Override
     public void tryAsyncExecuteInvokeCallbackAbnormally() {
@@ -239,15 +251,15 @@ public class DefaultInvokeFuture implements InvokeFuture {
                                 try {
                                     if (DefaultInvokeFuture.this.getAppClassLoader() != null) {
                                         oldClassLoader = Thread.currentThread()
-                                                .getContextClassLoader();
+                                            .getContextClassLoader();
                                         Thread.currentThread().setContextClassLoader(
-                                                DefaultInvokeFuture.this.getAppClassLoader());
+                                            DefaultInvokeFuture.this.getAppClassLoader());
                                     }
                                     DefaultInvokeFuture.this.executeInvokeCallback();
                                 } finally {
                                     if (null != oldClassLoader) {
                                         Thread.currentThread()
-                                                .setContextClassLoader(oldClassLoader);
+                                            .setContextClassLoader(oldClassLoader);
                                     }
                                 }
                             }
@@ -255,7 +267,7 @@ public class DefaultInvokeFuture implements InvokeFuture {
                     }
                 } else {
                     logger.error("Executor null in commandHandler of protocolCode [{}].",
-                            this.protocol);
+                        this.protocol);
                 }
             } else {
                 logger.error("protocolCode [{}] not registered!", this.protocol);

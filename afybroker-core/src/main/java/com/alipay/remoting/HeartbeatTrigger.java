@@ -20,7 +20,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Heartbeat triggers here.
- *
+ * 
  * @author jiangping
  * @version $Id: HeartbeatTrigger.java, v 0.1 2015-12-14 PM3:40:38 tao Exp $
  */

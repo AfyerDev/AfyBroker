@@ -22,86 +22,86 @@ import com.alipay.remoting.rpc.RequestCommand;
 import com.alipay.remoting.rpc.ResponseCommand;
 
 /**
- * The default custom serializer, which does nothing.
+ * The default custom serializer, which does nothing. 
  * Extend this class and override the methods you want to custom.
- *
+ * 
  * @author jiangping
  * @version $Id: DefaultCustomSerializer.java, v 0.1 2015-10-8 AM11:09:49 tao Exp $
  */
 public class DefaultCustomSerializer implements CustomSerializer {
 
-    /**
-     * @see CustomSerializer#serializeHeader(RequestCommand, InvokeContext)
+    /** 
+     * @see com.alipay.remoting.CustomSerializer#serializeHeader(com.alipay.remoting.rpc.RequestCommand, InvokeContext)
      */
     @Override
     public <T extends RequestCommand> boolean serializeHeader(T request, InvokeContext invokeContext)
-            throws SerializationException {
+                                                                                                     throws SerializationException {
         return false;
     }
 
-    /**
-     * @see CustomSerializer#serializeHeader(ResponseCommand)
+    /** 
+     * @see com.alipay.remoting.CustomSerializer#serializeHeader(com.alipay.remoting.rpc.ResponseCommand)
      */
     @Override
     public <T extends ResponseCommand> boolean serializeHeader(T response)
-            throws SerializationException {
+                                                                          throws SerializationException {
         return false;
     }
 
-    /**
-     * @see CustomSerializer#deserializeHeader(RequestCommand)
+    /** 
+     * @see com.alipay.remoting.CustomSerializer#deserializeHeader(com.alipay.remoting.rpc.RequestCommand)
      */
     @Override
     public <T extends RequestCommand> boolean deserializeHeader(T request)
-            throws DeserializationException {
+                                                                          throws DeserializationException {
         return false;
     }
 
-    /**
-     * @see CustomSerializer#deserializeHeader(ResponseCommand, InvokeContext)
+    /** 
+     * @see com.alipay.remoting.CustomSerializer#deserializeHeader(com.alipay.remoting.rpc.ResponseCommand, InvokeContext)
      */
     @Override
     public <T extends ResponseCommand> boolean deserializeHeader(T response,
                                                                  InvokeContext invokeContext)
-            throws DeserializationException {
+                                                                                             throws DeserializationException {
         return false;
     }
 
-    /**
-     * @see CustomSerializer#serializeContent(RequestCommand, InvokeContext)
+    /** 
+     * @see com.alipay.remoting.CustomSerializer#serializeContent(com.alipay.remoting.rpc.RequestCommand, InvokeContext)
      */
     @Override
     public <T extends RequestCommand> boolean serializeContent(T request,
                                                                InvokeContext invokeContext)
-            throws SerializationException {
+                                                                                           throws SerializationException {
         return false;
     }
 
-    /**
-     * @see CustomSerializer#serializeContent(ResponseCommand)
+    /** 
+     * @see com.alipay.remoting.CustomSerializer#serializeContent(com.alipay.remoting.rpc.ResponseCommand)
      */
     @Override
     public <T extends ResponseCommand> boolean serializeContent(T response)
-            throws SerializationException {
+                                                                           throws SerializationException {
         return false;
     }
 
-    /**
-     * @see CustomSerializer#deserializeContent(RequestCommand)
+    /** 
+     * @see com.alipay.remoting.CustomSerializer#deserializeContent(com.alipay.remoting.rpc.RequestCommand)
      */
     @Override
     public <T extends RequestCommand> boolean deserializeContent(T request)
-            throws DeserializationException {
+                                                                           throws DeserializationException {
         return false;
     }
 
-    /**
-     * @see CustomSerializer#deserializeContent(ResponseCommand, InvokeContext)
+    /** 
+     * @see com.alipay.remoting.CustomSerializer#deserializeContent(com.alipay.remoting.rpc.ResponseCommand, InvokeContext)
      */
     @Override
     public <T extends ResponseCommand> boolean deserializeContent(T response,
                                                                   InvokeContext invokeContext)
-            throws DeserializationException {
+                                                                                              throws DeserializationException {
         return false;
     }
 

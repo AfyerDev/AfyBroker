@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
 
 /**
  * Command factory
- *
+ * 
  * @author xiaomin.cxm
  * @version $Id: CommandFactory.java, v 0.1 Mar 10, 2016 11:24:24 AM yunliang.shi Exp $
  */
@@ -40,7 +40,6 @@ public interface CommandFactory {
 
     /**
      * create a normal response with response object
-     *
      * @param responseObject
      * @param requestCmd
      * @param <T>

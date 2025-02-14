@@ -21,14 +21,12 @@ import com.alipay.remoting.ResponseStatus;
 
 /**
  * Heartbeat ack.
- *
+ * 
  * @author jiangping
  * @version $Id: HeartbeatAckCommand.java, v 0.1 2015-9-29 AM11:46:11 tao Exp $
  */
 public class HeartbeatAckCommand extends ResponseCommand {
-    /**
-     * For serialization
-     */
+    /** For serialization */
     private static final long serialVersionUID = 2584912495844320855L;
 
     /**

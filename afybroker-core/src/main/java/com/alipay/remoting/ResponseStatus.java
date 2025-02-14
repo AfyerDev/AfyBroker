@@ -18,7 +18,7 @@ package com.alipay.remoting;
 
 /**
  * Status of the response.
- *
+ * 
  * @author jiangping
  * @version $Id: ResponseStatus.java, v 0.1 2015-9-28 PM3:08:12 tao Exp $
  */
@@ -40,7 +40,6 @@ public enum ResponseStatus {
 
     /**
      * Convert to short.
-     *
      * @return
      */
     public short getValue() {
@@ -78,7 +77,7 @@ public enum ResponseStatus {
 
     /**
      * Convert to ResponseStatus.
-     *
+     * 
      * @param value
      * @return
      */

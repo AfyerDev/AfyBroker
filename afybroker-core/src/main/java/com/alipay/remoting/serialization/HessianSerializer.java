@@ -16,33 +16,33 @@
  */
 package com.alipay.remoting.serialization;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import com.alipay.remoting.exception.CodecException;
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
 import com.caucho.hessian.io.SerializerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 /**
  * Hessian2 serializer.
- *
+ * 
  * @author jiangping
  * @version $Id: HessianSerializer.java, v 0.1 2015-10-4 PM9:51:55 tao Exp $
  */
 public class HessianSerializer implements Serializer {
 
-    private final SerializerFactory serializerFactory = new SerializerFactory();
-    private static final ThreadLocal<ByteArrayOutputStream> localOutputByteArray = new ThreadLocal<ByteArrayOutputStream>() {
-        @Override
-        protected ByteArrayOutputStream initialValue() {
-            return new ByteArrayOutputStream();
-        }
-    };
+    private SerializerFactory                         serializerFactory    = new SerializerFactory();
+    private static ThreadLocal<ByteArrayOutputStream> localOutputByteArray = new ThreadLocal<ByteArrayOutputStream>() {
+                                                                               @Override
+                                                                               protected ByteArrayOutputStream initialValue() {
+                                                                                   return new ByteArrayOutputStream();
+                                                                               }
+                                                                           };
 
-    /**
-     * @see Serializer#serialize(Object)
+    /** 
+     * @see com.alipay.remoting.serialization.Serializer#serialize(java.lang.Object)
      */
     @Override
     public byte[] serialize(Object obj) throws CodecException {
@@ -60,7 +60,8 @@ public class HessianSerializer implements Serializer {
     }
 
     /**
-     * @see Serializer#deserialize(byte[], String)
+     * 
+     * @see com.alipay.remoting.serialization.Serializer#deserialize(byte[], java.lang.String)
      */
     @SuppressWarnings("unchecked")
     @Override

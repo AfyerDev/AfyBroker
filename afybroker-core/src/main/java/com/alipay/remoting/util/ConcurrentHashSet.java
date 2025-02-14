@@ -23,12 +23,12 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Concurrent hash set.
- *
+ * 
  * @author yunliang.shi
  * @version $Id: ConcurrentHashSet.java, v 0.1 Mar 11, 2016 3:40:41 PM yunliang.shi Exp $
  */
 public class ConcurrentHashSet<E> extends AbstractSet<E> {
-    private final ConcurrentMap<E, Boolean> map;
+    private ConcurrentMap<E, Boolean> map;
 
     /**
      * constructor
@@ -40,7 +40,6 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> {
 
     /**
      * return the size of the map
-     *
      * @see java.util.AbstractCollection#size()
      */
     @Override
@@ -49,7 +48,8 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> {
     }
 
     /**
-     * @see java.util.AbstractCollection#contains(Object)
+     * 
+     * @see java.util.AbstractCollection#contains(java.lang.Object)
      */
     @Override
     public boolean contains(Object o) {
@@ -57,6 +57,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> {
     }
 
     /**
+     * 
      * @see java.util.AbstractCollection#iterator()
      */
     @Override
@@ -66,8 +67,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> {
 
     /**
      * add an obj to set, if exist, return false, else return true
-     *
-     * @see java.util.AbstractCollection#add(Object)
+     * @see java.util.AbstractCollection#add(java.lang.Object)
      */
     @Override
     public boolean add(E o) {
@@ -75,7 +75,8 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> {
     }
 
     /**
-     * @see java.util.AbstractCollection#remove(Object)
+     * 
+     * @see java.util.AbstractCollection#remove(java.lang.Object)
      */
     @Override
     public boolean remove(Object o) {
@@ -84,7 +85,6 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> {
 
     /**
      * clear the set
-     *
      * @see java.util.AbstractCollection#clear()
      */
     @Override

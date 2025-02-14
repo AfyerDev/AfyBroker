@@ -16,16 +16,17 @@
  */
 package com.alipay.remoting;
 
-import com.alipay.remoting.config.BoltClientOption;
-import com.alipay.remoting.config.Configs;
-import com.alipay.remoting.config.Configuration;
-import com.alipay.remoting.log.BoltLoggerFactory;
-import com.alipay.remoting.util.StringUtils;
-import org.slf4j.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import com.alipay.remoting.config.BoltClientOption;
+import com.alipay.remoting.config.Configuration;
+import org.slf4j.Logger;
+
+import com.alipay.remoting.config.Configs;
+import com.alipay.remoting.log.BoltLoggerFactory;
+import com.alipay.remoting.util.StringUtils;
 
 /**
  * Select a connection randomly
@@ -35,10 +36,10 @@ import java.util.Random;
  */
 public class RandomSelectStrategy implements ConnectionSelectStrategy {
 
-    private static final Logger logger = BoltLoggerFactory.getLogger("CommonDefault");
+    private static final Logger logger    = BoltLoggerFactory.getLogger("CommonDefault");
 
-    private static final int MAX_TIMES = 5;
-    private final Random random = new Random();
+    private static final int    MAX_TIMES = 5;
+    private final Random        random    = new Random();
     private final Configuration configuration;
 
     public RandomSelectStrategy(Configuration configuration) {
@@ -67,7 +68,7 @@ public class RandomSelectStrategy implements ConnectionSelectStrategy {
                 }
                 if (serviceStatusOnConnections.size() == 0) {
                     throw new Exception(
-                            "No available connection when select in RandomSelectStrategy.");
+                        "No available connection when select in RandomSelectStrategy.");
                 }
                 result = randomGet(serviceStatusOnConnections);
             } else {
@@ -82,7 +83,7 @@ public class RandomSelectStrategy implements ConnectionSelectStrategy {
 
     /**
      * get one connection randomly
-     *
+     * 
      * @param connections source connections
      * @return result connection
      */

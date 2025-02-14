@@ -16,14 +16,20 @@
  */
 package com.alipay.remoting.rpc.protocol;
 
-import com.alipay.remoting.*;
+import org.slf4j.Logger;
+
+import com.alipay.remoting.AbstractRemotingProcessor;
+import com.alipay.remoting.Connection;
+import com.alipay.remoting.InvokeFuture;
+import com.alipay.remoting.RemotingCommand;
+import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.log.BoltLoggerFactory;
 import com.alipay.remoting.rpc.HeartbeatAckCommand;
 import com.alipay.remoting.rpc.HeartbeatCommand;
 import com.alipay.remoting.util.RemotingUtil;
+
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import org.slf4j.Logger;
 
 /**
  * Processor for heart beat.
@@ -40,7 +46,7 @@ public class RpcHeartBeatProcessor extends AbstractRemotingProcessor {
             final int id = msg.getId();
             if (logger.isDebugEnabled()) {
                 logger.debug("Heartbeat received! Id=" + id + ", from "
-                        + RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
+                             + RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
             }
             HeartbeatAckCommand ack = new HeartbeatAckCommand();
             ack.setId(id);
@@ -51,11 +57,11 @@ public class RpcHeartBeatProcessor extends AbstractRemotingProcessor {
                     if (future.isSuccess()) {
                         if (logger.isDebugEnabled()) {
                             logger.debug("Send heartbeat ack done! Id={}, to remoteAddr={}", id,
-                                    RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
+                                RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
                         }
                     } else {
                         logger.error("Send heartbeat ack failed! Id={}, to remoteAddr={}", id,
-                                RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
+                            RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
                     }
                 }
 
@@ -70,15 +76,15 @@ public class RpcHeartBeatProcessor extends AbstractRemotingProcessor {
                     future.executeInvokeCallback();
                 } catch (Exception e) {
                     logger.error(
-                            "Exception caught when executing heartbeat invoke callback. From {}",
-                            RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()), e);
+                        "Exception caught when executing heartbeat invoke callback. From {}",
+                        RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()), e);
                 }
             } else {
                 logger
-                        .warn(
-                                "Cannot find heartbeat InvokeFuture, maybe already timeout. Id={}, From {}",
-                                msg.getId(),
-                                RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
+                    .warn(
+                        "Cannot find heartbeat InvokeFuture, maybe already timeout. Id={}, From {}",
+                        msg.getId(),
+                        RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
             }
         } else {
             throw new RuntimeException("Cannot process command: " + msg.getClass().getName());

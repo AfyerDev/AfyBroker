@@ -27,7 +27,6 @@ public interface RejectionProcessableInvokeCallback extends InvokeCallback {
     /**
      * when user executor rejected the {@link com.alipay.remoting.rpc.RpcInvokeCallbackListener.CallbackTask},
      * bolt will handle the rejected task according to this {@link RejectedExecutionPolicy}
-     *
      * @return rejectedExecution Policy
      * @see com.alipay.remoting.rpc.RpcInvokeCallbackListener#onResponse(InvokeFuture)
      */

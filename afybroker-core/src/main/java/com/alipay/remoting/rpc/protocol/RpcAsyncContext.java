@@ -16,11 +16,11 @@
  */
 package com.alipay.remoting.rpc.protocol;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.ResponseStatus;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Async biz context of Rpc.
@@ -29,28 +29,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Id: RpcAsyncContext.java, v 0.1 May 16, 2016 8:23:07 PM xiaomin.cxm Exp $
  */
 public class RpcAsyncContext implements AsyncContext {
-    /**
-     * remoting context
-     */
-    private final RemotingContext ctx;
+    /** remoting context */
+    private RemotingContext     ctx;
 
-    /**
-     * rpc request command
-     */
-    private final RpcRequestCommand cmd;
+    /** rpc request command */
+    private RpcRequestCommand   cmd;
 
-    private final RpcRequestProcessor processor;
+    private RpcRequestProcessor processor;
 
-    /**
-     * is response sent already
-     */
-    private final AtomicBoolean isResponseSentAlready = new AtomicBoolean();
+    /** is response sent already */
+    private AtomicBoolean       isResponseSentAlready = new AtomicBoolean();
 
     /**
      * Default constructor.
      *
-     * @param ctx       remoting context
-     * @param cmd       rpc request command
+     * @param ctx remoting context
+     * @param cmd rpc request command
      * @param processor rpc request processor
      */
     public RpcAsyncContext(final RemotingContext ctx, final RpcRequestCommand cmd,
@@ -61,29 +55,29 @@ public class RpcAsyncContext implements AsyncContext {
     }
 
     /**
-     * @see AsyncContext#sendResponse(Object)
+     * @see com.alipay.remoting.AsyncContext#sendResponse(java.lang.Object)
      */
     @Override
     public void sendResponse(Object responseObject) {
         if (isResponseSentAlready.compareAndSet(false, true)) {
             processor.sendResponseIfNecessary(this.ctx, cmd.getType(), processor
-                    .getCommandFactory().createResponse(responseObject, this.cmd));
+                .getCommandFactory().createResponse(responseObject, this.cmd));
         } else {
             throw new IllegalStateException("Should not send rpc response repeatedly!");
         }
     }
 
     /**
-     * @see AsyncContext#sendException(Throwable)
+     * @see com.alipay.remoting.AsyncContext#sendException(java.lang.Throwable)
      */
     @Override
     public void sendException(Throwable ex) {
         if (isResponseSentAlready.compareAndSet(false, true)) {
             processor.sendResponseIfNecessary(
-                    this.ctx,
-                    cmd.getType(),
-                    processor.getCommandFactory().createExceptionResponse(this.cmd.getId(),
-                            ResponseStatus.SERVER_EXCEPTION, ex));
+                this.ctx,
+                cmd.getType(),
+                processor.getCommandFactory().createExceptionResponse(this.cmd.getId(),
+                    ResponseStatus.SERVER_EXCEPTION, ex));
         } else {
             throw new IllegalStateException("Should not send rpc response repeatedly!");
         }

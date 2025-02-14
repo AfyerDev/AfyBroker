@@ -106,7 +106,7 @@ public class ConfigManager {
 
     public static int conn_create_tp_keepalive() {
         return getInt(Configs.CONN_CREATE_TP_KEEPALIVE_TIME,
-                Configs.CONN_CREATE_TP_KEEPALIVE_TIME_DEFAULT);
+            Configs.CONN_CREATE_TP_KEEPALIVE_TIME_DEFAULT);
     }
 
     // ~~~ properties for processor manager
@@ -138,7 +138,7 @@ public class ConfigManager {
 
     public static long conn_monitor_initial_delay() {
         return getLong(Configs.CONN_MONITOR_INITIAL_DELAY,
-                Configs.CONN_MONITOR_INITIAL_DELAY_DEFAULT);
+            Configs.CONN_MONITOR_INITIAL_DELAY_DEFAULT);
     }
 
     public static long conn_monitor_period() {
@@ -147,6 +147,10 @@ public class ConfigManager {
 
     public static int conn_threshold() {
         return getInt(Configs.CONN_THRESHOLD, Configs.CONN_THRESHOLD_DEFAULT);
+    }
+
+    public static int retry_detect_period() {
+        return getInt(Configs.RETRY_DETECT_PERIOD, Configs.RETRY_DETECT_PERIOD_DEFAULT);
     }
 
     // ~~~ properties for serializer

@@ -16,6 +16,8 @@
  */
 package com.alipay.remoting.rpc.protocol;
 
+import java.io.UnsupportedEncodingException;
+
 import com.alipay.remoting.CustomSerializer;
 import com.alipay.remoting.CustomSerializerManager;
 import com.alipay.remoting.InvokeContext;
@@ -25,27 +27,23 @@ import com.alipay.remoting.exception.SerializationException;
 import com.alipay.remoting.rpc.ResponseCommand;
 import com.alipay.remoting.serialization.SerializerManager;
 
-import java.io.UnsupportedEncodingException;
-
 /**
  * Response command for Rpc.
- *
+ * 
  * @author jiangping
  * @version $Id: RpcResponseCommand.java, v 0.1 2015-9-25 PM2:15:41 tao Exp $
  */
 public class RpcResponseCommand extends ResponseCommand {
-    /**
-     * For serialization
-     */
+    /** For serialization  */
     private static final long serialVersionUID = 5667111367880018776L;
-    private Object responseObject;
+    private Object            responseObject;
 
-    private String responseClass;
+    private String            responseClass;
 
-    private CustomSerializer customSerializer;
-    private Object responseHeader;
+    private CustomSerializer  customSerializer;
+    private Object            responseHeader;
 
-    private String errorMsg;
+    private String            errorMsg;
 
     public RpcResponseCommand() {
         super(RpcCommandCode.RPC_RESPONSE);
@@ -63,7 +61,7 @@ public class RpcResponseCommand extends ResponseCommand {
 
     /**
      * Getter method for property <tt>responseObject</tt>.
-     *
+     * 
      * @return property value of responseObject
      */
     public Object getResponseObject() {
@@ -72,7 +70,7 @@ public class RpcResponseCommand extends ResponseCommand {
 
     /**
      * Setter method for property <tt>responseObject</tt>.
-     *
+     * 
      * @param response value to be assigned to property responseObject
      */
     public void setResponseObject(Object response) {
@@ -87,7 +85,7 @@ public class RpcResponseCommand extends ResponseCommand {
                 this.setClazz(clz);
             } catch (UnsupportedEncodingException e) {
                 throw new SerializationException("Unsupported charset: " + Configs.DEFAULT_CHARSET,
-                        e);
+                    e);
             }
         }
     }
@@ -99,7 +97,7 @@ public class RpcResponseCommand extends ResponseCommand {
                 this.setResponseClass(new String(this.getClazz(), Configs.DEFAULT_CHARSET));
             } catch (UnsupportedEncodingException e) {
                 throw new DeserializationException("Unsupported charset: "
-                        + Configs.DEFAULT_CHARSET, e);
+                                                   + Configs.DEFAULT_CHARSET, e);
             }
         }
     }
@@ -109,17 +107,17 @@ public class RpcResponseCommand extends ResponseCommand {
         if (this.getResponseObject() != null) {
             try {
                 if (this.getCustomSerializer() != null
-                        && this.getCustomSerializer().serializeContent(this)) {
+                    && this.getCustomSerializer().serializeContent(this)) {
                     return;
                 }
 
                 this.setContent(SerializerManager.getSerializer(this.getSerializer()).serialize(
-                        this.responseObject));
+                    this.responseObject));
             } catch (SerializationException e) {
                 throw e;
             } catch (Exception e) {
                 throw new SerializationException(
-                        "Exception caught when serialize content of rpc response command!", e);
+                    "Exception caught when serialize content of rpc response command!", e);
             }
         }
     }
@@ -129,18 +127,18 @@ public class RpcResponseCommand extends ResponseCommand {
         if (this.getResponseObject() == null) {
             try {
                 if (this.getCustomSerializer() != null
-                        && this.getCustomSerializer().deserializeContent(this, invokeContext)) {
+                    && this.getCustomSerializer().deserializeContent(this, invokeContext)) {
                     return;
                 }
-                if (this.getContent() != null) {
+                if (this.getContent() != null && this.getContentLength() > 0) {
                     this.setResponseObject(SerializerManager.getSerializer(this.getSerializer())
-                            .deserialize(this.getContent(), this.responseClass));
+                        .deserialize(this.getContent(), this.responseClass));
                 }
             } catch (DeserializationException e) {
                 throw e;
             } catch (Exception e) {
                 throw new DeserializationException(
-                        "Exception caught when deserialize content of rpc response command!", e);
+                    "Exception caught when deserialize content of rpc response command!", e);
             }
         }
 
@@ -155,7 +153,7 @@ public class RpcResponseCommand extends ResponseCommand {
                 throw e;
             } catch (Exception e) {
                 throw new SerializationException(
-                        "Exception caught when serialize header of rpc response command!", e);
+                    "Exception caught when serialize header of rpc response command!", e);
             }
         }
     }
@@ -170,7 +168,7 @@ public class RpcResponseCommand extends ResponseCommand {
                     throw e;
                 } catch (Exception e) {
                     throw new DeserializationException(
-                            "Exception caught when deserialize header of rpc response command!", e);
+                        "Exception caught when deserialize header of rpc response command!", e);
                 }
             }
         }
@@ -178,7 +176,7 @@ public class RpcResponseCommand extends ResponseCommand {
 
     /**
      * Getter method for property <tt>responseClass</tt>.
-     *
+     * 
      * @return property value of responseClass
      */
     public String getResponseClass() {
@@ -187,7 +185,7 @@ public class RpcResponseCommand extends ResponseCommand {
 
     /**
      * Setter method for property <tt>responseClass</tt>.
-     *
+     * 
      * @param responseClass value to be assigned to property responseClass
      */
     public void setResponseClass(String responseClass) {
@@ -196,7 +194,7 @@ public class RpcResponseCommand extends ResponseCommand {
 
     /**
      * Getter method for property <tt>responseHeader</tt>.
-     *
+     * 
      * @return property value of responseHeader
      */
     public Object getResponseHeader() {
@@ -205,7 +203,7 @@ public class RpcResponseCommand extends ResponseCommand {
 
     /**
      * Setter method for property <tt>responseHeader</tt>.
-     *
+     * 
      * @param responseHeader value to be assigned to property responseHeader
      */
     public void setResponseHeader(Object responseHeader) {
@@ -214,7 +212,7 @@ public class RpcResponseCommand extends ResponseCommand {
 
     /**
      * Getter method for property <tt>customSerializer</tt>.
-     *
+     * 
      * @return property value of customSerializer
      */
     public CustomSerializer getCustomSerializer() {
@@ -232,7 +230,7 @@ public class RpcResponseCommand extends ResponseCommand {
 
     /**
      * Getter method for property <tt>errorMsg</tt>.
-     *
+     * 
      * @return property value of errorMsg
      */
     public String getErrorMsg() {
@@ -241,7 +239,7 @@ public class RpcResponseCommand extends ResponseCommand {
 
     /**
      * Setter method for property <tt>errorMsg</tt>.
-     *
+     * 
      * @param errorMsg value to be assigned to property errorMsg
      */
     public void setErrorMsg(String errorMsg) {

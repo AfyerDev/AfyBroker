@@ -16,8 +16,6 @@
  */
 package com.alipay.remoting.config;
 
-import java.util.Objects;
-
 /**
  * The base implementation class of the configuration item.
  *
@@ -26,7 +24,7 @@ import java.util.Objects;
 public class BoltOption<T> {
 
     private final String name;
-    private final T defaultValue;
+    private T            defaultValue;
 
     protected BoltOption(String name, T defaultValue) {
         this.name = name;
@@ -61,7 +59,7 @@ public class BoltOption<T> {
 
         BoltOption<?> that = (BoltOption<?>) o;
 
-        return Objects.equals(name, that.name);
+        return name != null ? name.equals(that.name) : that.name == null;
     }
 
     @Override

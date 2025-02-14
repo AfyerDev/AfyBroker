@@ -16,54 +16,47 @@
  */
 package com.alipay.remoting;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.alipay.remoting.rpc.RpcCommandType;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.alipay.remoting.util.ConnectionUtil;
 import com.alipay.remoting.util.StringUtils;
+
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * Wrap the ChannelHandlerContext.
- *
+ * 
  * @author jiangping
  * @version $Id: RemotingContext.java, v 0.1 2015-9-6 PM5:50:07 tao Exp $
  */
 public class RemotingContext implements Cloneable {
 
-    private ChannelHandlerContext channelContext;
+    private ChannelHandlerContext                       channelContext;
 
-    private boolean serverSide = false;
+    private boolean                                     serverSide     = false;
 
-    /**
-     * whether need handle request timeout, if true, request will be discarded. The default value is true
-     */
-    private boolean timeoutDiscard = true;
+    /** whether need handle request timeout, if true, request will be discarded. The default value is true */
+    private boolean                                     timeoutDiscard = true;
 
-    /**
-     * request arrive time stamp
-     */
-    private long arriveTimestamp;
+    /** request arrive time stamp */
+    private long                                        arriveTimestamp;
 
-    /**
-     * request timeout setting by invoke side
-     */
-    private int timeout;
+    /** request timeout setting by invoke side */
+    private int                                         timeout;
 
-    /**
-     * rpc command type
-     */
-    private int rpcCommandType;
+    /** rpc command type */
+    private int                                         rpcCommandType;
 
     private ConcurrentHashMap<String, UserProcessor<?>> userProcessors;
 
-    private InvokeContext invokeContext;
+    private InvokeContext                               invokeContext;
 
     /**
      * Constructor.
-     *
+     * 
      * @param ctx
      */
     public RemotingContext(ChannelHandlerContext ctx) {
@@ -72,7 +65,6 @@ public class RemotingContext implements Cloneable {
 
     /**
      * Constructor.
-     *
      * @param ctx
      * @param serverSide
      */
@@ -83,7 +75,6 @@ public class RemotingContext implements Cloneable {
 
     /**
      * Constructor.
-     *
      * @param ctx
      * @param serverSide
      * @param userProcessors
@@ -97,7 +88,6 @@ public class RemotingContext implements Cloneable {
 
     /**
      * Constructor.
-     *
      * @param ctx
      * @param invokeContext
      * @param serverSide
@@ -114,7 +104,7 @@ public class RemotingContext implements Cloneable {
 
     /**
      * Wrap the writeAndFlush method.
-     *
+     * 
      * @param msg as msg
      * @return channel future
      */
@@ -134,6 +124,7 @@ public class RemotingContext implements Cloneable {
 
     /**
      * Wrap the write method.
+     *
      */
     public void flush() {
         this.channelContext.flush();
@@ -141,26 +132,29 @@ public class RemotingContext implements Cloneable {
 
     /**
      * whether this request already timeout
-     *
+     * 
      * @return
      */
     public boolean isRequestTimeout() {
-        return this.timeout > 0 && (this.rpcCommandType != RpcCommandType.REQUEST_ONEWAY)
-                && (System.currentTimeMillis() - this.arriveTimestamp) > this.timeout;
+        if (this.timeout > 0 && (this.rpcCommandType != RpcCommandType.REQUEST_ONEWAY)
+            && (System.currentTimeMillis() - this.arriveTimestamp) > this.timeout) {
+            return true;
+        }
+        return false;
     }
 
     /**
      * The server side
-     *
+     * 
      * @return
      */
     public boolean isServerSide() {
         return this.serverSide;
     }
 
-    /**
+    /** 
      * Get user processor for class name.
-     *
+     * 
      * @param className
      * @return
      */
@@ -170,7 +164,7 @@ public class RemotingContext implements Cloneable {
 
     /**
      * Get connection from channel
-     *
+     * 
      * @return
      */
     public Connection getConnection() {

@@ -28,14 +28,12 @@ public interface ExtendedNettyChannelHandler {
 
     /**
      * Netty ChannelHandlers to be added before Bolt's built-in Handler.
-     *
      * @return Netty ChannelHandler list
      */
     List<ChannelHandler> frontChannelHandlers();
 
     /**
      * Netty ChannelHandlers to be added after Bolt's built-in Handler.
-     *
      * @return Netty ChannelHandler list
      */
     List<ChannelHandler> backChannelHandlers();

@@ -29,7 +29,7 @@ import java.util.WeakHashMap;
  */
 public class ThreadLocalArriveTimeHolder {
 
-    private static final FastThreadLocal<WeakHashMap<Channel, Map<Integer, Long>>> arriveTimeInNano = new FastThreadLocal<WeakHashMap<Channel, Map<Integer, Long>>>();
+    private static FastThreadLocal<WeakHashMap<Channel, Map<Integer, Long>>> arriveTimeInNano = new FastThreadLocal<WeakHashMap<Channel, Map<Integer, Long>>>();
 
     public static void arrive(Channel channel, Integer key) {
         Map<Integer, Long> map = getArriveTimeMap(channel);

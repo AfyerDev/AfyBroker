@@ -16,30 +16,31 @@
  */
 package com.alipay.remoting;
 
-import com.alipay.remoting.config.ConfigManager;
-import com.alipay.remoting.log.BoltLoggerFactory;
-import com.alipay.remoting.util.RunStateRecordedFutureTask;
-import org.slf4j.Logger;
-
 import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+
+import com.alipay.remoting.config.ConfigManager;
+import com.alipay.remoting.log.BoltLoggerFactory;
+import com.alipay.remoting.util.RunStateRecordedFutureTask;
+
 /**
- * A default connection monitor that handle connections with strategies
+ *  A default connection monitor that handle connections with strategies
  *
  * @author tsui
  * @version $Id: DefaultConnectionMonitor.java, v 0.1 2017-02-21 12:09 tsui Exp $
  */
 public class DefaultConnectionMonitor extends AbstractLifeCycle {
 
-    private static final Logger logger = BoltLoggerFactory.getLogger("CommonDefault");
+    private static final Logger             logger = BoltLoggerFactory.getLogger("CommonDefault");
 
-    private final ConnectionManager connectionManager;
+    private final ConnectionManager         connectionManager;
     private final ConnectionMonitorStrategy strategy;
 
-    private ScheduledThreadPoolExecutor executor;
+    private ScheduledThreadPoolExecutor     executor;
 
     public DefaultConnectionMonitor(ConnectionMonitorStrategy strategy,
                                     ConnectionManager connectionManager) {
@@ -66,7 +67,7 @@ public class DefaultConnectionMonitor extends AbstractLifeCycle {
         long period = ConfigManager.conn_monitor_period();
 
         this.executor = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory(
-                "ConnectionMonitorThread", true), new ThreadPoolExecutor.AbortPolicy());
+            "ConnectionMonitorThread", true), new ThreadPoolExecutor.AbortPolicy());
         this.executor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
@@ -91,4 +92,21 @@ public class DefaultConnectionMonitor extends AbstractLifeCycle {
         executor.shutdown();
     }
 
+    /**
+     * Start schedule task
+     * please use {@link DefaultConnectionMonitor#startup()} instead
+     */
+    @Deprecated
+    public void start() {
+        startup();
+    }
+
+    /**
+     * cancel task and shutdown executor
+     * please use {@link DefaultConnectionMonitor#shutdown()} instead
+     */
+    @Deprecated
+    public void destroy() {
+        shutdown();
+    }
 }

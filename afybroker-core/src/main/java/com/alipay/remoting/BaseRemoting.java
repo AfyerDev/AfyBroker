@@ -16,57 +16,59 @@
  */
 package com.alipay.remoting;
 
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.log.BoltLoggerFactory;
 import com.alipay.remoting.util.RemotingUtil;
+
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
-import org.slf4j.Logger;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Base remoting capability.
- *
+ * 
  * @author jiangping
  * @version $Id: BaseRemoting.java, v 0.1 Mar 4, 2016 12:09:56 AM tao Exp $
  */
 public abstract class BaseRemoting {
 
-    private final static Logger LOGGER = BoltLoggerFactory
-            .getLogger("CommonDefault");
-    private final static long ABANDONING_REQUEST_THRESHOLD = 0L;
+    private final static Logger LOGGER                       = BoltLoggerFactory
+                                                                 .getLogger("CommonDefault");
+    private final static long   ABANDONING_REQUEST_THRESHOLD = 0L;
 
-    private final CommandFactory      defalutCommandFactory;
+    protected CommandFactory    commandFactory;
 
     public BaseRemoting(CommandFactory commandFactory) {
-        this.defalutCommandFactory = commandFactory;
+        this.commandFactory = commandFactory;
     }
 
     /**
      * Synchronous invocation
-     *
+     * 
      * @param conn
      * @param request
      * @param timeoutMillis
      * @return
-     * @throws InterruptedException
+     * @throws InterruptedException 
      * @throws RemotingException
      */
     protected RemotingCommand invokeSync(final Connection conn, final RemotingCommand request,
                                          final int timeoutMillis) throws RemotingException,
-            InterruptedException {
+                                                                 InterruptedException {
         int remainingTime = remainingTime(request, timeoutMillis);
         if (remainingTime <= ABANDONING_REQUEST_THRESHOLD) {
             // already timeout
             LOGGER
-                    .warn(
-                            "already timeout before writing to the network, requestId: {}, remoting address: {}",
-                            request.getId(),
-                            conn.getUrl() != null ? conn.getUrl() : RemotingUtil.parseRemoteAddress(conn
-                                    .getChannel()));
+                .warn(
+                    "already timeout before writing to the network, requestId: {}, remoting address: {}",
+                    request.getId(),
+                    conn.getUrl() != null ? conn.getUrl() : RemotingUtil.parseRemoteAddress(conn
+                        .getChannel()));
             return this.getCommandFactory(conn).createTimeoutResponse(conn.getRemoteAddress());
         }
 
@@ -85,7 +87,7 @@ public abstract class BaseRemoting {
                     if (!f.isSuccess()) {
                         conn.removeInvokeFuture(requestId);
                         future.putResponse(getCommandFactory(conn).createSendFailedResponse(
-                                conn.getRemoteAddress(), f.cause()));
+                            conn.getRemoteAddress(), f.cause()));
                         LOGGER.error("Invoke send failed, id={}", requestId, f.cause());
                     }
                 }
@@ -97,7 +99,7 @@ public abstract class BaseRemoting {
         } catch (Exception e) {
             conn.removeInvokeFuture(requestId);
             future.putResponse(getCommandFactory(conn).createSendFailedResponse(
-                    conn.getRemoteAddress(), e));
+                conn.getRemoteAddress(), e));
             LOGGER.error("Exception caught when sending invocation, id={}", requestId, e);
         }
         RemotingCommand response = future.waitResponse(remainingTime);
@@ -117,7 +119,7 @@ public abstract class BaseRemoting {
 
     /**
      * Invocation with callback.
-     *
+     * 
      * @param conn
      * @param request
      * @param invokeCallback
@@ -127,17 +129,17 @@ public abstract class BaseRemoting {
     protected void invokeWithCallback(final Connection conn, final RemotingCommand request,
                                       final InvokeCallback invokeCallback, final int timeoutMillis) {
         final InvokeFuture future = createInvokeFuture(conn, request, request.getInvokeContext(),
-                invokeCallback);
+            invokeCallback);
         int remainingTime = remainingTime(request, timeoutMillis);
         if (remainingTime <= ABANDONING_REQUEST_THRESHOLD) {
             LOGGER
-                    .warn(
-                            "already timeout before writing to the network, requestId: {}, remoting address: {}",
-                            request.getId(),
-                            conn.getUrl() != null ? conn.getUrl() : RemotingUtil.parseRemoteAddress(conn
-                                    .getChannel()));
+                .warn(
+                    "already timeout before writing to the network, requestId: {}, remoting address: {}",
+                    request.getId(),
+                    conn.getUrl() != null ? conn.getUrl() : RemotingUtil.parseRemoteAddress(conn
+                        .getChannel()));
             future.putResponse(getCommandFactory(conn).createTimeoutResponse(
-                    conn.getRemoteAddress()));
+                conn.getRemoteAddress()));
             future.tryAsyncExecuteInvokeCallbackAbnormally();
             return;
         }
@@ -150,7 +152,7 @@ public abstract class BaseRemoting {
                     InvokeFuture future = conn.removeInvokeFuture(requestId);
                     if (future != null) {
                         future.putResponse(getCommandFactory(conn).createTimeoutResponse(
-                                conn.getRemoteAddress()));
+                            conn.getRemoteAddress()));
                         future.tryAsyncExecuteInvokeCallbackAbnormally();
                     }
                 }
@@ -166,11 +168,11 @@ public abstract class BaseRemoting {
                         if (f != null) {
                             f.cancelTimeout();
                             f.putResponse(getCommandFactory(conn).createSendFailedResponse(
-                                    conn.getRemoteAddress(), cf.cause()));
+                                conn.getRemoteAddress(), cf.cause()));
                             f.tryAsyncExecuteInvokeCallbackAbnormally();
                         }
                         LOGGER.error("Invoke send failed. The address is {}",
-                                RemotingUtil.parseRemoteAddress(conn.getChannel()), cf.cause());
+                            RemotingUtil.parseRemoteAddress(conn.getChannel()), cf.cause());
                     }
                 }
 
@@ -180,17 +182,17 @@ public abstract class BaseRemoting {
             if (f != null) {
                 f.cancelTimeout();
                 f.putResponse(getCommandFactory(conn).createSendFailedResponse(
-                        conn.getRemoteAddress(), e));
+                    conn.getRemoteAddress(), e));
                 f.tryAsyncExecuteInvokeCallbackAbnormally();
             }
             LOGGER.error("Exception caught when sending invocation. The address is {}",
-                    RemotingUtil.parseRemoteAddress(conn.getChannel()), e);
+                RemotingUtil.parseRemoteAddress(conn.getChannel()), e);
         }
     }
 
     /**
      * Invocation with future returned.
-     *
+     * 
      * @param conn
      * @param request
      * @param timeoutMillis
@@ -204,13 +206,13 @@ public abstract class BaseRemoting {
         int remainingTime = remainingTime(request, timeoutMillis);
         if (remainingTime <= ABANDONING_REQUEST_THRESHOLD) {
             LOGGER
-                    .warn(
-                            "already timeout before writing to the network, requestId: {}, remoting address: {}",
-                            request.getId(),
-                            conn.getUrl() != null ? conn.getUrl() : RemotingUtil.parseRemoteAddress(conn
-                                    .getChannel()));
+                .warn(
+                    "already timeout before writing to the network, requestId: {}, remoting address: {}",
+                    request.getId(),
+                    conn.getUrl() != null ? conn.getUrl() : RemotingUtil.parseRemoteAddress(conn
+                        .getChannel()));
             future.putResponse(getCommandFactory(conn).createTimeoutResponse(
-                    conn.getRemoteAddress()));
+                conn.getRemoteAddress()));
             return future;
         }
 
@@ -222,7 +224,7 @@ public abstract class BaseRemoting {
                     InvokeFuture future = conn.removeInvokeFuture(requestId);
                     if (future != null) {
                         future.putResponse(getCommandFactory(conn).createTimeoutResponse(
-                                conn.getRemoteAddress()));
+                            conn.getRemoteAddress()));
                     }
                 }
 
@@ -238,10 +240,10 @@ public abstract class BaseRemoting {
                         if (f != null) {
                             f.cancelTimeout();
                             f.putResponse(getCommandFactory(conn).createSendFailedResponse(
-                                    conn.getRemoteAddress(), cf.cause()));
+                                conn.getRemoteAddress(), cf.cause()));
                         }
                         LOGGER.error("Invoke send failed. The address is {}",
-                                RemotingUtil.parseRemoteAddress(conn.getChannel()), cf.cause());
+                            RemotingUtil.parseRemoteAddress(conn.getChannel()), cf.cause());
                     }
                 }
 
@@ -251,17 +253,17 @@ public abstract class BaseRemoting {
             if (f != null) {
                 f.cancelTimeout();
                 f.putResponse(getCommandFactory(conn).createSendFailedResponse(
-                        conn.getRemoteAddress(), e));
+                    conn.getRemoteAddress(), e));
             }
             LOGGER.error("Exception caught when sending invocation. The address is {}",
-                    RemotingUtil.parseRemoteAddress(conn.getChannel()), e);
+                RemotingUtil.parseRemoteAddress(conn.getChannel()), e);
         }
         return future;
     }
 
     /**
      * Oneway invocation.
-     *
+     * 
      * @param conn
      * @param request
      * @throws InterruptedException
@@ -277,11 +279,11 @@ public abstract class BaseRemoting {
             int remainingTime = remainingTime(request, url.getConnectTimeout());
             if (remainingTime <= ABANDONING_REQUEST_THRESHOLD) {
                 LOGGER
-                        .warn(
-                                "already timeout before writing to the network, requestId: {}, remoting address: {}",
-                                request.getId(),
-                                conn.getUrl() != null ? conn.getUrl() : RemotingUtil
-                                        .parseRemoteAddress(conn.getChannel()));
+                    .warn(
+                        "already timeout before writing to the network, requestId: {}, remoting address: {}",
+                        request.getId(),
+                        conn.getUrl() != null ? conn.getUrl() : RemotingUtil
+                            .parseRemoteAddress(conn.getChannel()));
                 return;
             }
         }
@@ -293,20 +295,19 @@ public abstract class BaseRemoting {
                 public void operationComplete(ChannelFuture f) throws Exception {
                     if (!f.isSuccess()) {
                         LOGGER.error("Invoke send failed. The address is {}",
-                                RemotingUtil.parseRemoteAddress(conn.getChannel()), f.cause());
+                            RemotingUtil.parseRemoteAddress(conn.getChannel()), f.cause());
                     }
                 }
 
             });
         } catch (Exception e) {
             LOGGER.error("Exception caught when sending invocation. The address is {}",
-                    RemotingUtil.parseRemoteAddress(conn.getChannel()), e);
+                RemotingUtil.parseRemoteAddress(conn.getChannel()), e);
         }
     }
 
     /**
      * Create invoke future with {@link InvokeContext}.
-     *
      * @param request
      * @param invokeContext
      * @return
@@ -316,7 +317,6 @@ public abstract class BaseRemoting {
 
     /**
      * Create invoke future with {@link InvokeContext}.
-     *
      * @param conn
      * @param request
      * @param invokeContext
@@ -328,6 +328,13 @@ public abstract class BaseRemoting {
                                                        final InvokeContext invokeContext,
                                                        final InvokeCallback invokeCallback);
 
+    @Deprecated
+    protected CommandFactory getCommandFactory() {
+        LOGGER
+            .warn("The method getCommandFactory() is deprecated. Please use getCommandFactory(ProtocolCode/Connection) instead.");
+        return commandFactory;
+    }
+
     protected CommandFactory getCommandFactory(Connection conn) {
         ProtocolCode protocolCode = conn.getChannel().attr(Connection.PROTOCOL).get();
         return getCommandFactory(protocolCode);
@@ -335,11 +342,11 @@ public abstract class BaseRemoting {
 
     protected CommandFactory getCommandFactory(ProtocolCode protocolCode) {
         if (protocolCode == null) {
-            return defalutCommandFactory;
+            return getCommandFactory();
         }
         Protocol protocol = ProtocolManager.getProtocol(protocolCode);
         if (protocol == null) {
-            return defalutCommandFactory;
+            return getCommandFactory();
         }
         return protocol.getCommandFactory();
     }

@@ -22,7 +22,7 @@ package com.alipay.remoting;
  * @author chengyi (mark.lx@antfin.com) 2019-03-07 14:40
  */
 public class DefaultServerConnectionManager extends DefaultConnectionManager implements
-        ServerConnectionManager {
+                                                                            ServerConnectionManager {
 
     public DefaultServerConnectionManager(ConnectionSelectStrategy connectionSelectStrategy) {
         super(connectionSelectStrategy);

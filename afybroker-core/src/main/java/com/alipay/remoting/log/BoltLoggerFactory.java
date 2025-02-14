@@ -17,10 +17,13 @@
 package com.alipay.remoting.log;
 
 import org.slf4j.Logger;
+
 import org.slf4j.LoggerFactory;
 
 /**
  * Customized logger factory
+ *
+ * This can use middleware-log in sofa-common-tools to detect specific log implementation and initialize with the given log template.
  *
  * @author tsui
  * @version $Id: BoltLoggerFactory.java, v 0.1 2017-09-05 16:06 tsui Exp $

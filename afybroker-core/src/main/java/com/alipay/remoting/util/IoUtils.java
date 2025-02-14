@@ -21,8 +21,9 @@ import java.io.IOException;
 
 /**
  * IO Utilities
+ * 
+ * @author boyan(boyan@antfin.com)
  *
- * @author boyan(boyan @ antfin.com)
  */
 public class IoUtils {
     public static void closeQuietly(Closeable closeable) {

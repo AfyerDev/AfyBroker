@@ -16,25 +16,31 @@
  */
 package com.alipay.remoting.rpc.protocol;
 
+import java.net.InetSocketAddress;
+import java.util.List;
+
+import com.alipay.remoting.log.BoltLoggerFactory;
+import com.alipay.remoting.util.ThreadLocalArriveTimeHolder;
+import io.netty.channel.Channel;
+import org.slf4j.Logger;
+
 import com.alipay.remoting.CommandCode;
 import com.alipay.remoting.CommandDecoder;
 import com.alipay.remoting.ResponseStatus;
 import com.alipay.remoting.config.switches.ProtocolSwitch;
-import com.alipay.remoting.log.BoltLoggerFactory;
-import com.alipay.remoting.rpc.*;
+import com.alipay.remoting.rpc.HeartbeatAckCommand;
+import com.alipay.remoting.rpc.HeartbeatCommand;
+import com.alipay.remoting.rpc.RequestCommand;
+import com.alipay.remoting.rpc.ResponseCommand;
+import com.alipay.remoting.rpc.RpcCommandType;
 import com.alipay.remoting.util.CrcUtil;
-import com.alipay.remoting.util.ThreadLocalArriveTimeHolder;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import org.slf4j.Logger;
 
-import java.net.InetSocketAddress;
-import java.util.List;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Command decoder for Rpc v2.
- *
+ * 
  * @author jiangping
  * @version $Id: RpcCommandDecoderV2.java, v 0.1 2017-05-27 PM5:15:26 tao Exp $
  */
@@ -42,11 +48,11 @@ public class RpcCommandDecoderV2 implements CommandDecoder {
 
     private static final Logger logger = BoltLoggerFactory.getLogger("RpcRemoting");
 
-    private final int lessLen;
+    private int                 lessLen;
 
     {
         lessLen = RpcProtocolV2.getResponseHeaderLength() < RpcProtocolV2.getRequestHeaderLength() ? RpcProtocolV2
-                .getResponseHeaderLength() : RpcProtocolV2.getRequestHeaderLength();
+            .getResponseHeaderLength() : RpcProtocolV2.getRequestHeaderLength();
     }
 
     /**
@@ -105,7 +111,7 @@ public class RpcCommandDecoderV2 implements CommandDecoder {
                             // decide the at-least bytes length for each version
                             int lengthAtLeastForV1 = classLen + headerLen + contentLen;
                             boolean crcSwitchOn = ProtocolSwitch.isOn(
-                                    ProtocolSwitch.CRC_SWITCH_INDEX, protocolSwitchValue);
+                                ProtocolSwitch.CRC_SWITCH_INDEX, protocolSwitchValue);
                             int lengthAtLeastForV2 = classLen + headerLen + contentLen;
                             if (crcSwitchOn) {
                                 lengthAtLeastForV2 += 4;// crc int
@@ -113,7 +119,7 @@ public class RpcCommandDecoderV2 implements CommandDecoder {
 
                             // continue read
                             if ((version == RpcProtocolV2.PROTOCOL_VERSION_1 && in.readableBytes() >= lengthAtLeastForV1)
-                                    || (version == RpcProtocolV2.PROTOCOL_VERSION_2 && in
+                                || (version == RpcProtocolV2.PROTOCOL_VERSION_2 && in
                                     .readableBytes() >= lengthAtLeastForV2)) {
                                 if (classLen > 0) {
                                     clazz = new byte[classLen];
@@ -136,7 +142,7 @@ public class RpcCommandDecoderV2 implements CommandDecoder {
                             }
 
                             long headerArriveTimeInNano = ThreadLocalArriveTimeHolder.getAndClear(
-                                    channel, requestId);
+                                channel, requestId);
 
                             RequestCommand command;
                             if (cmdCode == CommandCode.HEARTBEAT_VALUE) {
@@ -177,7 +183,7 @@ public class RpcCommandDecoderV2 implements CommandDecoder {
                             // decide the at-least bytes length for each version
                             int lengthAtLeastForV1 = classLen + headerLen + contentLen;
                             boolean crcSwitchOn = ProtocolSwitch.isOn(
-                                    ProtocolSwitch.CRC_SWITCH_INDEX, protocolSwitchValue);
+                                ProtocolSwitch.CRC_SWITCH_INDEX, protocolSwitchValue);
                             int lengthAtLeastForV2 = classLen + headerLen + contentLen;
                             if (crcSwitchOn) {
                                 lengthAtLeastForV2 += 4;// crc int
@@ -185,7 +191,7 @@ public class RpcCommandDecoderV2 implements CommandDecoder {
 
                             // continue read
                             if ((version == RpcProtocolV2.PROTOCOL_VERSION_1 && in.readableBytes() >= lengthAtLeastForV1)
-                                    || (version == RpcProtocolV2.PROTOCOL_VERSION_2 && in
+                                || (version == RpcProtocolV2.PROTOCOL_VERSION_2 && in
                                     .readableBytes() >= lengthAtLeastForV2)) {
                                 if (classLen > 0) {
                                     clazz = new byte[classLen];
@@ -195,7 +201,9 @@ public class RpcCommandDecoderV2 implements CommandDecoder {
                                     header = new byte[headerLen];
                                     in.readBytes(header);
                                 }
-                                if (contentLen > 0) {
+                                if (contentLen == 0) {
+                                    content = new byte[0];
+                                } else if (contentLen > 0) {
                                     content = new byte[contentLen];
                                     in.readBytes(content);
                                 }
@@ -223,7 +231,7 @@ public class RpcCommandDecoderV2 implements CommandDecoder {
                             command.setContent(content);
                             command.setResponseTimeMillis(System.currentTimeMillis());
                             command.setResponseHost((InetSocketAddress) ctx.channel()
-                                    .remoteAddress());
+                                .remoteAddress());
 
                             out.add(command);
                         } else {

@@ -16,21 +16,36 @@
  */
 package com.alipay.remoting.rpc.protocol;
 
-import com.alipay.remoting.*;
-import com.alipay.remoting.log.BoltLoggerFactory;
-import com.alipay.remoting.rpc.*;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler.Sharable;
-import org.slf4j.Logger;
-
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.slf4j.Logger;
+
+import com.alipay.remoting.AbstractRemotingProcessor;
+import com.alipay.remoting.CommandCode;
+import com.alipay.remoting.CommandFactory;
+import com.alipay.remoting.CommandHandler;
+import com.alipay.remoting.CommonCommandCode;
+import com.alipay.remoting.ProcessorManager;
+import com.alipay.remoting.RemotingCommand;
+import com.alipay.remoting.RemotingContext;
+import com.alipay.remoting.RemotingProcessor;
+import com.alipay.remoting.ResponseStatus;
+import com.alipay.remoting.log.BoltLoggerFactory;
+import com.alipay.remoting.rpc.RequestCommand;
+import com.alipay.remoting.rpc.ResponseCommand;
+import com.alipay.remoting.rpc.RpcCommand;
+import com.alipay.remoting.rpc.RpcCommandType;
+import com.alipay.remoting.rpc.RpcConfigManager;
+
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler.Sharable;
+
 /**
  * Rpc command handler.
- *
+ * 
  * @author jiangping
  * @version $Id: RpcServerHandler.java, v 0.1 2015-8-31 PM7:43:06 tao Exp $
  */
@@ -38,12 +53,10 @@ import java.util.concurrent.RejectedExecutionException;
 public class RpcCommandHandler implements CommandHandler {
 
     private static final Logger logger = BoltLoggerFactory.getLogger("RpcRemoting");
-    /**
-     * All processors
-     */
-    ProcessorManager processorManager;
+    /** All processors */
+    ProcessorManager            processorManager;
 
-    CommandFactory commandFactory;
+    CommandFactory              commandFactory;
 
     /**
      * Constructor. Initialize the processor manager and register processors.
@@ -53,22 +66,22 @@ public class RpcCommandHandler implements CommandHandler {
         this.processorManager = new ProcessorManager();
         //process request
         this.processorManager.registerProcessor(RpcCommandCode.RPC_REQUEST,
-                new RpcRequestProcessor(this.commandFactory));
+            new RpcRequestProcessor(this.commandFactory));
         //process response
         this.processorManager.registerProcessor(RpcCommandCode.RPC_RESPONSE,
-                new RpcResponseProcessor());
+            new RpcResponseProcessor());
 
         this.processorManager.registerProcessor(CommonCommandCode.HEARTBEAT,
-                new RpcHeartBeatProcessor());
+            new RpcHeartBeatProcessor());
 
         this.processorManager
-                .registerDefaultProcessor(new AbstractRemotingProcessor<RemotingCommand>() {
-                    @Override
-                    public void doProcess(RemotingContext ctx, RemotingCommand msg) throws Exception {
-                        logger.error("No processor available for command code {}, msgId {}",
-                                msg.getCmdCode(), msg.getId());
-                    }
-                });
+            .registerDefaultProcessor(new AbstractRemotingProcessor<RemotingCommand>() {
+                @Override
+                public void doProcess(RemotingContext ctx, RemotingCommand msg) throws Exception {
+                    logger.error("No processor available for command code {}, msgId {}",
+                        msg.getCmdCode(), msg.getId());
+                }
+            });
     }
 
     /**
@@ -111,7 +124,7 @@ public class RpcCommandHandler implements CommandHandler {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void process(RemotingContext ctx, Object msg) {
         try {
             final RpcCommand cmd = (RpcCommand) msg;
@@ -138,42 +151,42 @@ public class RpcCommandHandler implements CommandHandler {
     private void processExceptionForSingleCommand(RemotingContext ctx, Object msg, Throwable t) {
         final int id = ((RpcCommand) msg).getId();
         final String emsg = "Exception caught when processing "
-                + ((msg instanceof RequestCommand) ? "request, id=" : "response, id=");
+                            + ((msg instanceof RequestCommand) ? "request, id=" : "response, id=");
         logger.warn(emsg + id, t);
         if (msg instanceof RequestCommand) {
             final RequestCommand cmd = (RequestCommand) msg;
             if (cmd.getType() != RpcCommandType.REQUEST_ONEWAY) {
                 if (t instanceof RejectedExecutionException) {
                     final ResponseCommand response = this.commandFactory.createExceptionResponse(
-                            id, ResponseStatus.SERVER_THREADPOOL_BUSY);
+                        id, ResponseStatus.SERVER_THREADPOOL_BUSY);
                     // RejectedExecutionException here assures no response has been sent back
                     // Other exceptions should be processed where exception was caught, because here we don't known whether ack had been sent back.
                     ctx.getChannelContext().writeAndFlush(response)
-                            .addListener(new ChannelFutureListener() {
-                                @Override
-                                public void operationComplete(ChannelFuture future) throws Exception {
-                                    if (future.isSuccess()) {
-                                        if (logger.isInfoEnabled()) {
-                                            logger
-                                                    .info(
-                                                            "Write back exception response done, requestId={}, status={}",
-                                                            id, response.getResponseStatus());
-                                        }
-                                    } else {
-                                        logger.error(
-                                                "Write back exception response failed, requestId={}", id,
-                                                future.cause());
+                        .addListener(new ChannelFutureListener() {
+                            @Override
+                            public void operationComplete(ChannelFuture future) throws Exception {
+                                if (future.isSuccess()) {
+                                    if (logger.isInfoEnabled()) {
+                                        logger
+                                            .info(
+                                                "Write back exception response done, requestId={}, status={}",
+                                                id, response.getResponseStatus());
                                     }
+                                } else {
+                                    logger.error(
+                                        "Write back exception response failed, requestId={}", id,
+                                        future.cause());
                                 }
+                            }
 
-                            });
+                        });
                 }
             }
         }
     }
 
     /**
-     * @see CommandHandler#registerProcessor(CommandCode, RemotingProcessor)
+     * @see CommandHandler#registerProcessor(com.alipay.remoting.CommandCode, RemotingProcessor)
      */
     @Override
     public void registerProcessor(CommandCode cmd,
@@ -182,7 +195,7 @@ public class RpcCommandHandler implements CommandHandler {
     }
 
     /**
-     * @see CommandHandler#registerDefaultExecutor(ExecutorService)
+     * @see CommandHandler#registerDefaultExecutor(java.util.concurrent.ExecutorService)
      */
     @Override
     public void registerDefaultExecutor(ExecutorService executor) {

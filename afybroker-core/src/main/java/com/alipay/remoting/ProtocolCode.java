@@ -26,9 +26,7 @@ import java.util.Arrays;
  * @version $Id: ProtocolCode.java, v 0.1 2018-03-27 17:23 tsui Exp $
  */
 public class ProtocolCode {
-    /**
-     * bytes to represent protocol code
-     */
+    /** bytes to represent protocol code */
     byte[] version;
 
     private ProtocolCode(byte... version) {
@@ -41,7 +39,6 @@ public class ProtocolCode {
 
     /**
      * get the first single byte if your protocol code is single code.
-     *
      * @return
      */
     public byte getFirstByte() {

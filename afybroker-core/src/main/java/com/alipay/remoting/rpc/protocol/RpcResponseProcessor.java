@@ -16,14 +16,21 @@
  */
 package com.alipay.remoting.rpc.protocol;
 
-import com.alipay.remoting.*;
+import java.util.concurrent.ExecutorService;
+
+import org.slf4j.Logger;
+
+import com.alipay.remoting.AbstractRemotingProcessor;
+import com.alipay.remoting.Connection;
+import com.alipay.remoting.InvokeFuture;
+import com.alipay.remoting.RemotingCommand;
+import com.alipay.remoting.RemotingContext;
 import com.alipay.remoting.log.BoltLoggerFactory;
 import com.alipay.remoting.util.RemotingUtil;
-import org.slf4j.Logger;
 
 /**
  * Processor to process RpcResponse.
- *
+ * 
  * @author jiangping
  * @version $Id: RpcResponseProcessor.java, v 0.1 2015-10-1 PM11:06:52 tao Exp $
  */
@@ -39,7 +46,14 @@ public class RpcResponseProcessor extends AbstractRemotingProcessor<RemotingComm
     }
 
     /**
-     * @see AbstractRemotingProcessor#doProcess
+     * Constructor.
+     */
+    public RpcResponseProcessor(ExecutorService executor) {
+        super(executor);
+    }
+
+    /**
+     * @see com.alipay.remoting.AbstractRemotingProcessor#doProcess
      */
     @Override
     public void doProcess(RemotingContext ctx, RemotingCommand cmd) {
@@ -59,13 +73,13 @@ public class RpcResponseProcessor extends AbstractRemotingProcessor<RemotingComm
                     future.executeInvokeCallback();
                 } catch (Exception e) {
                     logger.error("Exception caught when executing invoke callback, id={}",
-                            cmd.getId(), e);
+                        cmd.getId(), e);
                 }
             } else {
                 logger
-                        .warn("Cannot find InvokeFuture, maybe already timeout, id={}, from={} ",
-                                cmd.getId(),
-                                RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
+                    .warn("Cannot find InvokeFuture, maybe already timeout, id={}, from={} ",
+                        cmd.getId(),
+                        RemotingUtil.parseRemoteAddress(ctx.getChannelContext().channel()));
             }
         } finally {
             if (null != oldClassLoader) {

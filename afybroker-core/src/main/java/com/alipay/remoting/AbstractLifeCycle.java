@@ -52,8 +52,8 @@ public abstract class AbstractLifeCycle implements LifeCycle {
     protected void ensureStarted() {
         if (!isStarted()) {
             throw new LifeCycleException(String.format(
-                    "Component(%s) has not been started yet, please startup first!", getClass()
-                            .getSimpleName()));
+                "Component(%s) has not been started yet, please startup first!", getClass()
+                    .getSimpleName()));
         }
     }
 }

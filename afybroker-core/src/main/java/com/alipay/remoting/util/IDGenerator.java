@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * IDGenerator is used for generating request id in integer form.
- *
+ * 
  * @author jiangping
  * @version $Id: IDGenerator.java, v 0.1 2015-9-23 PM5:28:58 tao Exp $
  */
@@ -29,7 +29,7 @@ public class IDGenerator {
 
     /**
      * generate the next id
-     *
+     * 
      * @return
      */
     public static int nextId() {

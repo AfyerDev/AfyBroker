@@ -16,12 +16,12 @@
  */
 package com.alipay.remoting.rpc.protocol;
 
+import java.util.concurrent.Executor;
+
 import com.alipay.remoting.AbstractLifeCycle;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.DefaultBizContext;
 import com.alipay.remoting.RemotingContext;
-
-import java.util.concurrent.Executor;
 
 /**
  * Implements common function and provide default value.
@@ -30,17 +30,15 @@ import java.util.concurrent.Executor;
  * @version $Id: AbstractUserProcessor.java, v 0.1 May 19, 2016 3:38:22 PM xiaomin.cxm Exp $
  */
 public abstract class AbstractUserProcessor<T> extends AbstractLifeCycle implements
-        UserProcessor<T> {
+                                                                        UserProcessor<T> {
 
-    /**
-     * executor selector, default null unless provide one using its setter method
-     */
+    /** executor selector, default null unless provide one using its setter method */
     protected ExecutorSelector executorSelector;
 
     /**
      * Provide a default - {@link DefaultBizContext} implementation of {@link BizContext}.
      *
-     * @see UserProcessor#preHandleRequest(RemotingContext, Object)
+     * @see com.alipay.remoting.rpc.protocol.UserProcessor#preHandleRequest(com.alipay.remoting.RemotingContext, java.lang.Object)
      */
     @Override
     public BizContext preHandleRequest(RemotingContext remotingCtx, T request) {

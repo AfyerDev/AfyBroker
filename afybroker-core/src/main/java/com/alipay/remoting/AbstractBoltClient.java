@@ -16,17 +16,29 @@
  */
 package com.alipay.remoting;
 
-import com.alipay.remoting.config.*;
+import com.alipay.remoting.config.BoltClientOption;
+import com.alipay.remoting.config.BoltOption;
+import com.alipay.remoting.config.BoltOptions;
+import com.alipay.remoting.config.ConfigManager;
+import com.alipay.remoting.config.Configuration;
+import com.alipay.remoting.config.ConfigurableInstance;
+import com.alipay.remoting.config.configs.ConfigContainer;
+import com.alipay.remoting.config.configs.DefaultConfigContainer;
+import com.alipay.remoting.config.switches.GlobalSwitch;
 
 /**
  * @author chengyi (mark.lx@antfin.com) 2018-11-07 15:22
  */
-public abstract class AbstractBoltClient extends AbstractLifeCycle implements BoltClient {
+public abstract class AbstractBoltClient extends AbstractLifeCycle implements BoltClient,
+                                                                  ConfigurableInstance {
 
-    private final BoltOptions options;
+    private final BoltOptions     options;
+    private final GlobalSwitch    globalSwitch;
+    private final ConfigContainer configContainer;
 
     public AbstractBoltClient() {
         this.options = new BoltOptions();
+        this.globalSwitch = new GlobalSwitch();
         if (ConfigManager.conn_reconnect_switch()) {
             option(BoltClientOption.CONN_RECONNECT_SWITCH, true);
         } else {
@@ -38,6 +50,7 @@ public abstract class AbstractBoltClient extends AbstractLifeCycle implements Bo
         } else {
             option(BoltClientOption.CONN_MONITOR_SWITCH, false);
         }
+        this.configContainer = new DefaultConfigContainer();
     }
 
     @Override
@@ -51,4 +64,31 @@ public abstract class AbstractBoltClient extends AbstractLifeCycle implements Bo
         return this;
     }
 
+    @Override
+    @Deprecated
+    public ConfigContainer conf() {
+        return this.configContainer;
+    }
+
+    @Override
+    @Deprecated
+    public GlobalSwitch switches() {
+        return this.globalSwitch;
+    }
+
+    @Override
+    public void initWriteBufferWaterMark(int low, int high) {
+        option(BoltClientOption.NETTY_BUFFER_LOW_WATER_MARK, low);
+        option(BoltClientOption.NETTY_BUFFER_HIGH_WATER_MARK, high);
+    }
+
+    @Override
+    public int netty_buffer_low_watermark() {
+        return option(BoltClientOption.NETTY_BUFFER_LOW_WATER_MARK);
+    }
+
+    @Override
+    public int netty_buffer_high_watermark() {
+        return option(BoltClientOption.NETTY_BUFFER_HIGH_WATER_MARK);
+    }
 }

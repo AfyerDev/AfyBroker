@@ -16,10 +16,9 @@
  */
 package com.alipay.remoting.rpc;
 
-import com.alipay.remoting.config.ConfigManager;
-
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
+import com.alipay.remoting.config.ConfigManager;
 
 /**
  * RPC framework config manager.
@@ -29,7 +28,7 @@ import javax.net.ssl.TrustManagerFactory;
 public class RpcConfigManager {
     public static boolean dispatch_msg_list_in_default_executor() {
         return ConfigManager.getBool(RpcConfigs.DISPATCH_MSG_LIST_IN_DEFAULT_EXECUTOR,
-                RpcConfigs.DISPATCH_MSG_LIST_IN_DEFAULT_EXECUTOR_DEFAULT);
+            RpcConfigs.DISPATCH_MSG_LIST_IN_DEFAULT_EXECUTOR_DEFAULT);
     }
 
     @Deprecated
@@ -60,7 +59,7 @@ public class RpcConfigManager {
     @Deprecated
     public static String server_ssl_kmf_algorithm() {
         return ConfigManager.getString(RpcConfigs.SRV_SSL_KMF_ALGO,
-                KeyManagerFactory.getDefaultAlgorithm());
+            KeyManagerFactory.getDefaultAlgorithm());
     }
 
     @Deprecated
@@ -86,6 +85,6 @@ public class RpcConfigManager {
     @Deprecated
     public static String client_ssl_tmf_algorithm() {
         return ConfigManager.getString(RpcConfigs.CLI_SSL_TMF_ALGO,
-                TrustManagerFactory.getDefaultAlgorithm());
+            TrustManagerFactory.getDefaultAlgorithm());
     }
 }

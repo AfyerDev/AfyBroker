@@ -20,25 +20,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manage the custom serializer according to the class name.
- *
+ * 
  * @author jiangping
  * @version $Id: CustomSerializerManager.java, v 0.1 2015-10-20 AM10:46:39 tao Exp $
  */
 public class CustomSerializerManager {
 
-    /**
-     * For rpc
-     */
-    private static final ConcurrentHashMap<String/* class name */, CustomSerializer> classCustomSerializer = new ConcurrentHashMap<String, CustomSerializer>();
+    /** For rpc */
+    private static ConcurrentHashMap<String/* class name */, CustomSerializer>        classCustomSerializer   = new ConcurrentHashMap<String, CustomSerializer>();
 
-    /**
-     * For user defined command
-     */
-    private static final ConcurrentHashMap<CommandCode/* command code */, CustomSerializer> commandCustomSerializer = new ConcurrentHashMap<CommandCode, CustomSerializer>();
+    /** For user defined command */
+    private static ConcurrentHashMap<CommandCode/* command code */, CustomSerializer> commandCustomSerializer = new ConcurrentHashMap<CommandCode, CustomSerializer>();
 
     /**
      * Register custom serializer for class name.
-     *
+     * 
      * @param className
      * @param serializer
      * @return
@@ -47,14 +43,14 @@ public class CustomSerializerManager {
         CustomSerializer prevSerializer = classCustomSerializer.putIfAbsent(className, serializer);
         if (prevSerializer != null) {
             throw new RuntimeException("CustomSerializer has been registered for class: "
-                    + className + ", the custom serializer is: "
-                    + prevSerializer.getClass().getName());
+                                       + className + ", the custom serializer is: "
+                                       + prevSerializer.getClass().getName());
         }
     }
 
     /**
      * Get the custom serializer for class name.
-     *
+     * 
      * @param className
      * @return
      */
@@ -67,7 +63,7 @@ public class CustomSerializerManager {
 
     /**
      * Register custom serializer for command code.
-     *
+     * 
      * @param code
      * @param serializer
      * @return
@@ -76,14 +72,14 @@ public class CustomSerializerManager {
         CustomSerializer prevSerializer = commandCustomSerializer.putIfAbsent(code, serializer);
         if (prevSerializer != null) {
             throw new RuntimeException("CustomSerializer has been registered for command code: "
-                    + code + ", the custom serializer is: "
-                    + prevSerializer.getClass().getName());
+                                       + code + ", the custom serializer is: "
+                                       + prevSerializer.getClass().getName());
         }
     }
 
     /**
      * Get the custom serializer for command code.
-     *
+     * 
      * @param code
      * @return
      */

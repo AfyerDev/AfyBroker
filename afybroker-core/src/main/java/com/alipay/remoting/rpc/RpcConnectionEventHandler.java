@@ -19,11 +19,12 @@ package com.alipay.remoting.rpc;
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventHandler;
 import com.alipay.remoting.config.Configuration;
+
 import io.netty.channel.ChannelHandlerContext;
 
 /**
  * ConnectionEventHandler for Rpc.
- *
+ * 
  * @author jiangping
  * @version $Id: RpcConnectionEventHandler.java, v 0.1 2015-10-16 PM4:41:29 tao Exp $
  */
@@ -38,7 +39,7 @@ public class RpcConnectionEventHandler extends ConnectionEventHandler {
     }
 
     /**
-     * @see ConnectionEventHandler#channelInactive(ChannelHandlerContext)
+     * @see com.alipay.remoting.ConnectionEventHandler#channelInactive(io.netty.channel.ChannelHandlerContext)
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {

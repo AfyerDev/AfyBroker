@@ -16,12 +16,13 @@
  */
 package com.alipay.remoting;
 
-import com.alipay.remoting.log.BoltLoggerFactory;
-import org.slf4j.Logger;
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.slf4j.Logger;
+
+import com.alipay.remoting.log.BoltLoggerFactory;
 
 /**
  * Reconnect manager.
@@ -31,16 +32,16 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class ReconnectManager extends AbstractLifeCycle implements Reconnector {
 
-    private static final Logger logger = BoltLoggerFactory
-            .getLogger("CommonDefault");
+    private static final Logger                      logger                   = BoltLoggerFactory
+                                                                                  .getLogger("CommonDefault");
 
-    private static final int HEAL_CONNECTION_INTERVAL = 1000;
+    private static final int                         HEAL_CONNECTION_INTERVAL = 1000;
 
-    private final ConnectionManager connectionManager;
+    private final ConnectionManager                  connectionManager;
     private final LinkedBlockingQueue<ReconnectTask> tasks;
-    private final List<Url> canceled;
+    private final List<Url>                          canceled;
 
-    private Thread healConnectionThreads;
+    private Thread                                   healConnectionThreads;
 
     public ReconnectManager(ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
@@ -91,6 +92,41 @@ public class ReconnectManager extends AbstractLifeCycle implements Reconnector {
         this.canceled.clear();
     }
 
+    /**
+     * please use {@link Reconnector#disableReconnect(Url)} instead
+     */
+    @Deprecated
+    public void addCancelUrl(Url url) {
+        ensureStarted();
+        disableReconnect(url);
+    }
+
+    /**
+     * please use {@link Reconnector#enableReconnect(Url)} instead
+     */
+    @Deprecated
+    public void removeCancelUrl(Url url) {
+        ensureStarted();
+        enableReconnect(url);
+    }
+
+    /**
+     * please use {@link Reconnector#reconnect(Url)} instead
+     */
+    @Deprecated
+    public void addReconnectTask(Url url) {
+        ensureStarted();
+        reconnect(url);
+    }
+
+    /**
+     * please use {@link Reconnector#shutdown()} instead
+     */
+    @Deprecated
+    public void stop() {
+        shutdown();
+    }
+
     private final class HealConnectionRunner implements Runnable {
         private long lastConnectTime = -1;
 
@@ -119,7 +155,7 @@ public class ReconnectManager extends AbstractLifeCycle implements Reconnector {
                         task.run();
                     } else {
                         logger.warn("Invalid reconnect request task {}, cancel list size {}",
-                                task.url, canceled.size());
+                            task.url, canceled.size());
                     }
                     this.lastConnectTime = System.currentTimeMillis() - start;
                 } catch (Exception e) {
