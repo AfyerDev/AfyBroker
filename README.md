@@ -1,5 +1,8 @@
-<h1 align="center">AfyBroker</h1>
-<h5 align="center">高效率bukkit通信框架，基于sofabolt</h5>
+<div align="center">
+    <h1>AfyBroker</h1>
+    <h5>高效率bukkit通信框架，基于sofabolt</h5>
+    <span><a href="./README.en-US.md">English</a> | 中文</span>
+</div>
 
 ## 💡这是什么
 
