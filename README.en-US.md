@@ -6,13 +6,13 @@
 
 ## 💡What is this
 
-- This is an RPC cross-server communication framework for Bukkit cluster servers
-- Used to implement message passing and remote code invocation between different Bukkit, BungeeCord, Velocity, and even Mirai servers
-- Aims to simplify cross-server communication development process with low learning curve and easy-to-use methods
-- Based on high-performance SofaBolt framework, using lock-free asynchronous event-driven design, stress tested to handle millions of communication requests per second
-- Supports multiple communication models including synchronous, asynchronous, and callback, with request timeout handling and automatic disconnection/reconnection
-- High-performance serialization framework with near-native performance and nanosecond-level response time
-- Supports Bungee cluster architecture, specially designed for large servers capable of handling tens of thousands of players
+- This is an RPC framework for Bukkit cluster servers.
+- Used to implement message passing and remote code invocation between different Bukkit, BungeeCord, Velocity, etc
+- Aims to simplify cross-server communication development process with low learning curve and easy-to-use methods.
+- Based on high-performance SofaBolt framework, using lock-free asynchronous event-driven design, stress tested to handle millions of communication requests per second.
+- Supports multiple communication models including synchronous, asynchronous, and callback, with request timeout handling and automatic disconnection/reconnection.
+- High-performance serialization framework with near-native performance and nanosecond-level response time.
+- Supports Bungee cluster architecture, specially designed for large servers capable of handling tens of thousands of players.
 - Flexible addition of custom server types to meet various communication business needs
 
 ## ⚡Quick Installation
@@ -23,7 +23,7 @@
 gradlew build
 ```
 
-2. Install the project to your local Maven repository
+2. Install the project to your local Maven repository.
 
 ```shell
 gradlew publishMavenPublicationToMavenLocal
@@ -53,7 +53,7 @@ broker:
 
 You can refer to these demo projects using this framework to quickly get started
 
-- Cross-server private messaging: https://github.com/Nipuru/MsgDemo  
-- Cross-server teleportation: https://github.com/Nipuru/TpaDemo
+- private messaging: https://github.com/Nipuru/MsgDemo  
+- teleportation: https://github.com/Nipuru/TpaDemo
 
-For details on RPC protocol implementation, please refer to [sofabolt](https://github.com/sofastack/sofa-bolt/blob/master/README.md)
+For details on RPC firework, please refer to [sofabolt](https://github.com/sofastack/sofa-bolt/blob/master/README.md)
