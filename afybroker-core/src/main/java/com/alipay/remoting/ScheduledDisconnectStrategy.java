@@ -16,20 +16,19 @@
  */
 package com.alipay.remoting;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.slf4j.Logger;
-
 import com.alipay.remoting.config.ConfigManager;
 import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.log.BoltLoggerFactory;
 import com.alipay.remoting.util.FutureTaskUtil;
 import com.alipay.remoting.util.RemotingUtil;
 import com.alipay.remoting.util.RunStateRecordedFutureTask;
+import org.slf4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An implemented strategy to monitor connections:
@@ -109,8 +108,8 @@ public class ScheduledDisconnectStrategy implements ConnectionMonitorStrategy {
                         Configs.CONN_SERVICE_STATUS_OFF);
                     serviceOffConnections.add(freshSelectConnect);
                 } else {
-                    if (logger.isInfoEnabled()) {
-                        logger.info("serviceOnConnections({}) size[{}], CONNECTION_THRESHOLD[{}].",
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("serviceOnConnections({}) size[{}], CONNECTION_THRESHOLD[{}].",
                             poolKey, serviceOnConnections.size(), connectionThreshold);
                     }
                 }
@@ -121,8 +120,8 @@ public class ScheduledDisconnectStrategy implements ConnectionMonitorStrategy {
                             offConn.close();
                         }
                     } else {
-                        if (logger.isInfoEnabled()) {
-                            logger.info("Address={} won't close at this schedule turn",
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Address={} won't close at this schedule turn",
                                 RemotingUtil.parseRemoteAddress(offConn.getChannel()));
                         }
                     }
