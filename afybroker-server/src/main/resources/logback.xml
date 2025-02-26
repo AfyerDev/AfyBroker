@@ -3,6 +3,7 @@
     <property name="logback.logdir" value="./logs"/>
 
     <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>
                 <pattern>%d{HH:mm:ss.SSS} %boldYellow([%thread]) %cyan(%level) - %msg%n</pattern>
