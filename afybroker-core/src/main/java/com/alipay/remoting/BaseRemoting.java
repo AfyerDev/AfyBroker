@@ -16,18 +16,16 @@
  */
 package com.alipay.remoting;
 
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.log.BoltLoggerFactory;
 import com.alipay.remoting.util.RemotingUtil;
-
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
+import org.slf4j.Logger;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Base remoting capability.
@@ -328,13 +326,6 @@ public abstract class BaseRemoting {
                                                        final InvokeContext invokeContext,
                                                        final InvokeCallback invokeCallback);
 
-    @Deprecated
-    protected CommandFactory getCommandFactory() {
-        LOGGER
-            .warn("The method getCommandFactory() is deprecated. Please use getCommandFactory(ProtocolCode/Connection) instead.");
-        return commandFactory;
-    }
-
     protected CommandFactory getCommandFactory(Connection conn) {
         ProtocolCode protocolCode = conn.getChannel().attr(Connection.PROTOCOL).get();
         return getCommandFactory(protocolCode);
@@ -342,11 +333,11 @@ public abstract class BaseRemoting {
 
     protected CommandFactory getCommandFactory(ProtocolCode protocolCode) {
         if (protocolCode == null) {
-            return getCommandFactory();
+            return commandFactory;
         }
         Protocol protocol = ProtocolManager.getProtocol(protocolCode);
         if (protocol == null) {
-            return getCommandFactory();
+            return commandFactory;
         }
         return protocol.getCommandFactory();
     }
