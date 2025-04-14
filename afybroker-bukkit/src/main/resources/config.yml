@@ -5,6 +5,12 @@ broker:
   port: 11200
   # 客户端名称 每个客户端应该唯一 建议和bungee内的此服务端名称保持一致，如spawn1、lobby1等
   name: 'bukkit-%unique_id%'
+  # 客户端默认标签 可以删除
+  tags: ['bukkit', 'server']
+  # 元数据信息 字符串键值对 自行拓展
+  metadata:
+    #key1: 'value1'
+    #key2: 'value2'
 
 server:
   # mc 服务器的 ip端口 信息，用于将服务器自动注册到 proxy(bungee,velocity)

@@ -5,6 +5,12 @@ broker:
   port: 11200
   # 客户端名称 每个客户端应该唯一
   name: 'bungee-%unique_id%'
+  # 客户端默认标签 可以删除
+  tags: ['bungee', 'proxy']
+  # 元数据信息 字符串键值对 自行拓展
+  metadata:
+    #key1: 'value1'
+    #key2: 'value2'
 
 player:
   # 在服务器网关断联后是否踢出全部玩家

@@ -8,7 +8,7 @@ subprojects {
     apply(plugin = "java")
 
     group = "net.afyer.afybroker"
-    version = "2.3"
+    version = "2.4"
 
     repositories {
         mavenCentral()
@@ -23,11 +23,11 @@ subprojects {
         testImplementation ("org.junit.jupiter:junit-jupiter-api:5.8.2")
         testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 
-        compileOnly ("org.projectlombok:lombok:1.18.24")
-        annotationProcessor ("org.projectlombok:lombok:1.18.24")
+        compileOnly ("org.projectlombok:lombok:1.18.36")
+        annotationProcessor ("org.projectlombok:lombok:1.18.36")
 
-        testCompileOnly ("org.projectlombok:lombok:1.18.24")
-        testAnnotationProcessor ("org.projectlombok:lombok:1.18.24")
+        testCompileOnly ("org.projectlombok:lombok:1.18.36")
+        testAnnotationProcessor ("org.projectlombok:lombok:1.18.36")
     }
 
     java {

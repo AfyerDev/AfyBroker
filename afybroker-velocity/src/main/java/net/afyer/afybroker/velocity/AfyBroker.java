@@ -81,13 +81,14 @@ public class AfyBroker {
             }
 
             syncEnable = config.getNode("server", "sync-enable").getBoolean(false);
-            BrokerClientBuilder brokerClientBuilder = BrokerClient.newBuilder()
+            BrokerClientBuilder builder = BrokerClient.newBuilder()
                     .host(config.getNode("broker", "host").getString(BrokerGlobalConfig.BROKER_HOST))
                     .port(config.getNode("broker", "port").getInt(BrokerGlobalConfig.BROKER_PORT))
                     .name(config.getNode("broker", "name").getString("velocity-%unique_id%")
                             .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
                             .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
                     )
+                    .addTags(config.getNode("tags").getList(Object::toString))
                     .type(BrokerClientType.PROXY)
                     .registerUserProcessor(new ConnectToServerVelocityProcessor(this))
                     .registerUserProcessor(new KickPlayerVelocityProcessor(this))
@@ -96,10 +97,13 @@ public class AfyBroker {
                     .registerUserProcessor(new SyncServerVelocityProcessor(this))
                     .registerUserProcessor(new PlayerProfilePropertyVelocityProcessor(this))
                     .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventVelocityProcessor(this));
+            config.getNode("metadata").getChildrenMap().forEach((key, value) -> {
+               builder.addMetadata(key.toString(), value.getString());
+            });
             for (Consumer<BrokerClientBuilder> buildAction : Broker.getBuildActions()) {
-                buildAction.accept(brokerClientBuilder);
+                buildAction.accept(builder);
             }
-            brokerClient = brokerClientBuilder.build();
+            brokerClient = builder.build();
             Broker.setClient(brokerClient);
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             BoltUtils.initProtocols();

@@ -49,6 +49,7 @@ public class AfyBroker extends Plugin {
                             .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
                             .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
                     )
+                    .addTags(getConfig().getStringList("tags"))
                     .type(BrokerClientType.PROXY)
                     .registerUserProcessor(new ConnectToServerBungeeProcessor())
                     .registerUserProcessor(new KickPlayerBungeeProcessor())
@@ -57,6 +58,12 @@ public class AfyBroker extends Plugin {
                     .registerUserProcessor(new SyncServerBungeeProcessor(this))
                     .registerUserProcessor(new PlayerProfilePropertyBungeeProcessor())
                     .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBungeeProcessor(this));
+            Configuration metadata = config.getSection("metadata");
+            if (metadata != null) {
+                for (String key : metadata.getKeys()) {
+                    brokerClientBuilder.addMetadata(key, metadata.getString(key));
+                }
+            }
             for (Consumer<BrokerClientBuilder> buildAction : Broker.getBuildActions()) {
                 buildAction.accept(brokerClientBuilder);
             }
