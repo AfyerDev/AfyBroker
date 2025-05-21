@@ -1,6 +1,6 @@
 plugins {
     application
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.shadow)
 }
 
 dependencies {

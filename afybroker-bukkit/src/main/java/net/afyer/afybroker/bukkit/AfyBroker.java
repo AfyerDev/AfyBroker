@@ -4,7 +4,6 @@ import com.alipay.remoting.LifeCycleException;
 import com.alipay.remoting.exception.RemotingException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import net.afyer.afybroker.bukkit.listener.PlayerListener;
 import net.afyer.afybroker.bukkit.processor.BroadcastChatBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.RequestPlayerInfoBukkitProcessor;

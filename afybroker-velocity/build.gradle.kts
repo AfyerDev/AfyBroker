@@ -1,15 +1,10 @@
 plugins {
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.shadow)
 }
 
 dependencies {
-    compileOnly("com.velocitypowered:velocity-api:3.1.0")
-    implementation(project(":afybroker-client")) {
-        exclude(group = "io.netty", module = "netty-all")
-        exclude(group = "org.slf4j", module = "slf4j-api")
-        exclude(group = "com.google.guava", module = "guava")
-        exclude(group = "org.jetbrains", module = "annotations")
-    }
+    compileOnly(libs.velocity.api)
+    implementation(project(":afybroker-client"))
 }
 
 tasks.build {

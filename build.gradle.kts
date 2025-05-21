@@ -13,7 +13,7 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
-        maven("https://repo.tabooproject.org/repository/releases/")
+        maven("https://hub.spigotmc.org/nexus/repository/public/")
         maven("https://oss.sonatype.org/content/groups/public/")
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.minebench.de/")

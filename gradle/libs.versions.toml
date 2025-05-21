@@ -1,0 +1,25 @@
+[versions]
+velocity = "3.1.0"
+bungeecord = "1.19-R0.1-SNAPSHOT"
+spigot = "1.12.2-R0.1-SNAPSHOT"
+
+
+[plugins]
+shadow = "com.github.johnrengelman.shadow:7.1.2"
+
+[libraries]
+gson = "com.google.code.gson:gson:2.8.9"
+snakeyaml = "org.yaml:snakeyaml:1.30"
+logback-classic = "ch.qos.logback:logback-classic:1.5.16"
+guava = "com.google.guava:guava:33.0.0-jre"
+slf4j-api = "org.slf4j:slf4j-api:1.7.21"
+netty = "io.netty:netty-all:4.1.42.Final"
+trove4j = "net.sf.trove4j:core:3.1.0"
+jline = "jline:jline:2.14.6"
+hessian = "com.caucho:hessian:4.0.66"
+annotations = "org.jetbrains:annotations:22.0.0"
+
+spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot"}
+velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
+bungeecord-api = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord" }
+bungeecord-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord"}
