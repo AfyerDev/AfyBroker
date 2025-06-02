@@ -88,7 +88,7 @@ public class AfyBroker {
                             .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
                             .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
                     )
-                    .addTags(config.getNode("tags").getList(Object::toString))
+                    .addTags(config.getNode("broker", "tags").getList(Object::toString))
                     .type(BrokerClientType.PROXY)
                     .registerUserProcessor(new ConnectToServerVelocityProcessor(this))
                     .registerUserProcessor(new KickPlayerVelocityProcessor(this))
@@ -97,7 +97,7 @@ public class AfyBroker {
                     .registerUserProcessor(new SyncServerVelocityProcessor(this))
                     .registerUserProcessor(new PlayerProfilePropertyVelocityProcessor(this))
                     .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventVelocityProcessor(this));
-            config.getNode("metadata").getChildrenMap().forEach((key, value) -> {
+            config.getNode("broker", "metadata").getChildrenMap().forEach((key, value) -> {
                builder.addMetadata(key.toString(), value.getString());
             });
             for (Consumer<BrokerClientBuilder> buildAction : Broker.getBuildActions()) {
