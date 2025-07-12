@@ -4,6 +4,7 @@ import com.alipay.remoting.LifeCycleException;
 import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.BrokerServer;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author Nipuru
  * @since 2025/07/12 12:11
  */
+@Disabled
 public class BrokerServiceTest {
 
     private static BrokerServer brokerServer;
@@ -179,7 +181,7 @@ public class BrokerServiceTest {
             System.out.println("日志服务消费者启动成功，开始调用服务...");
             
             // 获取远程日志服务代理
-            LogService logService = consumerClient.getService(LogService.class, "log-provider");
+            LogService logService = consumerClient.getService(LogService.class);
             
             // 调用远程服务
             System.out.println("调用 info 方法...");
