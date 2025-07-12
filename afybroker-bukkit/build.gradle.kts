@@ -5,10 +5,15 @@ plugins {
 dependencies {
     compileOnly(libs.spigot.api)
     implementation(project(":afybroker-client"))
+    implementation("org.bstats:bstats-bukkit:3.0.2")
 }
 
 tasks.assemble {
     dependsOn(tasks.shadowJar)
+}
+
+tasks.shadowJar {
+    relocate("org.bstats", "net.afyer.afybroker.bukkit.bstats")
 }
 
 tasks.processResources {

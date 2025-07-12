@@ -22,6 +22,7 @@ import net.afyer.afybroker.velocity.processor.*;
 import net.afyer.afybroker.velocity.processor.connection.CloseEventVelocityProcessor;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -43,24 +44,29 @@ public class AfyBroker {
     private final Logger logger;
     private final CommandManager commandManager;
     private final Path dataDirectory;
+    private final Metrics.Factory metricsFactory;
     private BrokerClient brokerClient;
     private ConfigurationNode config;
     private boolean syncEnable;
+    private Metrics metrics;
 
     @Inject
     public AfyBroker(
             ProxyServer server,
             Logger logger,
             CommandManager commandManager,
-            @DataDirectory Path dataDirectory) {
+            @DataDirectory Path dataDirectory,
+            Metrics.Factory metricsFactory) {
         this.server = server;
         this.logger = logger;
         this.commandManager = commandManager;
         this.dataDirectory = dataDirectory;
+        this.metricsFactory = metricsFactory;
     }
 
     @Subscribe(order = PostOrder.LAST)
     public void onProxyInitializeLast(ProxyInitializeEvent event) {
+        metrics = metricsFactory.make(this, 26648);
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
             Path configPath = dataDirectory.resolve("config.yml");
@@ -124,7 +130,12 @@ public class AfyBroker {
 
     @Subscribe(order = PostOrder.LAST)
     public void onProxyShutdownLast(ProxyShutdownEvent event) {
-        brokerClient.shutdown();
+        if (brokerClient != null) {
+            brokerClient.shutdown();
+        }
         BoltUtils.clearProtocols();
+        if (metrics != null) {
+            metrics.shutdown();
+        }
     }
 }

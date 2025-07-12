@@ -16,6 +16,7 @@ import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.MetadataKeys;
 import net.afyer.afybroker.core.util.BoltUtils;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,12 +34,14 @@ import java.util.function.Consumer;
 public class AfyBroker extends JavaPlugin {
 
     private BrokerClient brokerClient;
+    private Metrics metrics;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         BoltUtils.initProtocols();
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        metrics = new Metrics(this, 26646);
         try {
             String serverAddress = String.format("%s:%s",
                     getConfig().getString("server.host", getDefaultServerIp()),
@@ -86,8 +89,13 @@ public class AfyBroker extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        brokerClient.shutdown();
+        if (brokerClient != null) {
+            brokerClient.shutdown();
+        }
         BoltUtils.clearProtocols();
+        if (metrics != null) {
+            metrics.shutdown();
+        }
     }
 
     private void registerListeners() {

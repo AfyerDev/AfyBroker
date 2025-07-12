@@ -19,6 +19,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.YamlConfiguration;
+import org.bstats.bungeecord.Metrics;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -35,9 +36,11 @@ public class AfyBroker extends Plugin {
     private BrokerClient brokerClient;
     private Configuration config;
     private boolean syncEnable;
+    private Metrics metrics;
 
     @Override
     public void onEnable() {
+        metrics = new Metrics(this, 26647);
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
             config = new BungeeFileConfig("config.yml", this, YamlConfiguration.class).get();
@@ -89,8 +92,13 @@ public class AfyBroker extends Plugin {
 
     @Override
     public void onDisable() {
-        brokerClient.shutdown();
+        if (brokerClient != null) {
+            brokerClient.shutdown();
+        }
         BoltUtils.clearProtocols();
+        if (metrics != null) {
+            metrics.shutdown();
+        }
     }
 
     private void registerListeners() {
