@@ -59,3 +59,14 @@ broker:
 - 跨服传送：https://github.com/Nipuru/TpaDemo
 
 rpc协议的具体实现过程，请参考 [sofabolt](https://github.com/sofastack/sofa-bolt/blob/master/README.md)
+
+## 🙏致谢
+
+特别感谢以下项目和开发者为本框架的设计提供了宝贵的灵感和技术支持：
+
+**设计灵感来源**
+- [IoGame](https://github.com/iohao/ioGame) - 无锁异步化、事件驱动的Java网络游戏框架，本项目的主要设计灵感来源
+
+**技术贡献者**
+- [CarmJos](https://github.com/CarmJos) - rpc 和 service 功能的核心设计思路
+- [Ling556](https://github.com/Ling556) - docker 环境部署方案，优化了项目的 CI/CD 流程

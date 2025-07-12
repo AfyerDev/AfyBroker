@@ -57,3 +57,14 @@ You can refer to these demo projects using this framework to quickly get started
 - teleportation: https://github.com/Nipuru/TpaDemo
 
 For details on RPC firework, please refer to [sofabolt](https://github.com/sofastack/sofa-bolt/blob/master/README.md)
+
+## 🙏Acknowledgments
+
+Special thanks to the following projects and developers for providing valuable inspiration and technical support for this framework:
+
+**Design Inspiration**
+- [IoGame](https://github.com/iohao/ioGame) - A lock-free asynchronous, event-driven Java network game framework, the main design inspiration for this project
+
+**Technical Contributors**
+- [CarmJos](https://github.com/CarmJos) - Core design ideas for RPC and Service functionality
+- [Ling556](https://github.com/Ling556) - Docker environment deployment solution, optimized the project's CI/CD workflow
