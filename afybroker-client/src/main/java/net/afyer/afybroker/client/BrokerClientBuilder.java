@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.client.processor.RequestBrokerClientInfoClientProcessor;
+import net.afyer.afybroker.client.processor.RpcInvocationClientProcessor;
 import net.afyer.afybroker.client.processor.connection.CloseEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ConnectEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ConnectFailedEventClientProcessor;
@@ -65,6 +66,9 @@ public class BrokerClientBuilder {
     /** bolt 连接器 */
     final Map<ConnectionEventType, ConnectionEventProcessor> connectionEventProcessorMap = new HashMap<>();
 
+    /** 服务注册表 */
+    final Map<String, BrokerServiceEntry> serviceMap = new HashMap<>();
+
     BrokerClientBuilder() {
         // 初始化一些处理器
         this.defaultProcessor();
@@ -75,12 +79,14 @@ public class BrokerClientBuilder {
 
         BrokerAddress address = new BrokerAddress(host, port);
 
+        BrokerServiceRegistry serviceRegistry = new BrokerServiceRegistry(serviceMap);
         BrokerClientInfo clientInfo = new BrokerClientInfoMessage()
                 .setName(name)
                 .setType(type)
                 .setTags(tags)
                 .setMetadata(metadata)
                 .setAddress(address.getAddress())
+                .setServices(serviceRegistry.getDescriptors())
                 .build();
 
         RpcClient rpcClient = new RpcClient();
@@ -90,6 +96,7 @@ public class BrokerClientBuilder {
         BrokerClient brokerClient = new BrokerClient();
         brokerClient.setClientInfo(clientInfo);
         brokerClient.setRpcClient(rpcClient);
+        brokerClient.setServiceRegistry(serviceRegistry);
         brokerClient.setDefaultTimeoutMillis(defaultTimeoutMillis);
 
 
@@ -221,6 +228,16 @@ public class BrokerClientBuilder {
         return this;
     }
 
+    /**
+     * 注册服务实现（带标签）
+     */
+    public <T> BrokerClientBuilder registerService(Class<T> serviceInterface, T serviceImpl, String... tags) {
+        String interfaceName = serviceInterface.getName();
+        BrokerServiceEntry entry = new BrokerServiceEntry(serviceInterface, serviceImpl, new HashSet<>(Arrays.asList(tags)));
+        serviceMap.put(interfaceName, entry);
+        return this;
+    }
+
     private void defaultProcessor() {
         this
                 .addConnectionEventProcessor(ConnectionEventType.CONNECT, new ConnectEventClientProcessor())
@@ -229,7 +246,8 @@ public class BrokerClientBuilder {
                 .addConnectionEventProcessor(ConnectionEventType.EXCEPTION, new ExceptionEventClientProcessor());
 
         this
-                .registerUserProcessor(new RequestBrokerClientInfoClientProcessor());
+                .registerUserProcessor(new RequestBrokerClientInfoClientProcessor())
+                .registerUserProcessor(new RpcInvocationClientProcessor());
     }
 
 }

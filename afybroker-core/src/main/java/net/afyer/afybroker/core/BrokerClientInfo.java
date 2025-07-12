@@ -7,6 +7,7 @@ import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,13 +29,16 @@ public class BrokerClientInfo {
     final String address;
     /** 客户端元数据 */
     final Map<String, String> metadata;
+    /** 客户端服务列表 */
+    final List<BrokerServiceDescriptor> services;
 
-    public BrokerClientInfo(String name, Set<String> tags, String type, String address, Map<String, String> metadata) {
+    public BrokerClientInfo(String name, Set<String> tags, String type, String address, Map<String, String> metadata, List<BrokerServiceDescriptor> services) {
         this.name = name;
         this.tags = tags;
         this.type = type;
         this.address = address;
         this.metadata = metadata;
+        this.services = services;
     }
 
     public Set<String> getTags() {
@@ -96,6 +100,7 @@ public class BrokerClientInfo {
                 .setTags(tags)
                 .setType(type)
                 .setAddress(address)
-                .setMetadata(metadata);
+                .setMetadata(metadata)
+                .setServices(services);
     }
 }

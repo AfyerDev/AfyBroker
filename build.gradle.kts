@@ -8,7 +8,7 @@ subprojects {
     apply(plugin = "java")
 
     group = "net.afyer.afybroker"
-    version = "2.4"
+    version = "2.5"
 
     repositories {
         mavenCentral()
@@ -37,6 +37,10 @@ subprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
+    }
+    
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
 }
 

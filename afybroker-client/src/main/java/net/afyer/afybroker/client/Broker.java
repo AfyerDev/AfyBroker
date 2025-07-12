@@ -116,6 +116,20 @@ public final class Broker {
     }
 
     /**
+     * 获取远程服务代理
+     */
+    public static <T> T getService(Class<T> serviceInterface) {
+        return client.getService(serviceInterface);
+    }
+
+    /**
+     * 获取远程服务代理（带标签选择）
+     */
+    public static <T> T getService(Class<T> serviceInterface, String... tags) {
+        return client.getService(serviceInterface, tags);
+    }
+
+    /**
      * 添加 brokerClient 构建方法
      */
     public static void buildAction(Consumer<BrokerClientBuilder> action) {

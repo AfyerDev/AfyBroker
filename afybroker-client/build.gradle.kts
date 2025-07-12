@@ -6,6 +6,9 @@ plugins {
 
 dependencies {
     api(project(":afybroker-core"))
+
+    // 添加服务器模块的测试依赖
+    testImplementation(project(":afybroker-server"))
 }
 
 java {

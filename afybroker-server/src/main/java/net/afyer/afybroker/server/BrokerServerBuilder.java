@@ -147,7 +147,8 @@ public class BrokerServerBuilder {
                 .registerUserProcessor(new PlayerServerConnectedBrokerProcessor())
                 .registerUserProcessor(new PlayerServerJoinBrokerProcessor())
                 .registerUserProcessor(new KickPlayerBrokerProcessor())
-                .registerUserProcessor(new PlayerProfilePropertyBrokerProcessor());
+                .registerUserProcessor(new PlayerProfilePropertyBrokerProcessor())
+                .registerUserProcessor(new RpcInvocationBrokerProcessor());
 
     }
 

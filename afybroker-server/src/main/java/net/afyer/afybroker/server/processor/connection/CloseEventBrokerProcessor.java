@@ -26,12 +26,15 @@ public class CloseEventBrokerProcessor implements ConnectionEventProcessor, Brok
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
 
-        BrokerClientManager clientProxyManager = brokerServer.getClientManager();
-        BrokerClientItem brokerClientItem = clientProxyManager.getByAddress(remoteAddress);
-        clientProxyManager.remove(remoteAddress);
+        BrokerClientManager clientManager = brokerServer.getClientManager();
+        BrokerClientItem client = clientManager.getByAddress(remoteAddress);
+        clientManager.remove(remoteAddress);
 
-        if (brokerClientItem != null) {
-            ClientCloseEvent event = new ClientCloseEvent(remoteAddress, brokerClientItem.getName(), brokerClientItem.getTags(), brokerClientItem.getType());
+        if (client != null) {
+            // 清理服务注册
+            brokerServer.getServiceRegistry().unregisterClientServices(client);
+            
+            ClientCloseEvent event = new ClientCloseEvent(remoteAddress, client.getName(), client.getTags(), client.getType());
             brokerServer.getPluginManager().callEvent(event);
         }
 

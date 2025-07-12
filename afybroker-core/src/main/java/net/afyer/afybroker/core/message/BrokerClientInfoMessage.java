@@ -7,8 +7,10 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerClientInfo;
+import net.afyer.afybroker.core.BrokerServiceDescriptor;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,9 +36,11 @@ public class BrokerClientInfoMessage implements Serializable {
     String address;
     /** 客户端元数据 */
     Map<String, String> metadata;
+    /** 客户端服务列表 */
+    List<BrokerServiceDescriptor> services;
 
     public BrokerClientInfo build() {
-        return new BrokerClientInfo(name, tags, type, address, metadata);
+        return new BrokerClientInfo(name, tags, type, address, metadata,  services);
     }
 
 }

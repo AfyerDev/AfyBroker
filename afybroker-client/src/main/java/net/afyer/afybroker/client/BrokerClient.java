@@ -12,6 +12,10 @@ import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.core.BrokerClientInfo;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author Nipuru
  * @since 2022/7/30 19:15
@@ -31,7 +35,14 @@ public class BrokerClient {
     /** 消息发送超时时间 */
     int defaultTimeoutMillis;
 
+    /** 服务注册表 */
+    BrokerServiceRegistry serviceRegistry;
+    
+    /** 服务代理工厂 */
+    final BrokerServiceProxyFactory serviceProxyFactory;
+
     BrokerClient() {
+        this.serviceProxyFactory = new BrokerServiceProxyFactory(this);
     }
 
     public boolean hasTag(String tag) {
@@ -86,6 +97,15 @@ public class BrokerClient {
             ((BrokerClientAware) object).setBrokerClient(this);
         }
     }
+
+    public <T> T getService(Class<T> serviceInterface) {
+        return serviceProxyFactory.createProxy(serviceInterface);
+    }
+
+    public <T> T getService(Class<T> serviceInterface, String... tags) {
+        return serviceProxyFactory.createProxy(serviceInterface, new HashSet<>(Arrays.asList(tags)));
+    }
+
 
     public static BrokerClientBuilder newBuilder() {
         return new BrokerClientBuilder();

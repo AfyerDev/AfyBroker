@@ -20,6 +20,7 @@ import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerClientManager;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
+import net.afyer.afybroker.server.proxy.BrokerServiceRegistry;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
 import net.afyer.afybroker.server.task.PlayerHeartbeatValidateTask;
 import org.jetbrains.annotations.Nullable;
@@ -66,6 +67,11 @@ public class BrokerServer {
      * 玩家代理 管理器
      */
     final BrokerPlayerManager playerManager;
+    
+    /**
+     * 服务注册表
+     */
+    final BrokerServiceRegistry serviceRegistry;
 
     final PlayerHeartbeatValidateTask playerHeartbeatValidateTask;
 
@@ -79,6 +85,7 @@ public class BrokerServer {
         this.pluginsFolder = new File("plugins");
         this.clientManager = new BrokerClientManager();
         this.playerManager = new BrokerPlayerManager();
+        this.serviceRegistry = new BrokerServiceRegistry();
         this.playerHeartbeatValidateTask = new PlayerHeartbeatValidateTask(this);
         this.pluginManager.registerCommand(null, new CommandStop(this));
         this.pluginManager.registerCommand(null, new CommandList(this));
