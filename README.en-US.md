@@ -66,5 +66,5 @@ Special thanks to the following projects and developers for providing valuable i
 - [IoGame](https://github.com/iohao/ioGame) - A lock-free asynchronous, event-driven Java network game framework, the main design inspiration for this project
 
 **Technical Contributors**
-- [CarmJos](https://github.com/CarmJos) - Core design ideas for RPC and Service functionality
+- [CarmJos](https://github.com/CarmJos) - Core design ideas for Service functionality
 - [Ling556](https://github.com/Ling556) - Docker environment deployment solution, optimized the project's CI/CD workflow
