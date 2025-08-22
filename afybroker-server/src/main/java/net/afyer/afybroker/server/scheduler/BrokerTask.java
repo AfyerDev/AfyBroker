@@ -62,7 +62,6 @@ public class BrokerTask implements Runnable, ScheduledTask {
                 log.error(String.format("Task %s encountered an exception", this), t);
             }
 
-            // If we have a period of 0 or less, only run once
             if (period <= 0) {
                 break;
             }

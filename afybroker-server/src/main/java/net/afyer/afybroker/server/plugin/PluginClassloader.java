@@ -56,8 +56,6 @@ public class PluginClassloader extends URLClassLoader {
     protected Class<?> loadClass0(String name, boolean resolve, boolean checkOther) throws ClassNotFoundException {
         try {
             Class<?> result = super.loadClass(name, resolve);
-
-            // SPIGOT-6749: Library classes will appear in the above, but we don't want to return them to other plugins
             if (checkOther || result.getClassLoader() == this) {
                 return result;
             }

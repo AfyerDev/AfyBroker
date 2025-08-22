@@ -15,14 +15,12 @@ public abstract class ConfigurationProvider {
     static {
         try {
             providers.put(YamlConfiguration.class, new YamlConfiguration());
-        } catch (NoClassDefFoundError ex) {
-            // Ignore, no SnakeYAML
+        } catch (NoClassDefFoundError ignored) {
         }
 
         try {
             providers.put(JsonConfiguration.class, new JsonConfiguration());
-        } catch (NoClassDefFoundError ex) {
-            // Ignore, no Gson
+        } catch (NoClassDefFoundError ignored) {
         }
     }
 

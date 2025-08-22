@@ -14,6 +14,8 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -39,7 +41,6 @@ public class PluginManager {
     public PluginManager(BrokerServer server) {
         this.server = server;
 
-        // Ignore unknown entries in the plugin descriptions
         Constructor yamlConstructor = new Constructor();
         PropertyUtils propertyUtils = yamlConstructor.getPropertyUtils();
         propertyUtils.setSkipMissingProperties(true);
@@ -87,7 +88,6 @@ public class PluginManager {
 
     public boolean dispatchCommand(String commandLine, List<String> tabResults) {
         String[] split = commandLine.split(" ", -1);
-        // Check for chat that only contains " "
         if (split.length == 0 || split[0].isEmpty()) {
             return false;
         }
@@ -151,15 +151,11 @@ public class PluginManager {
             return pluginStatuses.get(plugin);
         }
 
-        // combine all dependencies for 'for loop'
         Set<String> dependencies = new HashSet<>();
         dependencies.addAll(plugin.getDepends());
         dependencies.addAll(plugin.getSoftDepends());
 
-        // success status
         boolean status = true;
-
-        // try to load dependencies first
         for (String dependName : dependencies) {
             PluginDescription depend = toLoad.get(dependName);
             Boolean dependStatus = (depend != null) ? pluginStatuses.get(depend) : Boolean.FALSE;
@@ -180,7 +176,7 @@ public class PluginManager {
                 }
             }
 
-            if (dependStatus == Boolean.FALSE && plugin.getDepends().contains(dependName)) // only fail if this wasn't a soft dependency
+            if (dependStatus == Boolean.FALSE && plugin.getDepends().contains(dependName))
             {
                 log.warn("{} (required by {}) is unavailable", dependName, plugin.getName());
                 status = false;
@@ -196,8 +192,7 @@ public class PluginManager {
             try {
                 URLClassLoader loader = new PluginClassloader(server, plugin, plugin.getFile());
                 Class<?> main = loader.loadClass(plugin.getMain());
-                Plugin clazz = (Plugin) main.getDeclaredConstructor().newInstance();
-
+                Plugin clazz = newPluginInstance(main);
                 plugins.put(plugin.getName(), clazz);
                 clazz.onLoad();
                 log.info("Loaded plugin {} version {} by {}", plugin.getName(), plugin.getVersion(), plugin.getAuthor());
@@ -208,6 +203,41 @@ public class PluginManager {
 
         pluginStatuses.put(plugin, status);
         return status;
+    }
+
+    private static Plugin newPluginInstance(Class<?> main) throws Exception {
+        Plugin plugin;
+
+        Field singletonField = getSingletonField(main);
+        if (singletonField != null) {
+            plugin = (Plugin) singletonField.get(null);
+        } else {
+            plugin = (Plugin) main.getDeclaredConstructor().newInstance();
+        }
+        
+        return plugin;
+    }
+
+    private static Field getSingletonField(Class<?> clazz)  {
+        try {
+            Field instanceField = clazz.getDeclaredField("INSTANCE");
+
+            if (!Modifier.isStatic(instanceField.getModifiers())) {
+                return null;
+            }
+
+            if (!Modifier.isFinal(instanceField.getModifiers())) {
+                return null;
+            }
+
+            if (!instanceField.getType().isAssignableFrom(clazz)) {
+                return null;
+            }
+            instanceField.setAccessible(true);
+            return instanceField;
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
     }
 
     public void detectPlugins(File folder) {
