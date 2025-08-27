@@ -1,12 +1,12 @@
 <div align="center">
     <h1>AfyBroker</h1>
-    <h5>高效率bukkit通信框架，基于sofabolt</h5>
+    <h5>高性能 Minecraft 服务器通信框架，基于 sofabolt</h5>
     <span><a href="./README.en-US.md">English</a> | 中文</span>
 </div>
 
 ## 💡这是什么
 
-- 这是一个适用于 Bukkit 集群服务器的 RPC 跨服通信框架
+- 这是一个适用于 Minecraft 集群服务器的 RPC 跨服通信框架
 - 用于实现在不同 Bukkit、BungeeCord、Velocity、甚至是 Mirai 服务器上进行信息传递以及远程代码调用。
 - 旨在降低跨服通信业务的开发流程，学习成本低，使用方法简单。
 - 基于蚂蚁金融的高性能 sofa-bolt 框架，使用无锁异步化的事件驱动型设计，经过压力测试，可承载每秒百万级别的通信请求。

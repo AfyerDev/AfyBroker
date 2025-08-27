@@ -1,19 +1,19 @@
 <div align="center">
     <h1>AfyBroker</h1>
-    <h5>High-performance Bukkit communication framework based on SofaBolt</h5>
+    <h5>High-performance remoting framework of Minecraft Servers, based on sofabolt</h5>
     <span>English | <a href="./README.md">中文</a></span>
 </div>
 
 ## 💡What is this
 
-- This is an RPC framework for Bukkit cluster servers.
-- Used to implement message passing and remote code invocation between different Bukkit, BungeeCord, Velocity, etc
+- This is an RPC framework for Minecraft cluster servers.
+- Used to implement message passing and remote procedure calls (RPC) between different Bukkit, BungeeCord, Velocity, etc
 - Aims to simplify cross-server communication development process with low learning curve and easy-to-use methods.
-- Based on high-performance SofaBolt framework, using lock-free asynchronous event-driven design, stress tested to handle millions of communication requests per second.
-- Supports multiple communication models including synchronous, asynchronous, and callback, with request timeout handling and automatic disconnection/reconnection.
+- Based on high-performance sofabolt framework, using lock-free asynchronous event-driven design, stress tested to handle millions of RPC calls per second.
+- Supports multiple messaging patterns including synchronous, asynchronous, and callback, with request timeout handling and automatic disconnection/reconnection.
 - High-performance serialization framework with near-native performance and nanosecond-level response time.
 - Supports Bungee cluster architecture, specially designed for large servers capable of handling tens of thousands of players.
-- Flexible addition of custom server types to meet various communication business needs
+- Flexible addition of custom server types to meet various messaging requirements
 
 ## ⚡Quick Installation
 
@@ -56,7 +56,7 @@ You can refer to these demo projects using this framework to quickly get started
 - private messaging: https://github.com/Nipuru/MsgDemo  
 - teleportation: https://github.com/Nipuru/TpaDemo
 
-For details on RPC firework, please refer to [sofabolt](https://github.com/sofastack/sofa-bolt/blob/master/README.md)
+For details on RPC framework, please refer to [sofabolt](https://github.com/sofastack/sofa-bolt/blob/master/README.md)
 
 ## 🙏Acknowledgments
 
