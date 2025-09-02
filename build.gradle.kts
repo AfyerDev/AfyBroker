@@ -8,7 +8,7 @@ subprojects {
     apply(plugin = "java")
 
     group = "net.afyer.afybroker"
-    version = "2.5"
+    version = "2.6"
 
     repositories {
         mavenCentral()
