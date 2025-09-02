@@ -19,6 +19,7 @@ import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
+import net.afyer.afybroker.core.util.ConnectionEventTypeProcessor;
 
 import java.util.*;
 
@@ -184,6 +185,17 @@ public class BrokerClientBuilder {
      */
     public BrokerClientBuilder addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {
         this.connectionEventProcessorMap.put(type, processor);
+        return this;
+    }
+
+    /**
+     * 注册连接器
+     *
+     * @param processor  processor
+     * @return this
+     */
+    public BrokerClientBuilder addConnectionEventProcessor(ConnectionEventTypeProcessor processor) {
+        this.connectionEventProcessorMap.put(processor.getType(), processor);
         return this;
     }
 
