@@ -5,6 +5,7 @@ import com.alipay.remoting.exception.RemotingException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.bukkit.listener.PlayerListener;
+import net.afyer.afybroker.bukkit.preprocessor.BukkitServerThreadPreprocessor;
 import net.afyer.afybroker.bukkit.processor.BroadcastChatBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.RequestPlayerInfoBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.SendPlayerChatBukkitProcessor;
@@ -58,7 +59,9 @@ public class AfyBroker extends JavaPlugin {
                     .registerUserProcessor(new SendPlayerChatBukkitProcessor())
                     .registerUserProcessor(new BroadcastChatBukkitProcessor())
                     .registerUserProcessor(new SendPlayerTitleBukkitProcessor())
-                    .registerUserProcessor(new RequestPlayerInfoBukkitProcessor());
+                    .registerUserProcessor(new RequestPlayerInfoBukkitProcessor())
+                    .registerPreprocessor(new BukkitServerThreadPreprocessor(
+                            getConfig().getBoolean("server.thread-check", true)));
             ConfigurationSection metadata = getConfig().getConfigurationSection("metadata");
             if (metadata != null) {
                 for (String key : metadata.getKeys(false)) {
