@@ -10,11 +10,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
+import net.afyer.afybroker.client.preprocessor.BrokerInvocationContext;
+import net.afyer.afybroker.client.preprocessor.BrokerPreprocessor;
+import net.afyer.afybroker.client.preprocessor.PreprocessorException;
+import net.afyer.afybroker.client.service.BrokerServiceProxyFactory;
+import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author Nipuru
@@ -41,6 +46,9 @@ public class BrokerClient {
     /** 服务代理工厂 */
     final BrokerServiceProxyFactory serviceProxyFactory;
 
+    /** 预处理函数列表 */
+    List<BrokerPreprocessor> preprocessors;
+
     BrokerClient() {
         this.serviceProxyFactory = new BrokerServiceProxyFactory(this);
     }
@@ -55,10 +63,12 @@ public class BrokerClient {
 
     @SuppressWarnings("unchecked")
     public <T> T invokeSync(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
+        executePreprocessors(request, "invokeSync", timeoutMillis);
         return (T) rpcClient.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
     }
 
     public void oneway(Object request) throws RemotingException, InterruptedException {
+        executePreprocessors(request, "oneway", 0);
         rpcClient.oneway(clientInfo.getAddress(), request);
     }
 
@@ -67,6 +77,7 @@ public class BrokerClient {
     }
 
     public void invokeWithCallback(Object request, InvokeCallback invokeCallback, int timeoutMillis) throws RemotingException, InterruptedException {
+        executePreprocessors(request, "invokeWithCallback", timeoutMillis);
         rpcClient.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
     }
 
@@ -75,6 +86,7 @@ public class BrokerClient {
     }
 
     public RpcResponseFuture invokeWithFuture(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
+        executePreprocessors(request, "invokeWithFuture", timeoutMillis);
         return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, timeoutMillis);
     }
 
@@ -106,6 +118,27 @@ public class BrokerClient {
         return serviceProxyFactory.createProxy(serviceInterface, new HashSet<>(Arrays.asList(tags)));
     }
 
+    /**
+     * 为直接调用方法执行预处理函数
+     * 
+     * @param request 请求对象
+     * @param methodName 方法名称（用于日志）
+     */
+    private void executePreprocessors(Object request, String methodName, int timeoutMillis) throws PreprocessorException {
+        if (preprocessors != null && !preprocessors.isEmpty()) {
+            // 创建通用的调用上下文
+            BrokerInvocationContext context = new BrokerInvocationContext(
+                request.getClass().getName(),
+                methodName,
+                timeoutMillis,
+                Thread.currentThread()
+            );
+
+            for (BrokerPreprocessor preprocessor : preprocessors) {
+                preprocessor.preprocess(context);
+            }
+        }
+    }
 
     public static BrokerClientBuilder newBuilder() {
         return new BrokerClientBuilder();

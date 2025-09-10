@@ -1,4 +1,4 @@
-package net.afyer.afybroker.client;
+package net.afyer.afybroker.client.service;
 
 
 import lombok.AccessLevel;

@@ -15,10 +15,13 @@ import net.afyer.afybroker.client.processor.connection.CloseEventClientProcessor
 import net.afyer.afybroker.client.processor.connection.ConnectEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ConnectFailedEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ExceptionEventClientProcessor;
+import net.afyer.afybroker.client.service.BrokerServiceEntry;
+import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
+import net.afyer.afybroker.client.preprocessor.BrokerPreprocessor;
 import net.afyer.afybroker.core.util.ConnectionEventTypeProcessor;
 
 import java.util.*;
@@ -70,6 +73,9 @@ public class BrokerClientBuilder {
     /** 服务注册表 */
     final Map<String, BrokerServiceEntry> serviceMap = new HashMap<>();
 
+    /** 预处理函数列表 */
+    final List<BrokerPreprocessor> preprocessors = new ArrayList<>();
+
     BrokerClientBuilder() {
         // 初始化一些处理器
         this.defaultProcessor();
@@ -99,6 +105,7 @@ public class BrokerClientBuilder {
         brokerClient.setRpcClient(rpcClient);
         brokerClient.setServiceRegistry(serviceRegistry);
         brokerClient.setDefaultTimeoutMillis(defaultTimeoutMillis);
+        brokerClient.setPreprocessors(preprocessors);
 
 
         this.processorList.forEach(brokerClient::aware);
@@ -247,6 +254,28 @@ public class BrokerClientBuilder {
         String interfaceName = serviceInterface.getName();
         BrokerServiceEntry entry = new BrokerServiceEntry(serviceInterface, serviceImpl, new HashSet<>(Arrays.asList(tags)));
         serviceMap.put(interfaceName, entry);
+        return this;
+    }
+
+    /**
+     * 注册预处理函数
+     * 在每次远程调用前执行，用于安全检查、权限验证等
+     * 
+     * @param preprocessor 预处理函数
+     * @return this
+     */
+    public BrokerClientBuilder registerPreprocessor(BrokerPreprocessor preprocessor) {
+        this.preprocessors.add(preprocessor);
+        return this;
+    }
+
+    /**
+     * 清除所有预处理函数
+     * 
+     * @return this
+     */
+    public BrokerClientBuilder clearPreprocessors() {
+        this.preprocessors.clear();
         return this;
     }
 

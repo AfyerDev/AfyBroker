@@ -1,8 +1,7 @@
-package net.afyer.afybroker.client;
+package net.afyer.afybroker.client.service;
 
 import com.alipay.remoting.rpc.exception.InvokeException;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerServiceDescriptor;
@@ -10,7 +9,6 @@ import net.afyer.afybroker.core.util.HessianSerializer;
 
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 服务注册表
