@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 /**
  * @author Nipuru
@@ -49,10 +48,7 @@ public class BrokerServer {
      * broker 运行状态
      */
     boolean start;
-    /**
-     * 事务线程池
-     */
-    ExecutorService bizThread;
+
 
     final ConsoleReader consoleReader;
     final PluginManager pluginManager;
@@ -174,7 +170,6 @@ public class BrokerServer {
                     }
                     playerHeartbeatValidateTask.cancel();
                     rpcServer.shutdown();
-                    bizThread.shutdown();
                     System.exit(0);
                 }
             }.start();

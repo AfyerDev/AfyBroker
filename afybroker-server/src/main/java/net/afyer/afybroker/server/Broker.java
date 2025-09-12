@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.UUID;
-import java.util.concurrent.Executor;
 
 /**
  * @author Nipuru
@@ -47,13 +46,6 @@ public class Broker {
      */
     public static int getPort() {
         return server.getPort();
-    }
-
-    /**
-     * 获取服务端事物线程池
-     */
-    public static Executor getBizThread() {
-        return server.getBizThread();
     }
 
     /**

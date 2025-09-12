@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import gnu.trove.TCollections;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -12,6 +13,9 @@ import net.afyer.afybroker.server.plugin.Plugin;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,6 +30,10 @@ public class BrokerScheduler implements TaskScheduler {
     private final AtomicInteger taskCounter = new AtomicInteger();
     private final TIntObjectMap<BrokerTask> tasks = TCollections.synchronizedMap(new TIntObjectHashMap<>());
     private final Multimap<Plugin, BrokerTask> tasksByPlugin = Multimaps.synchronizedMultimap(HashMultimap.create());
+    private final ExecutorService scheduler = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+            60L, TimeUnit.SECONDS,
+            new SynchronousQueue<>(),
+            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Broker-Scheduler-Thread-%d").build());
 
     public BrokerScheduler(BrokerServer server) {
         this.server = server;
@@ -88,7 +96,7 @@ public class BrokerScheduler implements TaskScheduler {
             tasksByPlugin.put(owner, prepared);
         }
 
-        server.getBizThread().execute(prepared);
+        scheduler.execute(prepared);
         return prepared;
     }
 }
