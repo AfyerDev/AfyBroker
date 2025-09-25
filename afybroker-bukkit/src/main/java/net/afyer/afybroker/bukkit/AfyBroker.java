@@ -41,7 +41,6 @@ public class AfyBroker extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         BoltUtils.initProtocols();
-        ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         metrics = new Metrics(this, 26646);
         try {
             String serverAddress = String.format("%s:%s",
@@ -73,7 +72,6 @@ public class AfyBroker extends JavaPlugin {
             }
             brokerClient = builder.build();
             Broker.setClient(brokerClient);
-            Thread.currentThread().setContextClassLoader(getClassLoader());
             brokerClient.startup();
             brokerClient.ping();
         } catch (LifeCycleException e) {
@@ -83,8 +81,6 @@ public class AfyBroker extends JavaPlugin {
         } catch (RemotingException | InterruptedException e) {
             getLogger().severe("Ping to the broker server failed!");
             e.printStackTrace();
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldLoader);
         }
 
         registerListeners();

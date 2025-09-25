@@ -1,14 +1,18 @@
 package net.afyer.afybroker.client.service;
 
 import com.alipay.remoting.rpc.exception.InvokeException;
+import com.alipay.remoting.serialization.Serializer;
+import com.alipay.remoting.serialization.SerializerManager;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerServiceDescriptor;
-import net.afyer.afybroker.core.util.HessianSerializer;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 服务注册表
@@ -53,7 +57,8 @@ public class BrokerServiceRegistry {
                     " with parameters: " + Arrays.toString(parameterTypeNames));
         }
 
-        Object[] parameters = HessianSerializer.deserialize(parametersData);
+        Serializer serializer = SerializerManager.getSerializer(SerializerManager.Hessian2);
+        Object[] parameters = serializer.deserialize(parametersData, Object[].class.getName());
         return method.invoke(entry.getServiceImpl(), parameters);
     }
 

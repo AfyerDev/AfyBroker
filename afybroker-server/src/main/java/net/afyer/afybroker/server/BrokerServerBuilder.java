@@ -4,13 +4,11 @@ import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
-import net.afyer.afybroker.server.plugin.BrokerClassLoader;
 import net.afyer.afybroker.server.processor.*;
 import net.afyer.afybroker.server.processor.connection.CloseEventBrokerProcessor;
 import net.afyer.afybroker.server.processor.connection.ConnectEventBrokerProcessor;
@@ -20,10 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Nipuru
@@ -67,9 +61,6 @@ public class BrokerServerBuilder {
         BrokerServer brokerServer = new BrokerServer();
 
         brokerServer.setPort(port);
-
-        BrokerClassLoader brokerLoader = new BrokerClassLoader();
-        Thread.currentThread().setContextClassLoader(brokerLoader);
         brokerServer.initServer();
 
         this.processorList.forEach(brokerServer::registerUserProcessor);

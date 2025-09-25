@@ -1,13 +1,14 @@
 package net.afyer.afybroker.client.service;
 
 import com.alipay.remoting.rpc.exception.InvokeException;
+import com.alipay.remoting.serialization.Serializer;
+import com.alipay.remoting.serialization.SerializerManager;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.RpcInvocationMessage;
-import net.afyer.afybroker.core.util.HessianSerializer;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -68,7 +69,8 @@ public class BrokerServiceProxyFactory {
             }
 
             args = args != null ? args : new Object[0];
-            byte[] parameters = HessianSerializer.serialize(args);
+            Serializer serializer = SerializerManager.getSerializer(SerializerManager.Hessian2);
+            byte[] parameters = serializer.serialize(args);
             // 构建调用消息
             RpcInvocationMessage message = new RpcInvocationMessage()
                 .setServiceInterface(serviceInterface)
@@ -81,7 +83,7 @@ public class BrokerServiceProxyFactory {
                 log.debug("Invoking remote service: {}.{}", serviceInterface, method.getName());
                 byte[] result = brokerClient.invokeSync(message);
                 if (result == null) return null;
-                return HessianSerializer.deserialize(result);
+                return serializer.deserialize(result, Object.class.getName());
             } catch (Exception e) {
                 log.error("RPC invocation failed: {}.{}", serviceInterface, method.getName(), e);
                 throw new InvokeException("RPC invocation failed: " + serviceInterface + "." + method.getName(), e);

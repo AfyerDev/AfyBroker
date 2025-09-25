@@ -5,6 +5,7 @@ import com.alipay.remoting.LifeCycleException;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.RpcResponseFuture;
+import com.alipay.remoting.serialization.SerializerManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import net.afyer.afybroker.client.preprocessor.PreprocessorException;
 import net.afyer.afybroker.client.service.BrokerServiceProxyFactory;
 import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
+import net.afyer.afybroker.core.util.HessianSerializer;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -142,5 +144,9 @@ public class BrokerClient {
 
     public static BrokerClientBuilder newBuilder() {
         return new BrokerClientBuilder();
+    }
+
+    static {
+        SerializerManager.addSerializer(SerializerManager.Hessian2, new HessianSerializer(BrokerClient.class.getClassLoader()));
     }
 }

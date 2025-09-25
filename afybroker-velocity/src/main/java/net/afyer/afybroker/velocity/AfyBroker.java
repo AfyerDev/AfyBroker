@@ -67,7 +67,6 @@ public class AfyBroker {
     @Subscribe(order = PostOrder.LAST)
     public void onProxyInitializeLast(ProxyInitializeEvent event) {
         metrics = metricsFactory.make(this, 26648);
-        ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
             Path configPath = dataDirectory.resolve("config.yml");
             if (Files.notExists(configPath)) {
@@ -111,14 +110,11 @@ public class AfyBroker {
             }
             brokerClient = builder.build();
             Broker.setClient(brokerClient);
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             BoltUtils.initProtocols();
             brokerClient.startup();
             brokerClient.ping();
         } catch (RemotingException | InterruptedException e) {
             logger.error("Broker client initialization failed!", e);
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldLoader);
         }
 
         registerListeners();

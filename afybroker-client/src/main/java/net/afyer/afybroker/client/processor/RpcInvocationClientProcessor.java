@@ -3,12 +3,13 @@ package net.afyer.afybroker.client.processor;
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
+import com.alipay.remoting.serialization.Serializer;
+import com.alipay.remoting.serialization.SerializerManager;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.core.message.RpcInvocationMessage;
-import net.afyer.afybroker.core.util.HessianSerializer;
 
 /**
  * 客户端RPC调用处理器
@@ -37,7 +38,8 @@ public class RpcInvocationClientProcessor extends AsyncUserProcessor<RpcInvocati
 
             byte[] response = null;
             if (result != null) {
-                response = HessianSerializer.serialize(result);
+                Serializer serializer = SerializerManager.getSerializer(SerializerManager.Hessian2);
+                response = serializer.serialize(result);
             }
             // 返回结果
             asyncCtx.sendResponse(response);

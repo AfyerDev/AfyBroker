@@ -41,7 +41,6 @@ public class AfyBroker extends Plugin {
     @Override
     public void onEnable() {
         metrics = new Metrics(this, 26647);
-        ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
             config = new BungeeFileConfig("config.yml", this, YamlConfiguration.class).get();
             syncEnable = config.getBoolean("server.sync-enable", false);
@@ -72,7 +71,6 @@ public class AfyBroker extends Plugin {
             }
             brokerClient = brokerClientBuilder.build();
             Broker.setClient(brokerClient);
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             BoltUtils.initProtocols();
             brokerClient.startup();
             brokerClient.ping();
@@ -83,8 +81,6 @@ public class AfyBroker extends Plugin {
         } catch (RemotingException | InterruptedException e) {
             getLogger().severe("Ping to the broker server failed!");
             e.printStackTrace();
-        } finally {
-            Thread.currentThread().setContextClassLoader(oldLoader);
         }
 
         registerListeners();

@@ -5,6 +5,7 @@ import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
+import com.alipay.remoting.serialization.SerializerManager;
 import com.google.common.collect.Lists;
 import jline.console.ConsoleReader;
 import lombok.AccessLevel;
@@ -12,15 +13,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import net.afyer.afybroker.core.util.HessianSerializer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.command.*;
+import net.afyer.afybroker.server.plugin.BrokerClassLoader;
 import net.afyer.afybroker.server.plugin.Plugin;
 import net.afyer.afybroker.server.plugin.PluginManager;
-import net.afyer.afybroker.server.proxy.BrokerClientItem;
-import net.afyer.afybroker.server.proxy.BrokerClientManager;
-import net.afyer.afybroker.server.proxy.BrokerPlayer;
-import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
-import net.afyer.afybroker.server.proxy.BrokerServiceRegistry;
+import net.afyer.afybroker.server.proxy.*;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
 import net.afyer.afybroker.server.task.PlayerHeartbeatValidateTask;
 import org.jetbrains.annotations.Nullable;
@@ -184,6 +183,11 @@ public class BrokerServer {
 
     public static BrokerServerBuilder builder() {
         return new BrokerServerBuilder();
+    }
+
+    static {
+        // 添加Hessian默认序列化器
+        SerializerManager.addSerializer(SerializerManager.Hessian2, new HessianSerializer(new BrokerClassLoader()));
     }
 
 }
