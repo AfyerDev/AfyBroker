@@ -1,14 +1,13 @@
 package net.afyer.afybroker.client.service;
 
+import com.alipay.remoting.config.ConfigManager;
 import com.alipay.remoting.rpc.exception.InvokeException;
 import com.alipay.remoting.serialization.Serializer;
 import com.alipay.remoting.serialization.SerializerManager;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.RpcInvocationMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -22,11 +21,11 @@ import java.util.Set;
  * @author Nipuru
  * @since 2025/7/11 17:04
  */
-@Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerServiceProxyFactory {
     
-    final BrokerClient brokerClient;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrokerServiceProxyFactory.class);
+    
+    private final BrokerClient brokerClient;
     
     public BrokerServiceProxyFactory(BrokerClient brokerClient) {
         this.brokerClient = brokerClient;
@@ -54,12 +53,16 @@ public class BrokerServiceProxyFactory {
     /**
      * 服务调用处理器
      */
-    @AllArgsConstructor
-    @FieldDefaults(level = AccessLevel.PRIVATE)
     private static class ServiceInvocationHandler implements InvocationHandler {
-        final BrokerClient brokerClient;
-        final String serviceInterface;
-        final Set<String> serviceTags;
+        private final BrokerClient brokerClient;
+        private final String serviceInterface;
+        private final Set<String> serviceTags;
+
+        public ServiceInvocationHandler(BrokerClient brokerClient, String serviceInterface, Set<String> serviceTags) {
+            this.brokerClient = brokerClient;
+            this.serviceInterface = serviceInterface;
+            this.serviceTags = serviceTags;
+        }
         
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -69,7 +72,7 @@ public class BrokerServiceProxyFactory {
             }
 
             args = args != null ? args : new Object[0];
-            Serializer serializer = SerializerManager.getSerializer(SerializerManager.Hessian2);
+            Serializer serializer = SerializerManager.getSerializer(ConfigManager.serializer);
             byte[] parameters = serializer.serialize(args);
             // 构建调用消息
             RpcInvocationMessage message = new RpcInvocationMessage()
@@ -80,12 +83,11 @@ public class BrokerServiceProxyFactory {
                 .setServiceTags(serviceTags);
             
             try {
-                log.debug("Invoking remote service: {}.{}", serviceInterface, method.getName());
+                LOGGER.debug("Invoking remote service: {}.{}", serviceInterface, method.getName());
                 byte[] result = brokerClient.invokeSync(message);
-                if (result == null) return null;
                 return serializer.deserialize(result, Object.class.getName());
             } catch (Exception e) {
-                log.error("RPC invocation failed: {}.{}", serviceInterface, method.getName(), e);
+                LOGGER.error("RPC invocation failed: {}.{}", serviceInterface, method.getName(), e);
                 throw new InvokeException("RPC invocation failed: " + serviceInterface + "." + method.getName(), e);
             }
         }

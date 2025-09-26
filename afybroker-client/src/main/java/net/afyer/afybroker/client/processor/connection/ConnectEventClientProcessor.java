@@ -2,19 +2,20 @@ package net.afyer.afybroker.client.processor.connection;
 
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventProcessor;
-import lombok.extern.slf4j.Slf4j;
-import net.afyer.afybroker.core.BrokerGlobalConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Nipuru
  * @since 2022/7/30 11:42
  */
-@Slf4j
 public class ConnectEventClientProcessor implements ConnectionEventProcessor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectEventClientProcessor.class);
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
-        if (log.isDebugEnabled()) {
-            log.debug("Connection establish! remoteAddress {}", remoteAddress);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Connection establish! remoteAddress {}", remoteAddress);
         }
     }
 }

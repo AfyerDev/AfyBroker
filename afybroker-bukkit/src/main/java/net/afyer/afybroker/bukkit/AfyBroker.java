@@ -2,8 +2,6 @@ package net.afyer.afybroker.bukkit;
 
 import com.alipay.remoting.LifeCycleException;
 import com.alipay.remoting.exception.RemotingException;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.bukkit.listener.PlayerListener;
 import net.afyer.afybroker.bukkit.preprocessor.BukkitServerThreadPreprocessor;
 import net.afyer.afybroker.bukkit.processor.BroadcastChatBukkitProcessor;
@@ -21,6 +19,8 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -30,17 +30,14 @@ import java.util.function.Consumer;
  * @author Nipuru
  * @since 2022/7/28 7:26
  */
-@Slf4j
-@Getter
 public class AfyBroker extends JavaPlugin {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AfyBroker.class);
     private BrokerClient brokerClient;
     private Metrics metrics;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        BoltUtils.initProtocols();
         metrics = new Metrics(this, 26646);
         try {
             String serverAddress = String.format("%s:%s",
@@ -72,15 +69,15 @@ public class AfyBroker extends JavaPlugin {
             }
             brokerClient = builder.build();
             Broker.setClient(brokerClient);
+            BoltUtils.initProtocols();
             brokerClient.startup();
+            brokerClient.printInformation(LOGGER);
             brokerClient.ping();
         } catch (LifeCycleException e) {
-            getLogger().severe("Broker client startup failed!");
-            e.printStackTrace();
+            LOGGER.error("Broker client startup failed!", e);
             Bukkit.shutdown();
         } catch (RemotingException | InterruptedException e) {
-            getLogger().severe("Ping to the broker server failed!");
-            e.printStackTrace();
+            LOGGER.error("Ping to the broker server failed!", e);
         }
 
         registerListeners();
@@ -95,6 +92,10 @@ public class AfyBroker extends JavaPlugin {
         if (metrics != null) {
             metrics.shutdown();
         }
+    }
+
+    public BrokerClient getBrokerClient() {
+        return brokerClient;
     }
 
     private void registerListeners() {

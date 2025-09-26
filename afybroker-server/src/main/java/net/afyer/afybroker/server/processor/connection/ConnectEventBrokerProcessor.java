@@ -5,10 +5,6 @@ import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.exception.RemotingException;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import lombok.AccessLevel;
-import lombok.Setter;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.BrokerServiceDescriptor;
@@ -26,6 +22,8 @@ import net.afyer.afybroker.server.processor.PlayerProxyConnectBrokerProcessor;
 import net.afyer.afybroker.server.processor.PlayerServerJoinBrokerProcessor;
 import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.Executor;
@@ -35,12 +33,15 @@ import java.util.concurrent.Executors;
  * @author Nipuru
  * @since 2022/7/30 11:42
  */
-@Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, BrokerServerAware {
 
-    @Setter
-    BrokerServer brokerServer;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectEventBrokerProcessor.class);
+
+    private BrokerServer brokerServer;
+
+    public void setBrokerServer(BrokerServer brokerServer) {
+        this.brokerServer = brokerServer;
+    }
 
     final RequestBrokerClientInfoMessage requestBrokerClientInfoMessage = new RequestBrokerClientInfoMessage();
     final RequestPlayerInfoMessage requestPlayerInfoMessage = new RequestPlayerInfoMessage();
@@ -50,7 +51,7 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
 
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
-        log.info("BrokerClient[{}] connected, sending request client info message", remoteAddress);
+        LOGGER.info("BrokerClient[{}] connected, sending request client info message", remoteAddress);
 
         ClientConnectEvent event = new ClientConnectEvent(remoteAddress, connection);
         brokerServer.getPluginManager().callEvent(event);
@@ -60,8 +61,8 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
         try {
             brokerServer.getRpcServer().invokeWithCallback(connection, requestBrokerClientInfoMessage, callback, timeoutMillis);
         } catch (RemotingException e) {
-            log.info("Request client info to BrokerClient:{} failed", remoteAddress);
-            log.error(e.getMessage(), e);
+            LOGGER.info("Request client info to BrokerClient:{} failed", remoteAddress);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -82,13 +83,13 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
                 registerPlayer(client);
                 registerServices(client);
 
-                log.info("BrokerClient:{} registration successful", remoteAddress);
+                LOGGER.info("BrokerClient:{} registration successful", remoteAddress);
             }
 
             @Override
             public void onException(Throwable e) {
-                log.error("BrokerClient:{} registration failed", remoteAddress);
-                log.error(e.getMessage(), e);
+                LOGGER.error("BrokerClient:{} registration failed", remoteAddress);
+                LOGGER.error(e.getMessage(), e);
             }
 
             @Override
@@ -109,8 +110,8 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
         try {
             client.invokeWithCallback(requestPlayerInfoMessage, callback);
         } catch (RemotingException | InterruptedException e) {
-            log.error("Request player server info to brokerClient:{} failed", client.getName());
-            log.error(e.getMessage(), e);
+            LOGGER.error("Request player server info to brokerClient:{} failed", client.getName());
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -133,8 +134,8 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
 
             @Override
             public void onException(Throwable e) {
-                log.error("Request player info to bungee brokerClient:{} failed", bungeeClient.getName());
-                log.error(e.getMessage(), e);
+                LOGGER.error("Request player info to bungee brokerClient:{} failed", bungeeClient.getName());
+                LOGGER.error(e.getMessage(), e);
             }
 
             @Override
@@ -161,8 +162,8 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
 
             @Override
             public void onException(Throwable e) {
-                log.error("Request player info to bukkit brokerClient:{} failed", bukkitClient.getName());
-                log.error(e.getMessage(), e);
+                LOGGER.error("Request player info to bukkit brokerClient:{} failed", bukkitClient.getName());
+                LOGGER.error(e.getMessage(), e);
             }
 
             @Override
@@ -184,7 +185,7 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
                 try {
                     proxy.oneway(message);
                 } catch (RemotingException | InterruptedException e) {
-                    log.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }
@@ -201,7 +202,7 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
             try {
                 client.oneway(message);
             } catch (RemotingException | InterruptedException e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -209,7 +210,7 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
     private void registerServices(BrokerClientItem client) {
         List<BrokerServiceDescriptor> services = client.getClientInfo().getServices();
         brokerServer.getServiceRegistry().registerClientServices(client, services);
-        log.info("Registered {} services for client: {}", services.size(), client.getName());
+        LOGGER.info("Registered {} services for client: {}", services.size(), client.getName());
     }
 
 }

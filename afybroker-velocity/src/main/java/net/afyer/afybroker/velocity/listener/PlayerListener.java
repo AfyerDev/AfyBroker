@@ -7,7 +7,6 @@ import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
-import lombok.AllArgsConstructor;
 import net.afyer.afybroker.core.message.PlayerProxyConnectMessage;
 import net.afyer.afybroker.core.message.PlayerProxyDisconnectMessage;
 import net.afyer.afybroker.core.message.PlayerServerConnectedMessage;
@@ -19,10 +18,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
  * @author Nipuru
  * @since 2022/7/30 18:44
  */
-@AllArgsConstructor
 public class PlayerListener {
 
     private final AfyBroker plugin;
+
+    public PlayerListener(AfyBroker plugin) {
+        this.plugin = plugin;
+    }
 
     @Subscribe
     public void onConnect(LoginEvent event) {

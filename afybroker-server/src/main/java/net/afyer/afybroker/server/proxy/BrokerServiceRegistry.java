@@ -1,11 +1,8 @@
 package net.afyer.afybroker.server.proxy;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerServiceDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,15 +15,15 @@ import java.util.stream.Collectors;
  * @author Nipuru
  * @since 2025/7/11 17:07
  */
-@Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerServiceRegistry {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrokerServiceRegistry.class);
+    
     /** 服务接口 -> 服务提供者列表 */
-    final Map<String, List<ServiceProvider>> serviceProviders = new ConcurrentHashMap<>();
+    private final Map<String, List<ServiceProvider>> serviceProviders = new ConcurrentHashMap<>();
     
     /** 客户端名称 -> 服务列表 */
-    final Map<String, Set<String>> clientServices = new ConcurrentHashMap<>();
+    private final Map<String, Set<String>> clientServices = new ConcurrentHashMap<>();
     
     /**
      * 注册客户端服务
@@ -44,8 +41,8 @@ public class BrokerServiceRegistry {
             
             serviceProviders.computeIfAbsent(serviceInterface, k -> new ArrayList<>()).add(provider);
             registeredServices.add(serviceInterface);
-            
-            log.info("Service registered: {} -> {} with tags: {}", serviceInterface, client.getName(), service.getTags());
+
+            LOGGER.info("Service registered: {} -> {} with tags: {}", serviceInterface, client.getName(), service.getTags());
         }
         
         clientServices.put(client.getName(), registeredServices);
@@ -66,7 +63,7 @@ public class BrokerServiceRegistry {
                     }
                 }
             }
-            log.info("Unregistered {} services for client: {}", services.size(), client.getName());
+            LOGGER.info("Unregistered {} services for client: {}", services.size(), client.getName());
         }
     }
     
@@ -124,11 +121,21 @@ public class BrokerServiceRegistry {
         return new HashSet<>(serviceProviders.keySet());
     }
     
-    @Getter
-    @AllArgsConstructor
-    @FieldDefaults(level = AccessLevel.PRIVATE)
     private static class ServiceProvider {
-        final BrokerClientItem client;
-        final Set<String> tags;
+        private final BrokerClientItem client;
+        private final Set<String> tags;
+
+        public ServiceProvider(BrokerClientItem client, Set<String> tags) {
+            this.client = client;
+            this.tags = tags;
+        }
+
+        public BrokerClientItem getClient() {
+            return client;
+        }
+
+        public Set<String> getTags() {
+            return tags;
+        }
     }
 } 

@@ -1,8 +1,5 @@
 package net.afyer.afybroker.core;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,22 +12,20 @@ import java.util.Set;
  * @author Nipuru
  * @since 2022/12/23 10:11
  */
-@Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClientInfo {
 
     /** 客户端名称(唯一标识) */
-    final String name;
+    private final String name;
     /** 客户端标签 */
-    final Set<String> tags;
+    private final Set<String> tags;
     /** 客户端类型 */
-    final String type;
+    private final String type;
     /** 客户端地址 */
-    final String address;
+    private final String address;
     /** 客户端元数据 */
-    final Map<String, String> metadata;
+    private final Map<String, String> metadata;
     /** 客户端服务列表 */
-    final List<BrokerServiceDescriptor> services;
+    private final List<BrokerServiceDescriptor> services;
 
     public BrokerClientInfo(String name, Set<String> tags, String type, String address, Map<String, String> metadata, List<BrokerServiceDescriptor> services) {
         this.name = name;
@@ -41,17 +36,33 @@ public class BrokerClientInfo {
         this.services = services;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public Set<String> getTags() {
         return Collections.unmodifiableSet(tags);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public Map<String, String> getMetadata() {
+        return Collections.unmodifiableMap(metadata);
+    }
+
+    public List<BrokerServiceDescriptor> getServices() {
+        return services;
     }
 
     @Nullable
     public String getMetadata(String key) {
         return metadata.get(key);
-    }
-
-    public Map<String, String> getMetadata() {
-        return Collections.unmodifiableMap(metadata);
     }
 
     public boolean hasTag(String tag) {

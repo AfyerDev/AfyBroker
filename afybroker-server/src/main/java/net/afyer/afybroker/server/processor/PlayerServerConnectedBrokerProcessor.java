@@ -3,8 +3,6 @@ package net.afyer.afybroker.server.processor;
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.message.PlayerServerConnectedMessage;
 import net.afyer.afybroker.server.BrokerServer;
@@ -12,6 +10,8 @@ import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.event.PlayerServerConnectedEvent;
 import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -20,11 +20,15 @@ import java.util.UUID;
  * @author Nipuru
  * @since 2022/9/12 12:33
  */
-@Slf4j
 public class PlayerServerConnectedBrokerProcessor extends AsyncUserProcessor<PlayerServerConnectedMessage> implements BrokerServerAware {
 
-    @Setter
-    BrokerServer brokerServer;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlayerServerConnectedBrokerProcessor.class);
+
+    private BrokerServer brokerServer;
+
+    public void setBrokerServer(BrokerServer brokerServer) {
+        this.brokerServer = brokerServer;
+    }
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerServerConnectedMessage request) {
@@ -36,8 +40,8 @@ public class PlayerServerConnectedBrokerProcessor extends AsyncUserProcessor<Pla
         if (bungeeClient == null) return;
         if (!Objects.equals(bungeeClient.getType(), BrokerClientType.PROXY)) return;
 
-        if (log.isDebugEnabled()) {
-            log.debug("Received player bukkit connected message => player[{}], server[{}]",
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Received player bukkit connected message => player[{}], server[{}]",
                     playerName, bukkitName);
         }
 

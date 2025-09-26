@@ -1,8 +1,6 @@
 package net.afyer.afybroker.server.config;
 
 import com.google.common.base.Charsets;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -18,8 +16,10 @@ import java.util.Map;
  * @author Nipuru
  * @since 2022/7/31 12:10
  */
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class YamlConfiguration extends ConfigurationProvider {
+
+    YamlConfiguration() {
+    }
 
     private final ThreadLocal<Yaml> yaml = new ThreadLocal<Yaml>() {
         @Override

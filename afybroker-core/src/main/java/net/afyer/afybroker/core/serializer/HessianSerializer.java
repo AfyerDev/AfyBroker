@@ -1,4 +1,4 @@
-package net.afyer.afybroker.core.util;
+package net.afyer.afybroker.core.serializer;
 
 
 import com.alipay.remoting.exception.CodecException;
@@ -12,11 +12,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
+ * Hessian 序列化器实现
+ *
  * @author Nipuru
  * @since 2025/07/12 10:36
  */
 public class HessianSerializer implements Serializer {
-
     private final ThreadLocal<ByteArrayOutputStream> localOutputByteArray = ThreadLocal.withInitial(ByteArrayOutputStream::new);
     private final SerializerFactory serializerFactory;
 
@@ -25,6 +26,9 @@ public class HessianSerializer implements Serializer {
     }
 
     public byte[] serialize(Object obj) throws CodecException {
+        if (obj == null) {
+            return new byte[0];
+        }
         ByteArrayOutputStream byteArray = localOutputByteArray.get();
         byteArray.reset();
         Hessian2Output output = new Hessian2Output(byteArray);
@@ -41,6 +45,9 @@ public class HessianSerializer implements Serializer {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T deserialize(byte[] data, String classOfT) throws CodecException {
+        if (data == null || data.length == 0) {
+            return null;
+        }
         Hessian2Input input = new Hessian2Input(new ByteArrayInputStream(data));
         input.setSerializerFactory(serializerFactory);
         Object resultObject;

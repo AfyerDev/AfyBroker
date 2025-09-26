@@ -1,14 +1,6 @@
 package net.afyer.afybroker.core;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
-
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -17,17 +9,38 @@ import java.util.Set;
  * @author Nipuru
  * @since 2025/7/11 17:04
  */
-@Getter
-@Setter
-@ToString
-@Accessors(chain = true)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerServiceDescriptor implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** 服务接口名 */
-    String serviceInterface;
+    private String serviceInterface;
 
     /** 服务标签 */
-    Set<String> tags;
+    private Set<String> tags;
+
+    public String getServiceInterface() {
+        return serviceInterface;
+    }
+
+    public BrokerServiceDescriptor setServiceInterface(String serviceInterface) {
+        this.serviceInterface = serviceInterface;
+        return this;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public BrokerServiceDescriptor setTags(Set<String> tags) {
+        this.tags = tags;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "BrokerServiceDescriptor{" +
+                "serviceInterface='" + serviceInterface + '\'' +
+                ", tags=" + tags +
+                '}';
+    }
 } 

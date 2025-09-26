@@ -1,9 +1,6 @@
 package net.afyer.afybroker.server.command;
 
 import jline.console.completer.Completer;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.server.BrokerServer;
 
 import java.util.ArrayList;
@@ -16,11 +13,13 @@ import java.util.stream.Collectors;
  * @author Nipuru
  * @since 2022/8/6 8:24
  */
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ConsoleCommandCompleter implements Completer {
 
-    final BrokerServer server;
+    private final BrokerServer server;
+
+    public ConsoleCommandCompleter(BrokerServer server) {
+        this.server = server;
+    }
 
     @Override
     public int complete(String buffer, int cursor, List<CharSequence> candidates) {

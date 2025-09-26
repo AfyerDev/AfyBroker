@@ -3,7 +3,6 @@ package net.afyer.afybroker.client;
 import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcResponseFuture;
-import lombok.Getter;
 import net.afyer.afybroker.core.BrokerClientInfo;
 
 import java.util.ArrayList;
@@ -20,8 +19,11 @@ import java.util.function.Consumer;
 public final class Broker {
 
     /** broker 客户端 */
-    @Getter
     private static BrokerClient client;
+
+    public static BrokerClient getClient() {
+        return client;
+    }
 
     private static List<Consumer<BrokerClientBuilder>> buildActions;
 

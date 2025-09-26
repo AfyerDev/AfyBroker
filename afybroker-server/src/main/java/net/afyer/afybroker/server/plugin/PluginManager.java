@@ -6,8 +6,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.server.BrokerServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
@@ -25,8 +26,9 @@ import java.util.jar.JarFile;
  * @author Nipuru
  * @since 2022/7/31 10:58
  */
-@Slf4j
 public class PluginManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PluginManager.class);
 
     private final BrokerServer server;
     private final Yaml yaml;
@@ -107,7 +109,7 @@ public class PluginManager {
                 }
             }
         } catch (Exception ex) {
-            log.error("Error in dispatching command", ex);
+            LOGGER.error("Error in dispatching command", ex);
         }
         return true;
     }
@@ -125,7 +127,7 @@ public class PluginManager {
         for (Map.Entry<String, PluginDescription> entry : toLoad.entrySet()) {
             PluginDescription plugin = entry.getValue();
             if (!enablePlugin(pluginStatuses, new Stack<>(), plugin)) {
-                log.warn("Failed to enable {}", entry.getKey());
+                LOGGER.warn("Failed to enable {}", entry.getKey());
             }
         }
         toLoad.clear();
@@ -136,12 +138,12 @@ public class PluginManager {
         for (Plugin plugin : plugins.values()) {
             try {
                 plugin.onEnable();
-                log.info("Enabled plugin {} version {} by {}",
+                LOGGER.info("Enabled plugin {} version {} by {}",
                         plugin.getDescription().getName(),
                         plugin.getDescription().getVersion(),
                         plugin.getDescription().getAuthor());
             } catch (Throwable t) {
-                log.warn("Exception encountered when loading plugin: " + plugin.getDescription().getName(), t);
+                LOGGER.warn("Exception encountered when loading plugin: " + plugin.getDescription().getName(), t);
             }
         }
     }
@@ -167,7 +169,7 @@ public class PluginManager {
                         dependencyGraph.append(element.getName()).append(" -> ");
                     }
                     dependencyGraph.append(plugin.getName()).append(" -> ").append(dependName);
-                    log.info("Circular dependency detected: {}", dependencyGraph);
+                    LOGGER.info("Circular dependency detected: {}", dependencyGraph);
                     status = false;
                 } else {
                     dependStack.push(plugin);
@@ -178,7 +180,7 @@ public class PluginManager {
 
             if (dependStatus == Boolean.FALSE && plugin.getDepends().contains(dependName))
             {
-                log.warn("{} (required by {}) is unavailable", dependName, plugin.getName());
+                LOGGER.warn("{} (required by {}) is unavailable", dependName, plugin.getName());
                 status = false;
             }
 
@@ -195,9 +197,9 @@ public class PluginManager {
                 Plugin clazz = newPluginInstance(main);
                 plugins.put(plugin.getName(), clazz);
                 clazz.onLoad();
-                log.info("Loaded plugin {} version {} by {}", plugin.getName(), plugin.getVersion(), plugin.getAuthor());
+                LOGGER.info("Loaded plugin {} version {} by {}", plugin.getName(), plugin.getVersion(), plugin.getAuthor());
             } catch (Throwable t) {
-                log.warn("Error loading plugin " + plugin.getName(), t);
+                LOGGER.warn("Error loading plugin " + plugin.getName(), t);
             }
         }
 
@@ -262,7 +264,7 @@ public class PluginManager {
                         toLoad.put(desc.getName(), desc);
                     }
                 } catch (Exception ex) {
-                    log.warn("Could not load plugin from file " + file, ex);
+                    LOGGER.warn("Could not load plugin from file " + file, ex);
                 }
             }
         }
@@ -277,7 +279,7 @@ public class PluginManager {
 
         long elapsed = System.nanoTime() - start;
         if (elapsed > 250000000) {
-            log.warn("Event {} took {}ms to process!", event, elapsed / 1000000);
+            LOGGER.warn("Event {} took {}ms to process!", event, elapsed / 1000000);
         }
         return event;
     }

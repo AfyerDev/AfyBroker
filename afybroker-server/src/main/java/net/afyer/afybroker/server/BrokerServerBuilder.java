@@ -4,10 +4,6 @@ import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
-import lombok.AccessLevel;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.server.processor.*;
 import net.afyer.afybroker.server.processor.connection.CloseEventBrokerProcessor;
@@ -23,34 +19,34 @@ import java.util.Map;
  * @author Nipuru
  * @since 2022/7/29 20:13
  */
-@Setter
-@Accessors(fluent = true)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerServerBuilder {
 
     /**
      * broker 端口
      */
-    int port = BrokerGlobalConfig.BROKER_PORT;
+    private int port = BrokerGlobalConfig.BROKER_PORT;
 
     /**
      * 用户处理器
      */
-    final List<UserProcessor<?>> processorList = new ArrayList<>();
+    private final List<UserProcessor<?>> processorList = new ArrayList<>();
 
     /**
      * bolt 连接器
      */
-    final Map<ConnectionEventType, ConnectionEventProcessor> connectionEventProcessorMap = new HashMap<>();
+    private final Map<ConnectionEventType, ConnectionEventProcessor> connectionEventProcessorMap = new HashMap<>();
+
+    public BrokerServerBuilder port(int port) {
+        this.port = port;
+        return this;
+    }
 
     BrokerServerBuilder() {
         // 初始化一些处理器
         this.defaultProcessor();
 
-        // 开启 bolt 重连, 通过系统属性来开和关，如果一个进程有多个 RpcClient，则同时生效
-        System.setProperty(Configs.CONN_MONITOR_SWITCH, "true");
-        System.setProperty(Configs.CONN_RECONNECT_SWITCH, "true");
-
+        // 通过系统属性来开和关，如果一个进程有多个 RpcServer，则同时生效
+        // 开启 bolt 重连
         System.setProperty(Configs.CONN_MONITOR_SWITCH, "true");
         System.setProperty(Configs.CONN_RECONNECT_SWITCH, "true");
     }

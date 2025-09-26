@@ -2,7 +2,6 @@ package net.afyer.afybroker.velocity.processor;
 
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
-import lombok.AllArgsConstructor;
 import net.afyer.afybroker.core.message.PlayerHeartbeatValidateMessage;
 import net.afyer.afybroker.velocity.AfyBroker;
 
@@ -14,10 +13,13 @@ import java.util.UUID;
  * @author Nipuru
  * @since 2023/11/25 12:32
  */
-@AllArgsConstructor
 public class PlayerHeartbeatValidateVelocityProcessor extends SyncUserProcessor<PlayerHeartbeatValidateMessage> {
 
     private final AfyBroker plugin;
+
+    public PlayerHeartbeatValidateVelocityProcessor(AfyBroker plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public Object handleRequest(BizContext bizCtx, PlayerHeartbeatValidateMessage request) {

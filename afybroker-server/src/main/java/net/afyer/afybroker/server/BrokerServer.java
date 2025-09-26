@@ -8,12 +8,7 @@ import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.alipay.remoting.serialization.SerializerManager;
 import com.google.common.collect.Lists;
 import jline.console.ConsoleReader;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import net.afyer.afybroker.core.util.HessianSerializer;
+import net.afyer.afybroker.core.serializer.HessianSerializer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.command.*;
 import net.afyer.afybroker.server.plugin.BrokerClassLoader;
@@ -23,6 +18,8 @@ import net.afyer.afybroker.server.proxy.*;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
 import net.afyer.afybroker.server.task.PlayerHeartbeatValidateTask;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,43 +30,39 @@ import java.util.UUID;
  * @author Nipuru
  * @since 2022/7/29 20:13
  */
-@Slf4j
-@Getter
-@Setter(AccessLevel.PACKAGE)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerServer {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrokerServer.class);
+
     /** rpc server */
-    RpcServer rpcServer;
+    private RpcServer rpcServer;
     /** broker 端口 */
-    int port;
+    private int port;
     /**
      * broker 运行状态
      */
-    boolean start;
+    private boolean start;
 
-
-    final ConsoleReader consoleReader;
-    final PluginManager pluginManager;
-    final BrokerScheduler scheduler;
-    final File pluginsFolder;
+    private final ConsoleReader consoleReader;
+    private final PluginManager pluginManager;
+    private final BrokerScheduler scheduler;
+    private final File pluginsFolder;
 
     /**
      * 客户端代理 管理器
      */
-    final BrokerClientManager clientManager;
+    private final BrokerClientManager clientManager;
     /**
      * 玩家代理 管理器
      */
-    final BrokerPlayerManager playerManager;
+    private final BrokerPlayerManager playerManager;
     
     /**
      * 服务注册表
      */
-    final BrokerServiceRegistry serviceRegistry;
+    private final BrokerServiceRegistry serviceRegistry;
 
-    final PlayerHeartbeatValidateTask playerHeartbeatValidateTask;
-
+    private final PlayerHeartbeatValidateTask playerHeartbeatValidateTask;
 
     BrokerServer() throws IOException {
         this.consoleReader = new ConsoleReader();
@@ -92,6 +85,50 @@ public class BrokerServer {
     void initServer() {
         this.rpcServer = new RpcServer(port, true);
         pluginsFolder.mkdirs();
+    }
+
+    void setPort(int port) {
+        this.port = port;
+    }
+
+    public RpcServer getRpcServer() {
+        return rpcServer;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public boolean isStart() {
+        return start;
+    }
+
+    public ConsoleReader getConsoleReader() {
+        return consoleReader;
+    }
+
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    public BrokerScheduler getScheduler() {
+        return scheduler;
+    }
+
+    public File getPluginsFolder() {
+        return pluginsFolder;
+    }
+
+    public BrokerClientManager getClientManager() {
+        return clientManager;
+    }
+
+    public BrokerPlayerManager getPlayerManager() {
+        return playerManager;
+    }
+
+    public BrokerServiceRegistry getServiceRegistry() {
+        return serviceRegistry;
     }
 
     public void registerUserProcessor(UserProcessor<?> processor) {
@@ -126,11 +163,11 @@ public class BrokerServer {
     public void startup() {
         synchronized (this) {
             if (start) {
-                log.info("Server already started!");
+                LOGGER.info("Server already started!");
                 return;
             }
             this.start = true;
-            log.info("Server port: [{}], Starting", this.port);
+            LOGGER.info("Server port: [{}], Starting", this.port);
             long start = System.currentTimeMillis();
 
             pluginManager.detectPlugins(pluginsFolder);
@@ -141,29 +178,29 @@ public class BrokerServer {
             // 启动 bolt rpc
             this.rpcServer.startup();
 
-            log.info("Done ({}ms)", System.currentTimeMillis() - start);
+            LOGGER.info("Done ({}ms)", System.currentTimeMillis() - start);
         }
     }
 
     public void shutdown() {
         synchronized (this) {
             if (!start) {
-                log.info("Server already closed");
+                LOGGER.info("Server already closed");
                 return;
             }
             start = false;
-            log.info("Stopping the server");
+            LOGGER.info("Stopping the server");
             new Thread("Shutdown Thread") {
                 @Override
                 public void run() {
-                    log.info("Stopping server");
-                    log.info("Disabling plugins");
+                    LOGGER.info("Stopping server");
+                    LOGGER.info("Disabling plugins");
                     for (Plugin plugin : Lists.reverse(new ArrayList<>(pluginManager.getPlugins()))) {
                         try {
                             plugin.onDisable();
                         }
                         catch (Throwable t) {
-                            log.error("Exception disabling plugin " + plugin.getDescription().getName(), t);
+                            LOGGER.error("Exception disabling plugin " + plugin.getDescription().getName(), t);
                         }
                         scheduler.cancel(plugin);
                     }
@@ -186,8 +223,9 @@ public class BrokerServer {
     }
 
     static {
-        // 添加Hessian默认序列化器
-        SerializerManager.addSerializer(SerializerManager.Hessian2, new HessianSerializer(new BrokerClassLoader()));
+        // 添加默认序列化器
+        ClassLoader classLoader = new BrokerClassLoader();
+        SerializerManager.addSerializer(SerializerManager.Hessian2, new HessianSerializer(classLoader));
     }
 
 }

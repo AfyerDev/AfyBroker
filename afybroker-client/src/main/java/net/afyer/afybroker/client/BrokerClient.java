@@ -6,10 +6,6 @@ import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.RpcResponseFuture;
 import com.alipay.remoting.serialization.SerializerManager;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.client.preprocessor.BrokerInvocationContext;
 import net.afyer.afybroker.client.preprocessor.BrokerPreprocessor;
@@ -17,7 +13,8 @@ import net.afyer.afybroker.client.preprocessor.PreprocessorException;
 import net.afyer.afybroker.client.service.BrokerServiceProxyFactory;
 import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
-import net.afyer.afybroker.core.util.HessianSerializer;
+import net.afyer.afybroker.core.serializer.HessianSerializer;
+import org.slf4j.Logger;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,32 +24,67 @@ import java.util.List;
  * @author Nipuru
  * @since 2022/7/30 19:15
  */
-@Getter
-@Setter(AccessLevel.PACKAGE)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClient {
-
     /** 客户端信息 */
-    BrokerClientInfo clientInfo;
+    private BrokerClientInfo clientInfo;
 
     /** rpc 客户端 */
-    @Getter(AccessLevel.NONE)
-    RpcClient rpcClient;
+    private RpcClient rpcClient;
 
     /** 消息发送超时时间 */
-    int defaultTimeoutMillis;
+    private int defaultTimeoutMillis;
 
     /** 服务注册表 */
-    BrokerServiceRegistry serviceRegistry;
+    private BrokerServiceRegistry serviceRegistry;
     
     /** 服务代理工厂 */
-    final BrokerServiceProxyFactory serviceProxyFactory;
+    private final BrokerServiceProxyFactory serviceProxyFactory;
 
     /** 预处理函数列表 */
-    List<BrokerPreprocessor> preprocessors;
+    private List<BrokerPreprocessor> preprocessors;
 
     BrokerClient() {
         this.serviceProxyFactory = new BrokerServiceProxyFactory(this);
+    }
+
+    void setClientInfo(BrokerClientInfo clientInfo) {
+        this.clientInfo = clientInfo;
+    }
+
+    void setRpcClient(RpcClient rpcClient) {
+        this.rpcClient = rpcClient;
+    }
+
+    void setDefaultTimeoutMillis(int defaultTimeoutMillis) {
+        this.defaultTimeoutMillis = defaultTimeoutMillis;
+    }
+
+    void setServiceRegistry(BrokerServiceRegistry serviceRegistry) {
+        this.serviceRegistry = serviceRegistry;
+    }
+
+    void setPreprocessors(List<BrokerPreprocessor> preprocessors) {
+        this.preprocessors = preprocessors;
+    }
+
+    public BrokerClientInfo getClientInfo() {
+        return clientInfo;
+    }
+
+    public int getDefaultTimeoutMillis() {
+        return defaultTimeoutMillis;
+    }
+
+    public BrokerServiceRegistry getServiceRegistry() {
+        return serviceRegistry;
+    }
+
+    public BrokerServiceProxyFactory getServiceProxyFactory() {
+        return serviceProxyFactory;
+    }
+
+    public List<BrokerPreprocessor> getPreprocessors() {
+        return preprocessors;
     }
 
     public boolean hasTag(String tag) {
@@ -142,11 +174,24 @@ public class BrokerClient {
         }
     }
 
+    public void printInformation(Logger logger) {
+        logger.info("========== BrokerClient Information ==========");
+        logger.info("Name: {}", clientInfo.getName());
+        logger.info("Type: {}", clientInfo.getType());
+        logger.info("Tags: {}", clientInfo.getTags());
+        logger.info("Metadata: {}", clientInfo.getMetadata());
+        logger.info("Address: {}", clientInfo.getAddress());
+        logger.info("Default Timeout: {} ms", defaultTimeoutMillis);
+        logger.info("================================================");
+    }
+
     public static BrokerClientBuilder newBuilder() {
         return new BrokerClientBuilder();
     }
 
     static {
-        SerializerManager.addSerializer(SerializerManager.Hessian2, new HessianSerializer(BrokerClient.class.getClassLoader()));
+        // 添加默认序列化器
+        ClassLoader classLoader = BrokerClient.class.getClassLoader();
+        SerializerManager.addSerializer(SerializerManager.Hessian2, new HessianSerializer(classLoader));
     }
 }

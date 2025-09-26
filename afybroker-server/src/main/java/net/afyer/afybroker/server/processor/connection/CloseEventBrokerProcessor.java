@@ -2,26 +2,27 @@ package net.afyer.afybroker.server.processor.connection;
 
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventProcessor;
-import lombok.AccessLevel;
-import lombok.Setter;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.event.ClientCloseEvent;
 import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerClientManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Nipuru
  * @since 2022/7/30 11:42
  */
-@Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CloseEventBrokerProcessor implements ConnectionEventProcessor, BrokerServerAware {
 
-    @Setter
-    BrokerServer brokerServer;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CloseEventBrokerProcessor.class);
+
+    private BrokerServer brokerServer;
+
+    public void setBrokerServer(BrokerServer brokerServer) {
+        this.brokerServer = brokerServer;
+    }
 
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
@@ -38,6 +39,6 @@ public class CloseEventBrokerProcessor implements ConnectionEventProcessor, Brok
             brokerServer.getPluginManager().callEvent(event);
         }
 
-        log.info("BrokerClient[{}] disconnect", remoteAddress);
+        LOGGER.info("BrokerClient[{}] disconnect", remoteAddress);
     }
 }

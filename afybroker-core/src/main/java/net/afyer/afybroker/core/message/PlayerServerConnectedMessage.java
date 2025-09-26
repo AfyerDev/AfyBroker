@@ -1,12 +1,5 @@
 package net.afyer.afybroker.core.message;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
-
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -15,21 +8,51 @@ import java.util.UUID;
  * @author Nipuru
  * @since 2022/9/12 12:21
  */
-@Getter
-@Setter
-@ToString
-@Accessors(chain = true)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerServerConnectedMessage implements Serializable {
     private static final long serialVersionUID = 5436035428469761938L;
 
     /** 玩家uuid */
-    UUID uniqueId;
+    private UUID uniqueId;
 
     /** 玩家名 */
-    String name;
+    private String name;
 
     /** 服务器名 */
-    String serverName;
+    private String serverName;
 
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
+
+    public PlayerServerConnectedMessage setUniqueId(UUID uniqueId) {
+        this.uniqueId = uniqueId;
+        return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public PlayerServerConnectedMessage setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public PlayerServerConnectedMessage setServerName(String serverName) {
+        this.serverName = serverName;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerServerConnectedMessage{" +
+                "uniqueId=" + uniqueId +
+                ", name='" + name + '\'' +
+                ", serverName='" + serverName + '\'' +
+                '}';
+    }
 }

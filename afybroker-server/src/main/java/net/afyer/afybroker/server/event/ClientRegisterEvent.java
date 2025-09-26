@@ -1,9 +1,5 @@
 package net.afyer.afybroker.server.event;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.server.plugin.Event;
 import net.afyer.afybroker.server.proxy.BrokerClientItem;
@@ -14,14 +10,24 @@ import net.afyer.afybroker.server.proxy.BrokerClientItem;
  * @author Nipuru
  * @since 2022/9/10 17:56
  */
-@Getter
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ClientRegisterEvent extends Event {
 
     /** 客户端信息 */
-    final BrokerClientInfoMessage brokerClientInfo;
+    private final BrokerClientInfoMessage brokerClientInfo;
 
     /** 客户端代理 */
-    final BrokerClientItem brokerClientItem;
+    private final BrokerClientItem brokerClientItem;
+
+    public ClientRegisterEvent(BrokerClientInfoMessage brokerClientInfo, BrokerClientItem brokerClientItem) {
+        this.brokerClientInfo = brokerClientInfo;
+        this.brokerClientItem = brokerClientItem;
+    }
+
+    public BrokerClientInfoMessage getBrokerClientInfo() {
+        return brokerClientInfo;
+    }
+
+    public BrokerClientItem getBrokerClientItem() {
+        return brokerClientItem;
+    }
 }

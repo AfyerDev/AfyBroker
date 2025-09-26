@@ -1,6 +1,7 @@
 package net.afyer.afybroker.server;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -8,8 +9,9 @@ import java.io.IOException;
  * @author Nipuru
  * @since 2022/7/29 20:19
  */
-@Slf4j
 public class BootStrap {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BootStrap.class);
 
     public static void main(String[] args) throws IOException {
         BrokerServer brokerServer = BrokerServer.builder().build();
@@ -21,7 +23,7 @@ public class BootStrap {
         String line;
         while (brokerServer.isStart() && (line = brokerServer.getConsoleReader().readLine()) != null) {
             if (!brokerServer.getPluginManager().dispatchCommand(line)) {
-                log.warn("Command not found.");
+                LOGGER.warn("Command not found.");
             }
         }
     }

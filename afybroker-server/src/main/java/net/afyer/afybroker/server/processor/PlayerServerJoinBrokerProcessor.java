@@ -3,8 +3,6 @@ package net.afyer.afybroker.server.processor;
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.message.PlayerServerJoinMessage;
 import net.afyer.afybroker.server.BrokerServer;
@@ -12,6 +10,8 @@ import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.event.PlayerServerJoinEvent;
 import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -19,11 +19,15 @@ import java.util.Objects;
  * @author Nipuru
  * @since 2023/09/29 12:16
  */
-@Slf4j
 public class PlayerServerJoinBrokerProcessor extends AsyncUserProcessor<PlayerServerJoinMessage> implements BrokerServerAware {
 
-    @Setter
-    BrokerServer brokerServer;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlayerServerJoinBrokerProcessor.class);
+
+    private BrokerServer brokerServer;
+
+    public void setBrokerServer(BrokerServer brokerServer) {
+        this.brokerServer = brokerServer;
+    }
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, PlayerServerJoinMessage request) {
@@ -34,8 +38,8 @@ public class PlayerServerJoinBrokerProcessor extends AsyncUserProcessor<PlayerSe
         BrokerPlayer player = brokerServer.getPlayer(request.getUniqueId());
         if (player == null) return;
 
-        if (log.isDebugEnabled()) {
-            log.debug("Received player bukkit join message => player[{}], bukkitClient[{}]",
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Received player bukkit join message => player[{}], bukkitClient[{}]",
                     request.getName(), currentBukkit.getName());
         }
 

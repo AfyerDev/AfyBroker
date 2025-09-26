@@ -1,12 +1,5 @@
 package net.afyer.afybroker.core.message;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
-
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -16,17 +9,38 @@ import java.util.UUID;
  * @author Nipuru
  * @since 2022/10/10 10:30
  */
-@Getter
-@Setter
-@ToString
-@Accessors(chain = true)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class KickPlayerMessage implements Serializable {
     private static final long serialVersionUID = 225514412094976346L;
 
     /** 玩家名 */
-    UUID uniqueId;
+    private UUID uniqueId;
 
     /** 踢出消息 */
-    String message;
+    private String message;
+
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
+
+    public KickPlayerMessage setUniqueId(UUID uniqueId) {
+        this.uniqueId = uniqueId;
+        return this;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public KickPlayerMessage setMessage(String message) {
+        this.message = message;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "KickPlayerMessage{" +
+                "uniqueId=" + uniqueId +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

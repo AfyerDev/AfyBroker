@@ -1,18 +1,10 @@
 package net.afyer.afybroker.client.service;
 
 import com.alipay.remoting.rpc.exception.InvokeException;
-import com.alipay.remoting.serialization.Serializer;
-import com.alipay.remoting.serialization.SerializerManager;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerServiceDescriptor;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 服务注册表
@@ -20,11 +12,9 @@ import java.util.Map;
  * @author Nipuru
  * @since 2025/7/11 17:06
  */
-@Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerServiceRegistry {
 
-    final Map<String, BrokerServiceEntry> services;
+    private final Map<String, BrokerServiceEntry> services;
 
     public BrokerServiceRegistry(Map<String, BrokerServiceEntry> services) {
         this.services = services;
@@ -43,7 +33,7 @@ public class BrokerServiceRegistry {
      * 调用本地服务
      */
     public Object invoke(String serviceInterface, String methodName,
-                         String[] parameterTypeNames, byte[] parametersData)
+                         String[] parameterTypeNames, Objects[] parameters)
             throws Exception {
         BrokerServiceEntry entry = services.get(serviceInterface);
         if (entry == null) {
@@ -57,9 +47,7 @@ public class BrokerServiceRegistry {
                     " with parameters: " + Arrays.toString(parameterTypeNames));
         }
 
-        Serializer serializer = SerializerManager.getSerializer(SerializerManager.Hessian2);
-        Object[] parameters = serializer.deserialize(parametersData, Object[].class.getName());
-        return method.invoke(entry.getServiceImpl(), parameters);
+        return method.invoke(entry.getServiceImpl(), (Object[]) parameters);
     }
 
 

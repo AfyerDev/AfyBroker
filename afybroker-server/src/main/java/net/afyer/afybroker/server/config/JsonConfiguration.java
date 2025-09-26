@@ -2,8 +2,6 @@ package net.afyer.afybroker.server.config;
 
 import com.google.common.base.Charsets;
 import com.google.gson.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -14,8 +12,10 @@ import java.util.Map;
  * @author Nipuru
  * @since 2022/7/31 12:13
  */
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class JsonConfiguration extends ConfigurationProvider {
+
+    JsonConfiguration() {
+    }
 
     private final Gson json = new GsonBuilder().serializeNulls().setPrettyPrinting().registerTypeAdapter(Configuration.class, new JsonSerializer<Configuration>() {
         @Override

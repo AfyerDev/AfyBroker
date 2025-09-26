@@ -1,7 +1,5 @@
 package net.afyer.afybroker.server.proxy;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -16,12 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Nipuru
  * @since 2022/7/30 20:36
  */
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerPlayerManager {
 
-    final Map<UUID, BrokerPlayer> byUid = new ConcurrentHashMap<>();
-    final Map<String, BrokerPlayer> byName = new ConcurrentHashMap<>();
-    final Map<UUID, BrokerPlayer> view = Collections.unmodifiableMap(byUid);
+    private final Map<UUID, BrokerPlayer> byUid = new ConcurrentHashMap<>();
+    private final Map<String, BrokerPlayer> byName = new ConcurrentHashMap<>();
+    private final Map<UUID, BrokerPlayer> view = Collections.unmodifiableMap(byUid);
 
     public Collection<BrokerPlayer> getPlayers() {
         return view.values();

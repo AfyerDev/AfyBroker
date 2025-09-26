@@ -1,9 +1,5 @@
 package net.afyer.afybroker.server.event;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.server.plugin.Event;
 import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
@@ -13,19 +9,35 @@ import org.jetbrains.annotations.Nullable;
  * @author Nipuru
  * @since 2023/09/29 12:18
  */
-@Getter
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerServerJoinEvent extends Event {
 
     /** 玩家代理 */
-    final BrokerPlayer player;
+    private final BrokerPlayer player;
 
     /** 玩家之前所在的 server 代理 */
     @Nullable
-    final BrokerClientItem previous;
+    private final BrokerClientItem previous;
 
     /** 玩家当前所在的 server 代理 */
-    final BrokerClientItem current;
+    private final BrokerClientItem current;
+
+    public PlayerServerJoinEvent(BrokerPlayer player, @Nullable BrokerClientItem previous, BrokerClientItem current) {
+        this.player = player;
+        this.previous = previous;
+        this.current = current;
+    }
+
+    public BrokerPlayer getPlayer() {
+        return player;
+    }
+
+    @Nullable
+    public BrokerClientItem getPrevious() {
+        return previous;
+    }
+
+    public BrokerClientItem getCurrent() {
+        return current;
+    }
 
 }

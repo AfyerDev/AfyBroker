@@ -1,10 +1,8 @@
 package net.afyer.afybroker.server.scheduler;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.server.plugin.Plugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,18 +11,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Nipuru
  * @since 2022/7/31 12:25
  */
-@Slf4j
-@Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerTask implements Runnable, ScheduledTask {
 
-    final BrokerScheduler sched;
-    final int id;
-    final Plugin owner;
-    final Runnable task;
-    final long delay;
-    final long period;
-    final AtomicBoolean running = new AtomicBoolean(true);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrokerTask.class);
+
+    private final BrokerScheduler sched;
+    private final int id;
+    private final Plugin owner;
+    private final Runnable task;
+    private final long delay;
+    private final long period;
+    private final AtomicBoolean running = new AtomicBoolean(true);
 
     public BrokerTask(BrokerScheduler sched, int id, Plugin owner, Runnable task,
                       long delay, long period, TimeUnit unit) {
@@ -34,6 +31,34 @@ public class BrokerTask implements Runnable, ScheduledTask {
         this.task = task;
         this.delay = unit.toMillis(delay);
         this.period = unit.toMillis(period);
+    }
+
+    public BrokerScheduler getSched() {
+        return sched;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Plugin getOwner() {
+        return owner;
+    }
+
+    public Runnable getTask() {
+        return task;
+    }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    public long getPeriod() {
+        return period;
+    }
+
+    public AtomicBoolean getRunning() {
+        return running;
     }
 
     @Override
@@ -59,7 +84,7 @@ public class BrokerTask implements Runnable, ScheduledTask {
             try {
                 task.run();
             } catch (Throwable t) {
-                log.error(String.format("Task %s encountered an exception", this), t);
+                LOGGER.error(String.format("Task %s encountered an exception", this), t);
             }
 
             if (period <= 0) {

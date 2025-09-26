@@ -1,9 +1,8 @@
 package net.afyer.afybroker.server.proxy;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +17,11 @@ import java.util.function.Predicate;
  * @author Nipuru
  * @since 2022/7/31 8:00
  */
-@Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClientManager {
 
-    final Map<String, BrokerClientItem> byAddress = new ConcurrentHashMap<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrokerClientManager.class);
+
+    private final Map<String, BrokerClientItem> byAddress = new ConcurrentHashMap<>();
 
     /** 注册客户端代理 */
     public void register(BrokerClientItem brokerClientItem) {

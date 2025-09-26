@@ -5,7 +5,6 @@ import com.alipay.remoting.Protocol;
 import com.alipay.remoting.ProtocolCode;
 import com.alipay.remoting.ProtocolManager;
 import com.alipay.remoting.rpc.protocol.*;
-import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.concurrent.TimeUnit;
  * @author Nipuru
  * @since 2022/8/11 11:57
  */
-@UtilityClass
 public class BoltUtils {
 
     private static final ProtocolCode[] PROTOCOL_CODES = new ProtocolCode[] {

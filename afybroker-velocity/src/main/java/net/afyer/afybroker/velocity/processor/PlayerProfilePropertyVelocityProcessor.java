@@ -5,7 +5,6 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
-import lombok.AllArgsConstructor;
 import net.afyer.afybroker.core.message.PlayerProfilePropertyMessage;
 import net.afyer.afybroker.velocity.AfyBroker;
 
@@ -17,10 +16,13 @@ import java.util.Map;
  * @author Nipuru
  * @since 2024/12/03 10:20
  */
-@AllArgsConstructor
 public class PlayerProfilePropertyVelocityProcessor extends SyncUserProcessor<PlayerProfilePropertyMessage> {
 
     private final AfyBroker plugin;
+
+    public PlayerProfilePropertyVelocityProcessor(AfyBroker plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public Object handleRequest(BizContext bizCtx, PlayerProfilePropertyMessage request) throws Exception {

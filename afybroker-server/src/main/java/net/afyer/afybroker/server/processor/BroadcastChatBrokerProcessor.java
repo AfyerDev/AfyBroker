@@ -4,14 +4,14 @@ import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.message.BroadcastChatMessage;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerClientManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -19,11 +19,15 @@ import java.util.List;
  * @author Nipuru
  * @since 2022/8/10 11:27
  */
-@Slf4j
 public class BroadcastChatBrokerProcessor extends AsyncUserProcessor<BroadcastChatMessage> implements BrokerServerAware {
 
-    @Setter
-    BrokerServer brokerServer;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BroadcastChatBrokerProcessor.class);
+
+    private BrokerServer brokerServer;
+
+    public void setBrokerServer(BrokerServer brokerServer) {
+        this.brokerServer = brokerServer;
+    }
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, BroadcastChatMessage request) {
@@ -34,7 +38,7 @@ public class BroadcastChatBrokerProcessor extends AsyncUserProcessor<BroadcastCh
             try {
                 brokerClient.oneway(request);
             } catch (RemotingException | InterruptedException e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

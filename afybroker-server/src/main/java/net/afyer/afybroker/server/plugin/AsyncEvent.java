@@ -1,7 +1,6 @@
 package net.afyer.afybroker.server.plugin;
 
 import com.google.common.base.Preconditions;
-import lombok.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,16 +11,59 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Nipuru
  * @since 2022/11/21 16:38
  */
-@Data
-@Getter(AccessLevel.NONE)
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 public class AsyncEvent<T> extends Event {
 
     private final Callback<T> done;
     private final Map<Plugin, AtomicInteger> intents = new ConcurrentHashMap<>();
     private final AtomicBoolean fired = new AtomicBoolean();
     private final AtomicInteger latch = new AtomicInteger();
+
+    public AsyncEvent(Callback<T> done) {
+        this.done = done;
+    }
+
+    public Callback<T> getDone() {
+        return done;
+    }
+
+    public Map<Plugin, AtomicInteger> getIntents() {
+        return intents;
+    }
+
+    public AtomicBoolean getFired() {
+        return fired;
+    }
+
+    public AtomicInteger getLatch() {
+        return latch;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AsyncEvent<?> asyncEvent = (AsyncEvent<?>) o;
+        return java.util.Objects.equals(done, asyncEvent.done) &&
+                java.util.Objects.equals(intents, asyncEvent.intents) &&
+                java.util.Objects.equals(fired, asyncEvent.fired) &&
+                java.util.Objects.equals(latch, asyncEvent.latch);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(super.hashCode(), done, intents, fired, latch);
+    }
+
+    @Override
+    public String toString() {
+        return "AsyncEvent{" +
+                "done=" + done +
+                ", intents=" + intents +
+                ", fired=" + fired +
+                ", latch=" + latch +
+                '}';
+    }
 
     @Override
     @SuppressWarnings("unchecked")

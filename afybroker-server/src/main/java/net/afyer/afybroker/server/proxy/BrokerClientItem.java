@@ -4,9 +4,6 @@ import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcResponseFuture;
 import com.alipay.remoting.rpc.RpcServer;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
@@ -21,21 +18,27 @@ import java.util.Set;
  * @author Nipuru
  * @since 2022/7/30 16:15
  */
-@Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClientItem {
 
     /** 客户端信息 */
-    final BrokerClientInfo clientInfo;
+    private final BrokerClientInfo clientInfo;
 
-    final RpcServer rpcServer;
+    private final RpcServer rpcServer;
 
     /** 默认消息发送超时时间 */
-    final int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
+    private final int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
 
     public BrokerClientItem(BrokerClientInfoMessage clientInfo, RpcServer rpcServer) {
         this.clientInfo = clientInfo.build();
         this.rpcServer = rpcServer;
+    }
+
+    public BrokerClientInfo getClientInfo() {
+        return clientInfo;
+    }
+
+    public int getDefaultTimeoutMillis() {
+        return defaultTimeoutMillis;
     }
 
     public String getName() {

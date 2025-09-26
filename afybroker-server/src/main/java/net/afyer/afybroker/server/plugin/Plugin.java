@@ -1,9 +1,6 @@
 package net.afyer.afybroker.server.plugin;
 
 import com.google.common.base.Preconditions;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.server.BrokerServer;
 
 import java.io.File;
@@ -13,13 +10,23 @@ import java.io.InputStream;
  * @author Nipuru
  * @since 2022/7/31 10:42
  */
-@Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Plugin {
 
-    PluginDescription description;
-    BrokerServer server;
-    File file;
+    private PluginDescription description;
+    private BrokerServer server;
+    private File file;
+
+    public PluginDescription getDescription() {
+        return description;
+    }
+
+    public BrokerServer getServer() {
+        return server;
+    }
+
+    public File getFile() {
+        return file;
+    }
 
     public Plugin() {
         ClassLoader classLoader = getClass().getClassLoader();

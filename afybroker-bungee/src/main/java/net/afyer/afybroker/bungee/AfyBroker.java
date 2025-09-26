@@ -3,9 +3,6 @@ package net.afyer.afybroker.bungee;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.LifeCycleException;
 import com.alipay.remoting.exception.RemotingException;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.bungee.listener.PlayerListener;
 import net.afyer.afybroker.bungee.processor.*;
 import net.afyer.afybroker.bungee.processor.connection.CloseEventBungeeProcessor;
@@ -20,6 +17,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.YamlConfiguration;
 import org.bstats.bungeecord.Metrics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -29,14 +28,14 @@ import java.util.function.Consumer;
  * @author Nipuru
  * @since 2022/7/28 7:26
  */
-@Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AfyBroker extends Plugin {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AfyBroker.class);
     private BrokerClient brokerClient;
     private Configuration config;
     private boolean syncEnable;
     private Metrics metrics;
+
+
 
     @Override
     public void onEnable() {
@@ -73,14 +72,13 @@ public class AfyBroker extends Plugin {
             Broker.setClient(brokerClient);
             BoltUtils.initProtocols();
             brokerClient.startup();
+            brokerClient.printInformation(LOGGER);
             brokerClient.ping();
         } catch (LifeCycleException e) {
-            getLogger().severe("Broker client startup failed!");
-            e.printStackTrace();
+            LOGGER.error("Broker client startup failed!", e);
             getProxy().stop();
         } catch (RemotingException | InterruptedException e) {
-            getLogger().severe("Ping to the broker server failed!");
-            e.printStackTrace();
+            LOGGER.error("Ping to the broker server failed!", e);
         }
 
         registerListeners();
@@ -95,6 +93,18 @@ public class AfyBroker extends Plugin {
         if (metrics != null) {
             metrics.shutdown();
         }
+    }
+
+    public BrokerClient getBrokerClient() {
+        return brokerClient;
+    }
+
+    public Configuration getConfig() {
+        return config;
+    }
+
+    public boolean isSyncEnable() {
+        return syncEnable;
     }
 
     private void registerListeners() {

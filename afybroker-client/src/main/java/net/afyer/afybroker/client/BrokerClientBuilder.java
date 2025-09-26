@@ -3,12 +3,10 @@ package net.afyer.afybroker.client;
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.config.BoltClientOption;
+import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
-import lombok.AccessLevel;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
+import net.afyer.afybroker.client.preprocessor.BrokerPreprocessor;
 import net.afyer.afybroker.client.processor.RequestBrokerClientInfoClientProcessor;
 import net.afyer.afybroker.client.processor.RpcInvocationClientProcessor;
 import net.afyer.afybroker.client.processor.connection.CloseEventClientProcessor;
@@ -21,7 +19,6 @@ import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
-import net.afyer.afybroker.client.preprocessor.BrokerPreprocessor;
 import net.afyer.afybroker.core.util.ConnectionEventTypeProcessor;
 
 import java.util.*;
@@ -30,55 +27,102 @@ import java.util.*;
  * @author Nipuru
  * @since 2022/7/31 10:10
  */
-@Setter
-@Accessors(fluent = true)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerClientBuilder {
 
     /**
      * 客户端名称(唯一标识)
      */
-    String name;
+    private String name;
 
     /**
      * 客户端类型
      */
-    String type = BrokerClientType.UNKNOWN;
+    private String type = BrokerClientType.UNKNOWN;
 
     /**
      * broker 服务端主机
      */
-    String host = BrokerGlobalConfig.BROKER_HOST;
+    private String host = BrokerGlobalConfig.BROKER_HOST;
 
     /**
      * broker 服务端端口
      */
-    int port = BrokerGlobalConfig.BROKER_PORT;
+    private int port = BrokerGlobalConfig.BROKER_PORT;
 
     /** 消息发送超时时间 */
-    int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
+    private int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
 
     /** 客户端标签 */
-    final Set<String> tags = new HashSet<>();
+    private final Set<String> tags = new HashSet<>();
 
     /** 客户端元数据 */
-    final Map<String, String> metadata = new HashMap<>();
+    private final Map<String, String> metadata = new HashMap<>();
 
     /** 用户处理器 */
-    final List<UserProcessor<?>> processorList = new ArrayList<>();
+    private final List<UserProcessor<?>> processorList = new ArrayList<>();
 
     /** bolt 连接器 */
-    final Map<ConnectionEventType, ConnectionEventProcessor> connectionEventProcessorMap = new HashMap<>();
+    private final Map<ConnectionEventType, ConnectionEventProcessor> connectionEventProcessorMap = new HashMap<>();
 
     /** 服务注册表 */
-    final Map<String, BrokerServiceEntry> serviceMap = new HashMap<>();
+    private final Map<String, BrokerServiceEntry> serviceMap = new HashMap<>();
 
     /** 预处理函数列表 */
-    final List<BrokerPreprocessor> preprocessors = new ArrayList<>();
+    private final List<BrokerPreprocessor> preprocessors = new ArrayList<>();
+
+    public String name() {
+        return name;
+    }
+
+    public BrokerClientBuilder name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public String type() {
+        return type;
+    }
+
+    public BrokerClientBuilder type(String type) {
+        this.type = type;
+        return this;
+    }
+
+    public String host() {
+        return host;
+    }
+
+    public BrokerClientBuilder host(String host) {
+        this.host = host;
+        return this;
+    }
+
+    public int port() {
+        return port;
+    }
+
+    public BrokerClientBuilder port(int port) {
+        this.port = port;
+        return this;
+    }
+
+    public int defaultTimeoutMillis() {
+        return defaultTimeoutMillis;
+    }
+
+    public BrokerClientBuilder defaultTimeoutMillis(int defaultTimeoutMillis) {
+        this.defaultTimeoutMillis = defaultTimeoutMillis;
+        return this;
+    }
 
     BrokerClientBuilder() {
         // 初始化一些处理器
         this.defaultProcessor();
+
+        // 通过系统属性来开和关，如果一个进程有多个 RpcClient，则同时生效
+        // 开启 bolt 重连
+        System.setProperty(Configs.CONN_MONITOR_SWITCH, "true");
+        System.setProperty(Configs.CONN_RECONNECT_SWITCH, "true");
     }
 
     public BrokerClient build() {
@@ -290,5 +334,7 @@ public class BrokerClientBuilder {
                 .registerUserProcessor(new RequestBrokerClientInfoClientProcessor())
                 .registerUserProcessor(new RpcInvocationClientProcessor());
     }
+
+
 
 }

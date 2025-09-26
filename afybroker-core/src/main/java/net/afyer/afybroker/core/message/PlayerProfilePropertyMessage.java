@@ -1,13 +1,5 @@
 package net.afyer.afybroker.core.message;
 
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
-
 import java.io.Serializable;
 import java.util.*;
 
@@ -15,18 +7,40 @@ import java.util.*;
  * @author Nipuru
  * @since 2024/12/03 10:14
  */
-@Getter
-@Setter
-@ToString
-@Accessors(chain = true)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerProfilePropertyMessage implements Serializable {
     /** 玩家uuid */
-    UUID uniqueId;
+    private UUID uniqueId;
     /** 需要移除的 Property */
-    List<String> removeList;
+    private List<String> removeList;
     /** 需要更新的 Property */
-    Map<String, String[]> updateMap;
+    private Map<String, String[]> updateMap;
+
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
+
+    public PlayerProfilePropertyMessage setUniqueId(UUID uniqueId) {
+        this.uniqueId = uniqueId;
+        return this;
+    }
+
+    public List<String> getRemoveList() {
+        return removeList;
+    }
+
+    public PlayerProfilePropertyMessage setRemoveList(List<String> removeList) {
+        this.removeList = removeList;
+        return this;
+    }
+
+    public Map<String, String[]> getUpdateMap() {
+        return updateMap;
+    }
+
+    public PlayerProfilePropertyMessage setUpdateMap(Map<String, String[]> updateMap) {
+        this.updateMap = updateMap;
+        return this;
+    }
 
     public PlayerProfilePropertyMessage remove(String name) {
         if (removeList == null) {
@@ -42,5 +56,14 @@ public class PlayerProfilePropertyMessage implements Serializable {
         }
         updateMap.put(name, new String[]{value, signature});
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerProfilePropertyMessage{" +
+                "uniqueId=" + uniqueId +
+                ", removeList=" + removeList +
+                ", updateMap=" + updateMap +
+                '}';
     }
 }

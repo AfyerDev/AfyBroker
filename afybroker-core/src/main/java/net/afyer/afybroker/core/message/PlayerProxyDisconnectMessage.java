@@ -1,12 +1,5 @@
 package net.afyer.afybroker.core.message;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
-
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -15,17 +8,38 @@ import java.util.UUID;
  * @author Nipuru
  * @since 2022/11/21 17:30
  */
-@Getter
-@Setter
-@ToString
-@Accessors(chain = true)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerProxyDisconnectMessage implements Serializable {
     private static final long serialVersionUID = -5160344925177364814L;
 
     /** 玩家uuid */
-    UUID uniqueId;
+    private UUID uniqueId;
 
     /** 玩家名 */
-    String name;
+    private String name;
+
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
+
+    public PlayerProxyDisconnectMessage setUniqueId(UUID uniqueId) {
+        this.uniqueId = uniqueId;
+        return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public PlayerProxyDisconnectMessage setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerProxyDisconnectMessage{" +
+                "uniqueId=" + uniqueId +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

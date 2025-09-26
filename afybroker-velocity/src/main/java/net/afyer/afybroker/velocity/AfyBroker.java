@@ -10,7 +10,6 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import lombok.Getter;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.BrokerClientBuilder;
@@ -37,7 +36,6 @@ import java.util.function.Consumer;
  * @author Nipuru
  * @since 2022/7/28 7:26
  */
-@Getter
 public class AfyBroker {
 
     private final ProxyServer server;
@@ -62,6 +60,34 @@ public class AfyBroker {
         this.commandManager = commandManager;
         this.dataDirectory = dataDirectory;
         this.metricsFactory = metricsFactory;
+    }
+
+    public ProxyServer getServer() {
+        return server;
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public Path getDataDirectory() {
+        return dataDirectory;
+    }
+
+    public BrokerClient getBrokerClient() {
+        return brokerClient;
+    }
+
+    public ConfigurationNode getConfig() {
+        return config;
+    }
+
+    public boolean isSyncEnable() {
+        return syncEnable;
     }
 
     @Subscribe(order = PostOrder.LAST)
@@ -112,6 +138,7 @@ public class AfyBroker {
             Broker.setClient(brokerClient);
             BoltUtils.initProtocols();
             brokerClient.startup();
+            brokerClient.printInformation(logger);
             brokerClient.ping();
         } catch (RemotingException | InterruptedException e) {
             logger.error("Broker client initialization failed!", e);

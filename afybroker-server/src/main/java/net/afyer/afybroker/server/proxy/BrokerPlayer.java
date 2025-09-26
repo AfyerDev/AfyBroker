@@ -1,9 +1,5 @@
 package net.afyer.afybroker.server.proxy;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.message.ConnectToServerMessage;
 import net.afyer.afybroker.core.message.KickPlayerMessage;
 import org.jetbrains.annotations.Nullable;
@@ -17,21 +13,18 @@ import java.util.UUID;
  * @author Nipuru
  * @since 2022/7/30 16:47
  */
-@Getter
-@Setter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerPlayer {
 
     /** 玩家UUID */
-    final UUID uniqueId;
+    private final UUID uniqueId;
     /** 玩家名字 */
-    final String name;
+    private final String name;
     /** 玩家所在的 Proxy 服务器客户端代理 */
-    final BrokerClientItem proxy;
+    private final BrokerClientItem proxy;
 
     /** 玩家所在的 Minecraft 服务器客户端代理 */
     @Nullable
-    BrokerClientItem server;
+    private BrokerClientItem server;
 
     public BrokerPlayer(UUID uniqueId, String name, BrokerClientItem proxy) {
         this.uniqueId = uniqueId;
@@ -39,12 +32,25 @@ public class BrokerPlayer {
         this.proxy = proxy;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BrokerPlayer that = (BrokerPlayer) o;
-        return uniqueId.equals(that.uniqueId);
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BrokerClientItem getProxy() {
+        return proxy;
+    }
+
+    @Nullable
+    public BrokerClientItem getServer() {
+        return server;
+    }
+
+    public void setServer(@Nullable BrokerClientItem server) {
+        this.server = server;
     }
 
     public void kick(String message) throws Exception {
@@ -61,6 +67,14 @@ public class BrokerPlayer {
                 .setServerName(serverName);
 
         proxy.oneway(request);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BrokerPlayer that = (BrokerPlayer) o;
+        return uniqueId.equals(that.uniqueId);
     }
 
     @Override

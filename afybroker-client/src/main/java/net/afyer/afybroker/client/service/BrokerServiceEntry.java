@@ -1,9 +1,5 @@
 package net.afyer.afybroker.client.service;
 
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.core.BrokerServiceDescriptor;
 
 import java.lang.reflect.Method;
@@ -13,13 +9,11 @@ import java.util.*;
  * @author Nipuru
  * @since 2025/07/12 11:53
  */
-@Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrokerServiceEntry {
-    final Class<?> serviceInterface;
-    final Object serviceImpl;
-    final Set<String> tags;
-    final Map<MethodKey, Method> methodCache;
+    private final Class<?> serviceInterface;
+    private final Object serviceImpl;
+    private final Set<String> tags;
+    private final Map<MethodKey, Method> methodCache;
 
     public BrokerServiceEntry(Class<?> serviceInterface, Object serviceImpl, Set<String> tags) {
         this.serviceInterface = serviceInterface;
@@ -31,15 +25,20 @@ public class BrokerServiceEntry {
         cacheAllMethods();
     }
 
-    private void cacheAllMethods() {
-        Method[] methods = serviceInterface.getMethods();
-        for (Method method : methods) {
-            String[] parameterTypeNames = Arrays.stream(method.getParameterTypes())
-                    .map(Class::getName)
-                    .toArray(String[]::new);
-            MethodKey key = new MethodKey(method.getName(), parameterTypeNames);
-            methodCache.put(key, method);
-        }
+    public Class<?> getServiceInterface() {
+        return serviceInterface;
+    }
+
+    public Object getServiceImpl() {
+        return serviceImpl;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public Map<MethodKey, Method> getMethodCache() {
+        return methodCache;
     }
 
     public Method getMethod(String methodName, String[] parameterTypeNames) {
@@ -53,15 +52,32 @@ public class BrokerServiceEntry {
                 .setTags(tags);
     }
 
-    @Getter
-    @FieldDefaults(level = AccessLevel.PRIVATE)
+    private void cacheAllMethods() {
+        Method[] methods = serviceInterface.getMethods();
+        for (Method method : methods) {
+            String[] parameterTypeNames = Arrays.stream(method.getParameterTypes())
+                    .map(Class::getName)
+                    .toArray(String[]::new);
+            MethodKey key = new MethodKey(method.getName(), parameterTypeNames);
+            methodCache.put(key, method);
+        }
+    }
+
     private static class MethodKey {
-        final String methodName;
-        final String[] parameterTypeNames;
+        private final String methodName;
+        private final String[] parameterTypeNames;
 
         public MethodKey(String methodName, String[] parameterTypeNames) {
             this.methodName = methodName;
             this.parameterTypeNames = parameterTypeNames;
+        }
+
+        public String getMethodName() {
+            return methodName;
+        }
+
+        public String[] getParameterTypeNames() {
+            return parameterTypeNames;
         }
 
         @Override

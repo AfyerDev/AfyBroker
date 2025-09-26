@@ -1,10 +1,6 @@
 package net.afyer.afybroker.server.event;
 
 import com.alipay.remoting.Connection;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.server.plugin.Event;
 
 /**
@@ -13,13 +9,23 @@ import net.afyer.afybroker.server.plugin.Event;
  * @author Nipuru
  * @since 2022/9/10 17:54
  */
-@Getter
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ClientConnectEvent extends Event {
     /** 客户端地址 */
-    final String remoteAddress;
+    private final String remoteAddress;
 
     /** 客户端连接 */
-    final Connection connection;
+    private final Connection connection;
+
+    public ClientConnectEvent(String remoteAddress, Connection connection) {
+        this.remoteAddress = remoteAddress;
+        this.connection = connection;
+    }
+
+    public String getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
 }

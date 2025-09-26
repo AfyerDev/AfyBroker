@@ -2,13 +2,14 @@ package net.afyer.afybroker.server.command;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.Broker;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.plugin.Command;
 import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerPlayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -16,8 +17,9 @@ import java.util.*;
  * @author Nipuru
  * @since 2022/7/31 14:17
  */
-@Slf4j
 public class CommandListPlayer extends Command {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandListPlayer.class);
 
     private final BrokerServer server;
 
@@ -51,8 +53,8 @@ public class CommandListPlayer extends Command {
                 }
                 builder.append(" ");
             }
-            log.info(builder.toString());
+            LOGGER.info(builder.toString());
         });
-        log.info(String.format("Total players online: %d", players.size()));
+        LOGGER.info(String.format("Total players online: %d", players.size()));
     }
 }

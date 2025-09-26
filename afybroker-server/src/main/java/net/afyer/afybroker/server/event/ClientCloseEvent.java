@@ -1,9 +1,5 @@
 package net.afyer.afybroker.server.event;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import net.afyer.afybroker.server.plugin.Event;
 
 import java.util.Set;
@@ -13,21 +9,41 @@ import java.util.Set;
  * @author Nipuru
  * @since 2022/9/10 17:55
  */
-@Getter
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ClientCloseEvent extends Event {
 
     /** 客户端地址 */
-    final String remoteAddress;
+    private final String remoteAddress;
 
     /** 客户端名称 */
-    final String name;
+    private final String name;
 
     /** 客户端标签 */
-    final Set<String> tags;
+    private final Set<String> tags;
 
     /** 客户端类型 */
-    final String type;
+    private final String type;
+
+    public ClientCloseEvent(String remoteAddress, String name, Set<String> tags, String type) {
+        this.remoteAddress = remoteAddress;
+        this.name = name;
+        this.tags = tags;
+        this.type = type;
+    }
+
+    public String getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public String getType() {
+        return type;
+    }
 
 }

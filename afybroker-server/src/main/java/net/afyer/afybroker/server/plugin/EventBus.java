@@ -1,7 +1,8 @@
 package net.afyer.afybroker.server.plugin;
 
 import com.google.common.collect.ImmutableSet;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,8 +16,9 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Nipuru
  * @since 2022/7/31 11:40
  */
-@Slf4j
 public class EventBus {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventBus.class);
 
     private final Map<Class<?>, Map<Byte, Map<Object, Method[]>>> byListenerAndPriority = new HashMap<>();
     private final Map<Class<?>, EventHandlerMethod[]> byEventBaked = new ConcurrentHashMap<>();
@@ -36,12 +38,12 @@ public class EventBus {
                 } catch (IllegalArgumentException ex) {
                     throw new Error("Method rejected target/argument: " + event, ex);
                 } catch (InvocationTargetException ex) {
-                    log.warn(MessageFormat.format("Error dispatching event {0} to listener {1}", event, method.getListener()), ex.getCause());
+                    LOGGER.warn(MessageFormat.format("Error dispatching event {0} to listener {1}", event, method.getListener()), ex.getCause());
                 }
 
                 long elapsed = System.nanoTime() - start;
                 if (elapsed > 50000000) {
-                    log.warn("Plugin listener {} took {}ms to process event {}!", method.getListener().getClass().getName(), elapsed / 1000000, event);
+                    LOGGER.warn("Plugin listener {} took {}ms to process event {}!", method.getListener().getClass().getName(), elapsed / 1000000, event);
                 }
             }
         }
@@ -55,7 +57,7 @@ public class EventBus {
             if (annotation != null) {
                 Class<?>[] params = m.getParameterTypes();
                 if (params.length != 1) {
-                    log.info("Method {} in class {} annotated with {} does not have single argument", m, listener.getClass(), annotation);
+                    LOGGER.info("Method {} in class {} annotated with {} does not have single argument", m, listener.getClass(), annotation);
                     continue;
                 }
                 Map<Byte, Set<Method>> prioritiesMap = handler.computeIfAbsent(params[0], k -> new HashMap<>());

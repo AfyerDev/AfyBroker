@@ -2,7 +2,6 @@ package net.afyer.afybroker.server;
 
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.RpcServer;
-import lombok.Getter;
 import net.afyer.afybroker.server.plugin.PluginManager;
 import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import net.afyer.afybroker.server.proxy.BrokerClientManager;
@@ -23,8 +22,11 @@ public class Broker {
     /**
      * broker 服务端
      */
-    @Getter
     private static BrokerServer server;
+
+    public static BrokerServer getServer() {
+        return server;
+    }
 
     private Broker() {}
 

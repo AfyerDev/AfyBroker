@@ -6,7 +6,6 @@ import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import lombok.AllArgsConstructor;
 import net.afyer.afybroker.core.message.ConnectToServerMessage;
 import net.afyer.afybroker.velocity.AfyBroker;
 
@@ -14,10 +13,13 @@ import net.afyer.afybroker.velocity.AfyBroker;
  * @author Nipuru
  * @since 2022/9/6 17:35
  */
-@AllArgsConstructor
 public class ConnectToServerVelocityProcessor extends AsyncUserProcessor<ConnectToServerMessage> {
 
     private final AfyBroker plugin;
+
+    public ConnectToServerVelocityProcessor(AfyBroker plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, ConnectToServerMessage message) {
