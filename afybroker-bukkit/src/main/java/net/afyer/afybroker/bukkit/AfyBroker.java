@@ -15,23 +15,22 @@ import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.MetadataKeys;
 import net.afyer.afybroker.core.util.BoltUtils;
+import net.afyer.afybroker.core.util.LoggerAdapter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 /**
  * @author Nipuru
  * @since 2022/7/28 7:26
  */
 public class AfyBroker extends JavaPlugin {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AfyBroker.class);
     private BrokerClient brokerClient;
     private Metrics metrics;
 
@@ -71,15 +70,14 @@ public class AfyBroker extends JavaPlugin {
             Broker.setClient(brokerClient);
             BoltUtils.initProtocols();
             brokerClient.startup();
-            brokerClient.printInformation(LOGGER);
+            brokerClient.printInformation(LoggerAdapter.toSlf4j(getLogger()));
             brokerClient.ping();
         } catch (LifeCycleException e) {
-            LOGGER.error("Broker client startup failed!", e);
+            getLogger().log(Level.SEVERE, "Broker client startup failed!", e);
             Bukkit.shutdown();
         } catch (RemotingException | InterruptedException e) {
-            LOGGER.error("Ping to the broker server failed!", e);
+            getLogger().log(Level.SEVERE,"Ping to the broker server failed!", e);
         }
-
         registerListeners();
     }
 

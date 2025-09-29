@@ -9,6 +9,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.logging.Level;
+
 /**
  * @author Nipuru
  * @since 2023/09/29 12:05
@@ -30,7 +32,7 @@ public class PlayerListener implements Listener {
             try {
                 plugin.getBrokerClient().oneway(message);
             } catch (RemotingException | InterruptedException e) {
-                e.printStackTrace();
+                plugin.getLogger().log(Level.SEVERE, e.getMessage(), e);
                 Bukkit.getScheduler().runTask(plugin, () -> event.getPlayer().kickPlayer(null));
             }
         });

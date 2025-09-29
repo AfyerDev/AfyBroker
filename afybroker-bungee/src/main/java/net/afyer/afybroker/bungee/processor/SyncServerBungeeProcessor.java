@@ -18,7 +18,7 @@ public class SyncServerBungeeProcessor extends AsyncUserProcessor<SyncServerMess
         this.plugin = plugin;
     }
     @Override
-    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, SyncServerMessage request) throws Exception {
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, SyncServerMessage request) {
         if (!plugin.isSyncEnable()) {
             return;
         }

@@ -15,6 +15,8 @@ import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
+import java.util.logging.Level;
+
 /**
  * @author Nipuru
  * @since 2022/7/30 18:44
@@ -63,7 +65,7 @@ public class PlayerListener implements Listener {
             try {
                 plugin.getBrokerClient().oneway(msg);
             } catch (RemotingException | InterruptedException e) {
-                e.printStackTrace();
+                plugin.getLogger().log(Level.SEVERE, e.getMessage(), e);
             }
         });
     }
@@ -81,7 +83,7 @@ public class PlayerListener implements Listener {
             try {
                 brokerClient.oneway(msg);
             } catch (RemotingException | InterruptedException e) {
-                e.printStackTrace();
+                plugin.getLogger().log(Level.SEVERE, e.getMessage(), e);
             }
         });
     }

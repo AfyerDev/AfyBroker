@@ -20,9 +20,9 @@ public class ConnectToServerBungeeProcessor extends AsyncUserProcessor<ConnectTo
 
     private static Field PENDING_CONNECT_FIELD;
 
-    @SuppressWarnings({"unchecked", "SynchronizationOnLocalVariableOrMethodParameter"})
+    @SuppressWarnings({"unchecked"})
     @Override
-    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, ConnectToServerMessage message) {
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, ConnectToServerMessage message) throws Exception {
         ProxyServer bungee = ProxyServer.getInstance();
 
         ServerInfo target = bungee.getServerInfo(message.getServerName());
@@ -34,17 +34,13 @@ public class ConnectToServerBungeeProcessor extends AsyncUserProcessor<ConnectTo
         synchronized (player) {
             if (player.getServer() != null && Objects.equals(player.getServer().getInfo(), target)) return;
 
-            try {
-                if (PENDING_CONNECT_FIELD == null) {
-                    Field field = player.getClass().getDeclaredField("pendingConnects");
-                    field.setAccessible(true);
-                    PENDING_CONNECT_FIELD = field;
-                }
-                if (((Collection<ServerInfo>)PENDING_CONNECT_FIELD.get(player)).contains(target)) {
-                    return;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (PENDING_CONNECT_FIELD == null) {
+                Field field = player.getClass().getDeclaredField("pendingConnects");
+                field.setAccessible(true);
+                PENDING_CONNECT_FIELD = field;
+            }
+            if (((Collection<ServerInfo>)PENDING_CONNECT_FIELD.get(player)).contains(target)) {
+                return;
             }
             player.connect(target);
         }

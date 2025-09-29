@@ -12,6 +12,7 @@ import net.afyer.afybroker.client.BrokerClientBuilder;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.util.BoltUtils;
+import net.afyer.afybroker.core.util.LoggerAdapter;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -23,19 +24,17 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 /**
  * @author Nipuru
  * @since 2022/7/28 7:26
  */
 public class AfyBroker extends Plugin {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AfyBroker.class);
     private BrokerClient brokerClient;
     private Configuration config;
     private boolean syncEnable;
     private Metrics metrics;
-
-
 
     @Override
     public void onEnable() {
@@ -72,13 +71,13 @@ public class AfyBroker extends Plugin {
             Broker.setClient(brokerClient);
             BoltUtils.initProtocols();
             brokerClient.startup();
-            brokerClient.printInformation(LOGGER);
+            brokerClient.printInformation(LoggerAdapter.toSlf4j(getLogger()));
             brokerClient.ping();
         } catch (LifeCycleException e) {
-            LOGGER.error("Broker client startup failed!", e);
+            getLogger().log(Level.SEVERE, "Broker client startup failed!", e);
             getProxy().stop();
         } catch (RemotingException | InterruptedException e) {
-            LOGGER.error("Ping to the broker server failed!", e);
+            getLogger().log(Level.SEVERE, "Ping to the broker server failed!", e);
         }
 
         registerListeners();
