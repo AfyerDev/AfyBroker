@@ -9,6 +9,7 @@ import net.afyer.afybroker.bungee.processor.connection.CloseEventBungeeProcessor
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.BrokerClientBuilder;
+import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.util.BoltUtils;
@@ -57,6 +58,7 @@ public class AfyBroker extends Plugin {
                     .registerUserProcessor(new RequestPlayerInfoBungeeProcessor())
                     .registerUserProcessor(new SyncServerBungeeProcessor(this))
                     .registerUserProcessor(new PlayerProfilePropertyBungeeProcessor())
+                    .registerUserProcessor(new CloseBrokerClientProcessor(getProxy()::stop))
                     .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventBungeeProcessor(this));
             Configuration metadata = config.getSection("metadata");
             if (metadata != null) {

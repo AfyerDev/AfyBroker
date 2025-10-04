@@ -13,6 +13,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.BrokerClientBuilder;
+import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.util.BoltUtils;
@@ -127,6 +128,7 @@ public class AfyBroker {
                     .registerUserProcessor(new RequestPlayerInfoVelocityProcessor(this))
                     .registerUserProcessor(new SyncServerVelocityProcessor(this))
                     .registerUserProcessor(new PlayerProfilePropertyVelocityProcessor(this))
+                    .registerUserProcessor(new CloseBrokerClientProcessor(server::shutdown))
                     .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventVelocityProcessor(this));
             config.getNode("broker", "metadata").getChildrenMap().forEach((key, value) -> {
                builder.addMetadata(key.toString(), value.getString());

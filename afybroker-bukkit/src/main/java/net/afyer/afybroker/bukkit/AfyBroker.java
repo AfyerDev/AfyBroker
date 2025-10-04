@@ -11,6 +11,7 @@ import net.afyer.afybroker.bukkit.processor.SendPlayerTitleBukkitProcessor;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.BrokerClientBuilder;
+import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.MetadataKeys;
@@ -55,6 +56,7 @@ public class AfyBroker extends JavaPlugin {
                     .registerUserProcessor(new BroadcastChatBukkitProcessor())
                     .registerUserProcessor(new SendPlayerTitleBukkitProcessor())
                     .registerUserProcessor(new RequestPlayerInfoBukkitProcessor())
+                    .registerUserProcessor(new CloseBrokerClientProcessor(Bukkit::shutdown))
                     .registerPreprocessor(new BukkitServerThreadPreprocessor(
                             getConfig().getBoolean("server.thread-check", true)));
             ConfigurationSection metadata = getConfig().getConfigurationSection("metadata");

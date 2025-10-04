@@ -122,8 +122,8 @@ public class BrokerServerBuilder {
                 .registerUserProcessor(new PlayerServerJoinBrokerProcessor())
                 .registerUserProcessor(new KickPlayerBrokerProcessor())
                 .registerUserProcessor(new PlayerProfilePropertyBrokerProcessor())
-                .registerUserProcessor(new RpcInvocationBrokerProcessor());
-
+                .registerUserProcessor(new RpcInvocationBrokerProcessor())
+                .registerUserProcessor(new CloseBrokerClientBrokerProcessor());
     }
 
 
