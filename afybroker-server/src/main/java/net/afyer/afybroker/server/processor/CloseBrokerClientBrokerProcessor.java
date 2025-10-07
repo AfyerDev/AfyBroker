@@ -18,7 +18,6 @@ import java.util.List;
  */
 public class CloseBrokerClientBrokerProcessor extends AsyncUserProcessor<CloseBrokerClientMessage> implements BrokerServerAware {
 
-    private final CloseBrokerClientMessage closeBrokerClientMessage = new CloseBrokerClientMessage();
     private BrokerServer brokerServer;
 
     @Override
@@ -42,7 +41,7 @@ public class CloseBrokerClientBrokerProcessor extends AsyncUserProcessor<CloseBr
         }
         for (BrokerClientItem client : clientsToClose) {
             if (client == null) continue;
-            client.oneway(closeBrokerClientMessage);
+            client.shutdown();
         }
     }
 

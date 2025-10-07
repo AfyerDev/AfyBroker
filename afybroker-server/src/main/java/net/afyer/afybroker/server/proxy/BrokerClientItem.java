@@ -7,6 +7,7 @@ import com.alipay.remoting.rpc.RpcServer;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
+import net.afyer.afybroker.core.message.CloseBrokerClientMessage;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -113,5 +114,9 @@ public class BrokerClientItem {
 
     public RpcResponseFuture invokeWithFuture(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
         return rpcServer.invokeWithFuture(clientInfo.getAddress(), request, timeoutMillis);
+    }
+
+    public void shutdown() throws Exception {
+        this.oneway(new CloseBrokerClientMessage());
     }
 }
