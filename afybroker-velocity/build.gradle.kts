@@ -4,8 +4,8 @@ plugins {
 
 dependencies {
     compileOnly(libs.velocity.api)
+    implementation(libs.bstats.velocity)
     implementation(project(":afybroker-client"))
-    implementation("org.bstats:bstats-velocity:3.0.2")
 }
 
 tasks.build {

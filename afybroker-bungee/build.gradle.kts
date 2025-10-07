@@ -5,8 +5,8 @@ plugins {
 dependencies {
     compileOnly(libs.bungeecord.api)
     compileOnly(libs.bungeecord.proxy)
+    implementation(libs.bstats.bungeecord)
     implementation(project(":afybroker-client"))
-    implementation("org.bstats:bstats-bungeecord:3.0.2")
 }
 
 tasks.assemble {
