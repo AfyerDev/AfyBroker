@@ -31,7 +31,7 @@ public class HessianSerializer implements Serializer {
         }
         ByteArrayOutputStream byteArray = localOutputByteArray.get();
         byteArray.reset();
-        Hessian2Output output = new Hessian2Output(byteArray);
+        Hessian2Output output = new Hessian2OutputPatched(byteArray);
         output.setSerializerFactory(serializerFactory);
         try {
             output.writeObject(obj);
@@ -58,6 +58,17 @@ public class HessianSerializer implements Serializer {
             throw new CodecException("IOException occurred when Hessian serializer decode!", e);
         }
         return (T) resultObject;
+    }
+
+    public static class Hessian2OutputPatched extends Hessian2Output {
+        public Hessian2OutputPatched(ByteArrayOutputStream byteArray) {
+            super(byteArray);
+        }
+        @Override
+        public int writeObjectBegin(String type) throws IOException {
+            // 修复某些自定义类 Class.getName() 返回对象不同的问题
+            return super.writeObjectBegin(type.intern());
+        }
     }
 
 }
