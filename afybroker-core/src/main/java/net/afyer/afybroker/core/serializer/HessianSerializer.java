@@ -10,6 +10,7 @@ import com.caucho.hessian.io.SerializerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.function.Function;
 
 /**
  * Hessian 序列化器实现
@@ -20,9 +21,13 @@ import java.io.IOException;
 public class HessianSerializer implements Serializer {
     private final ThreadLocal<ByteArrayOutputStream> localOutputByteArray = ThreadLocal.withInitial(ByteArrayOutputStream::new);
     private final SerializerFactory serializerFactory;
+    private final Function<ByteArrayOutputStream, Hessian2Output> outputFactory;
 
     public HessianSerializer(ClassLoader classLoader) {
-        serializerFactory = new SerializerFactory(classLoader);
+        this.serializerFactory = new SerializerFactory(classLoader);
+        this.outputFactory = useTypeIntern()
+                ? TypeInternHessian2Output::new
+                : Hessian2Output::new;
     }
 
     public byte[] serialize(Object obj) throws CodecException {
@@ -31,7 +36,7 @@ public class HessianSerializer implements Serializer {
         }
         ByteArrayOutputStream byteArray = localOutputByteArray.get();
         byteArray.reset();
-        Hessian2Output output = new Hessian2OutputPatched(byteArray);
+        Hessian2Output output = outputFactory.apply(byteArray);
         output.setSerializerFactory(serializerFactory);
         try {
             output.writeObject(obj);
@@ -60,8 +65,15 @@ public class HessianSerializer implements Serializer {
         return (T) resultObject;
     }
 
-    public static class Hessian2OutputPatched extends Hessian2Output {
-        public Hessian2OutputPatched(ByteArrayOutputStream byteArray) {
+    private static boolean useTypeIntern() {
+        Class<?> clazz = HessianSerializer.class;
+        String name1 = clazz.getName();
+        String name2 = clazz.getName();
+        return System.identityHashCode(name1) != System.identityHashCode(name2);
+    }
+
+    private static class TypeInternHessian2Output extends Hessian2Output {
+        public TypeInternHessian2Output(ByteArrayOutputStream byteArray) {
             super(byteArray);
         }
         @Override
