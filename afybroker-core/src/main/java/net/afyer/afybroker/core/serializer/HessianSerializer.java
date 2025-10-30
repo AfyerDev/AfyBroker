@@ -55,21 +55,19 @@ public class HessianSerializer implements Serializer {
         }
         Hessian2Input input = new Hessian2Input(new ByteArrayInputStream(data));
         input.setSerializerFactory(serializerFactory);
-        Object resultObject;
         try {
-            resultObject = input.readObject();
+            T resultObject = (T) input.readObject();
             input.close();
+            return resultObject;
         } catch (IOException e) {
             throw new CodecException("IOException occurred when Hessian serializer decode!", e);
         }
-        return (T) resultObject;
     }
 
-    private static boolean useTypeIntern() {
-        Class<?> clazz = HessianSerializer.class;
-        String name1 = clazz.getName();
-        String name2 = clazz.getName();
-        return System.identityHashCode(name1) != System.identityHashCode(name2);
+    private boolean useTypeIntern() {
+        Object name1 = this.getClass().getName();
+        Object name2 = this.getClass().getName();
+        return name1 != name2;
     }
 
     private static class TypeInternHessian2Output extends Hessian2Output {
