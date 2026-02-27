@@ -82,26 +82,9 @@ public class HessianSerializer implements Serializer {
 
         Class<?> resolved = null;
 
-        if (classLoader != null) {
-            try {
-                resolved = Class.forName(className, false, classLoader);
-            } catch (ClassNotFoundException ignored) {
-            }
-        }
-
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
-            try {
-                resolved = Class.forName(className, false, contextClassLoader);
-            } catch (ClassNotFoundException ignored) {
-            }
-        }
-
-        if (resolved == null) {
-            try {
-                resolved = Class.forName(className);
-            } catch (ClassNotFoundException ignored) {
-            }
+        try {
+            resolved = Class.forName(className, false, classLoader);
+        } catch (ClassNotFoundException ignored) {
         }
 
         if (resolved != null) {
