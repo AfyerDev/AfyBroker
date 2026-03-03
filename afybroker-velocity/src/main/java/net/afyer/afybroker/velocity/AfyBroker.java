@@ -16,6 +16,7 @@ import net.afyer.afybroker.client.BrokerClientBuilder;
 import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.Bstats;
 import net.afyer.afybroker.core.util.BoltUtils;
 import net.afyer.afybroker.velocity.listener.PlayerListener;
 import net.afyer.afybroker.velocity.processor.*;
@@ -93,7 +94,7 @@ public class AfyBroker {
 
     @Subscribe(order = PostOrder.LAST)
     public void onProxyInitializeLast(ProxyInitializeEvent event) {
-        metrics = metricsFactory.make(this, 26648);
+        metrics = metricsFactory.make(this, Bstats.VELOCITY);
         try {
             Path configPath = dataDirectory.resolve("config.yml");
             if (Files.notExists(configPath)) {

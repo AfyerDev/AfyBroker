@@ -12,6 +12,7 @@ import net.afyer.afybroker.client.BrokerClientBuilder;
 import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.Bstats;
 import net.afyer.afybroker.core.util.BoltUtils;
 import net.afyer.afybroker.core.util.LoggerAdapter;
 import net.md_5.bungee.api.ProxyServer;
@@ -39,7 +40,7 @@ public class AfyBroker extends Plugin {
 
     @Override
     public void onEnable() {
-        metrics = new Metrics(this, 26647);
+        metrics = new Metrics(this, Bstats.BUNGEE);
         try {
             config = new BungeeFileConfig("config.yml", this, YamlConfiguration.class).get();
             syncEnable = config.getBoolean("server.sync-enable", false);

@@ -14,6 +14,7 @@ import net.afyer.afybroker.client.BrokerClientBuilder;
 import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.Bstats;
 import net.afyer.afybroker.core.MetadataKeys;
 import net.afyer.afybroker.core.util.BoltUtils;
 import net.afyer.afybroker.core.util.LoggerAdapter;
@@ -38,7 +39,7 @@ public class AfyBroker extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        metrics = new Metrics(this, 26646);
+        metrics = new Metrics(this, Bstats.BUKKIT);
         try {
             String serverAddress = String.format("%s:%s",
                     getConfig().getString("server.host", getDefaultServerIp()),
