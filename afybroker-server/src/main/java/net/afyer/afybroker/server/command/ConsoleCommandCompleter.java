@@ -1,13 +1,15 @@
 package net.afyer.afybroker.server.command;
 
-import jline.console.completer.Completer;
 import net.afyer.afybroker.server.BrokerServer;
+import org.jline.reader.Candidate;
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.ParsedLine;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author Nipuru
@@ -22,20 +24,24 @@ public class ConsoleCommandCompleter implements Completer {
     }
 
     @Override
-    public int complete(String buffer, int cursor, List<CharSequence> candidates) {
+    public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
+        String buffer = line.line();
+        if (buffer == null) {
+            buffer = "";
+        }
+
         int lastSpace = buffer.lastIndexOf(' ');
         if (lastSpace == -1) {
             String lowerCase = buffer.toLowerCase(Locale.ROOT);
-            candidates.addAll(server.getPluginManager().getCommands().stream()
+            server.getPluginManager().getCommands().stream()
                     .map(Map.Entry::getKey)
                     .filter((name) -> name.toLowerCase(Locale.ROOT).startsWith(lowerCase))
-                    .collect(Collectors.toList()));
+                    .map(Candidate::new)
+                    .forEach(candidates::add);
         } else {
             List<String> suggestions = new ArrayList<>();
             server.getPluginManager().dispatchCommand(buffer, suggestions);
-            candidates.addAll(suggestions);
+            suggestions.stream().map(Candidate::new).forEach(candidates::add);
         }
-
-        return (lastSpace == -1) ? cursor - buffer.length() : cursor - (buffer.length() - lastSpace - 1);
     }
 }

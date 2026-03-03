@@ -7,7 +7,6 @@ import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.alipay.remoting.serialization.SerializerManager;
 import com.google.common.collect.Lists;
-import jline.console.ConsoleReader;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.command.*;
@@ -18,6 +17,10 @@ import net.afyer.afybroker.server.proxy.*;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
 import net.afyer.afybroker.server.task.PlayerHeartbeatValidateTask;
 import org.jetbrains.annotations.Nullable;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +46,8 @@ public class BrokerServer {
      */
     private boolean start;
 
-    private final ConsoleReader consoleReader;
+    private final Terminal terminal;
+    private final LineReader consoleReader;
     private final PluginManager pluginManager;
     private final BrokerScheduler scheduler;
     private final File pluginsFolder;
@@ -65,9 +69,12 @@ public class BrokerServer {
     private final PlayerHeartbeatValidateTask playerHeartbeatValidateTask;
 
     BrokerServer() throws IOException {
-        this.consoleReader = new ConsoleReader();
-        this.consoleReader.setExpandEvents(false);
-        this.consoleReader.addCompleter(new ConsoleCommandCompleter(this));
+        this.terminal = TerminalBuilder.builder().system(true).jansi(true).build();
+        this.consoleReader = LineReaderBuilder.builder()
+                .terminal(this.terminal)
+                .completer(new ConsoleCommandCompleter(this))
+                .build();
+        this.consoleReader.setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION);
         this.pluginManager = new PluginManager(this);
         this.scheduler = new BrokerScheduler(this);
         this.pluginsFolder = new File("plugins");
@@ -103,7 +110,7 @@ public class BrokerServer {
         return start;
     }
 
-    public ConsoleReader getConsoleReader() {
+    public LineReader getConsoleReader() {
         return consoleReader;
     }
 
@@ -206,6 +213,10 @@ public class BrokerServer {
                     }
                     playerHeartbeatValidateTask.cancel();
                     rpcServer.shutdown();
+                    try {
+                        terminal.close();
+                    } catch (IOException ignored) {
+                    }
                     System.exit(0);
                 }
             }.start();
