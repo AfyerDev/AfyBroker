@@ -13,6 +13,7 @@ public class CommandStop extends Command {
 
     public CommandStop(BrokerServer server) {
         super("stop");
+        setUsage("stop - Gracefully stop the broker server");
         this.server = server;
     }
 

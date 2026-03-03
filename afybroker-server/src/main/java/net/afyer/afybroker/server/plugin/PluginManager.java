@@ -96,6 +96,9 @@ public class PluginManager {
 
         Command command = getCommandIfEnabled(split[0]);
         if (command == null) {
+            if (tabResults == null) {
+                LOGGER.warn("Command not found. Use 'help' for available commands.");
+            }
             return false;
         }
 

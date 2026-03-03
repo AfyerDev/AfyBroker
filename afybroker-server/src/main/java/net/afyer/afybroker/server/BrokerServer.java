@@ -17,8 +17,10 @@ import net.afyer.afybroker.server.proxy.*;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
 import net.afyer.afybroker.server.task.PlayerHeartbeatValidateTask;
 import org.jetbrains.annotations.Nullable;
+import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.slf4j.Logger;
@@ -86,6 +88,7 @@ public class BrokerServer {
         this.pluginManager.registerCommand(null, new CommandList(this));
         this.pluginManager.registerCommand(null, new CommandListPlayer(this));
         this.pluginManager.registerCommand(null, new CommandKick(this));
+        this.pluginManager.registerCommand(null, new CommandHelp(this));
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -220,6 +223,26 @@ public class BrokerServer {
                     System.exit(0);
                 }
             }.start();
+        }
+    }
+
+    public void runConsoleLoop() {
+        while (isStart()) {
+            String line;
+            try {
+                line = this.consoleReader.readLine(">");
+            } catch (UserInterruptException e) {
+                this.shutdown();
+                break;
+            } catch (EndOfFileException e) {
+                break;
+            }
+
+            if (line == null) {
+                break;
+            }
+
+            this.pluginManager.dispatchCommand(line);
         }
     }
 

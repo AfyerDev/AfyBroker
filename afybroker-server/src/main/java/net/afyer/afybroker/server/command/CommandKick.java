@@ -17,8 +17,10 @@ public class CommandKick extends Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandKick.class);
 
     private final BrokerServer server;
+
     public CommandKick(BrokerServer server) {
         super("kick");
+        setUsage("kick <player> [message...] - Kick an online player");
         this.server = server;
     }
 

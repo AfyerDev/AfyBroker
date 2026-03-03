@@ -21,6 +21,7 @@ public class CommandList extends Command {
 
     public CommandList(BrokerServer server) {
         super("list", "ls");
+        setUsage("list|ls - List connected broker clients");
         this.server = server;
     }
 
