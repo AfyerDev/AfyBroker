@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -38,8 +39,13 @@ public class BrokerServiceRegistry {
             String serviceInterface = service.getServiceInterface();
             
             ServiceProvider provider = new ServiceProvider(client, service.getTags());
-            
-            serviceProviders.computeIfAbsent(serviceInterface, k -> new ArrayList<>()).add(provider);
+
+            List<ServiceProvider> providers = serviceProviders.get(serviceInterface);
+            if (providers == null) {
+                serviceProviders.putIfAbsent(serviceInterface, new CopyOnWriteArrayList<>());
+                providers = serviceProviders.get(serviceInterface);
+            }
+            providers.add(provider);
             registeredServices.add(serviceInterface);
 
             LOGGER.info("Service registered: {} -> {} with tags: {}", serviceInterface, client.getName(), service.getTags());
