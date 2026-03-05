@@ -23,12 +23,9 @@ import java.util.function.Function;
 public class HessianSerializer implements Serializer {
     private final ThreadLocal<ByteArrayOutputStream> localOutputByteArray = ThreadLocal.withInitial(ByteArrayOutputStream::new);
     private final SerializerFactory serializerFactory;
-    private final ClassLoader classLoader;
     private final Function<ByteArrayOutputStream, Hessian2Output> outputFactory;
-    private final ConcurrentMap<String, Class<?>> classCache = new ConcurrentHashMap<>();
 
     public HessianSerializer(ClassLoader classLoader) {
-        this.classLoader = classLoader;
         this.serializerFactory = new SerializerFactory(classLoader);
         this.outputFactory = useTypeIntern()
                 ? TypeInternHessian2Output::new
@@ -61,37 +58,12 @@ public class HessianSerializer implements Serializer {
         Hessian2Input input = new Hessian2Input(new ByteArrayInputStream(data));
         input.setSerializerFactory(serializerFactory);
         try {
-            Class<?> targetClass = resolveClass(classOfT);
-            T resultObject = (T) (targetClass != null ? input.readObject(targetClass) : input.readObject());
+            T resultObject = (T) input.readObject();
             input.close();
             return resultObject;
         } catch (IOException e) {
             throw new CodecException("IOException occurred when Hessian serializer decode!", e);
         }
-    }
-
-    private Class<?> resolveClass(String className) {
-        if (className == null || className.isEmpty() || Object.class.getName().equals(className)) {
-            return null;
-        }
-
-        Class<?> cached = classCache.get(className);
-        if (cached != null) {
-            return cached;
-        }
-
-        Class<?> resolved = null;
-
-        try {
-            resolved = Class.forName(className, false, classLoader);
-        } catch (ClassNotFoundException ignored) {
-        }
-
-        if (resolved != null) {
-            classCache.putIfAbsent(className, resolved);
-        }
-
-        return resolved;
     }
 
     private boolean useTypeIntern() {
