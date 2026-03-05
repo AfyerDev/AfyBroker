@@ -1,15 +1,13 @@
 package net.afyer.afybroker.server.command;
 
+import com.mojang.brigadier.suggestion.Suggestion;
 import net.afyer.afybroker.server.BrokerServer;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * @author Nipuru
@@ -30,18 +28,9 @@ public class ConsoleCommandCompleter implements Completer {
             buffer = "";
         }
 
-        int lastSpace = buffer.lastIndexOf(' ');
-        if (lastSpace == -1) {
-            String lowerCase = buffer.toLowerCase(Locale.ROOT);
-            server.getPluginManager().getCommands().stream()
-                    .map(Map.Entry::getKey)
-                    .filter((name) -> name.toLowerCase(Locale.ROOT).startsWith(lowerCase))
-                    .map(Candidate::new)
-                    .forEach(candidates::add);
-        } else {
-            List<String> suggestions = new ArrayList<>();
-            server.getPluginManager().dispatchCommand(buffer, suggestions);
-            suggestions.stream().map(Candidate::new).forEach(candidates::add);
+        List<Suggestion> suggestions = server.getPluginManager().listSuggestion(buffer, line.cursor());
+        for (Suggestion suggestion : suggestions) {
+            candidates.add(new Candidate(suggestion.getText()));
         }
     }
 }

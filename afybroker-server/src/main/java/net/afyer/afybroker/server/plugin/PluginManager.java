@@ -6,6 +6,12 @@ import com.google.common.collect.Multimap;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.Suggestion;
+import com.mojang.brigadier.suggestion.Suggestions;
 import net.afyer.afybroker.server.BrokerServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +41,10 @@ public class PluginManager {
     private final EventBus eventBus;
     private final Map<String, Plugin> plugins = new LinkedHashMap<>();
     private final MutableGraph<String> dependencyGraph = GraphBuilder.directed().build();
-    private final Map<String, Command> commandMap = new HashMap<>();
+    private final Multimap<Plugin, BrigadierCommand> commandsByPlugin = ArrayListMultimap.create();
     private Map<String, PluginDescription> toLoad = new HashMap<>();
-    private final Multimap<Plugin, Command> commandsByPlugin = ArrayListMultimap.create();
     private final Multimap<Plugin, Listener> listenersByPlugin = ArrayListMultimap.create();
+    private CommandDispatcher<BrokerServer> commandDispatcher = new CommandDispatcher<>();
 
     public PluginManager(BrokerServer server) {
         this.server = server;
@@ -53,68 +59,40 @@ public class PluginManager {
     }
 
     public void registerCommand(Plugin plugin, Command command) {
-        commandMap.put(command.getName().toLowerCase(Locale.ROOT), command);
-        for (String alias : command.getAliases()) {
-            commandMap.put(alias.toLowerCase(Locale.ROOT), command);
-        }
+        commandsByPlugin.put(plugin, new BrigadierCommandAdapter(command));
+        rebuildCommandDispatcher();
+    }
+
+    public void registerCommand(Plugin plugin, BrigadierCommand command) {
         commandsByPlugin.put(plugin, command);
-    }
-
-    public void unregisterCommand(Command command) {
-        while (commandMap.values().remove(command)) ;
-        commandsByPlugin.values().remove(command);
-    }
-
-    public void unregisterCommands(Plugin plugin) {
-        for (Iterator<Command> it = commandsByPlugin.get(plugin).iterator(); it.hasNext(); ) {
-            Command command = it.next();
-            while (commandMap.values().remove(command)) ;
-            it.remove();
-        }
-    }
-
-    private Command getCommandIfEnabled(String commandName) {
-        String commandLower = commandName.toLowerCase(Locale.ROOT);
-
-        return commandMap.get(commandLower);
-    }
-
-    public boolean isExecutableCommand(String commandName) {
-        return getCommandIfEnabled(commandName) != null;
+        rebuildCommandDispatcher();
     }
 
 
     public boolean dispatchCommand(String commandLine) {
-        return this.dispatchCommand(commandLine, null);
-    }
-
-    public boolean dispatchCommand(String commandLine, List<String> tabResults) {
-        String[] split = commandLine.split(" ", -1);
-        if (split.length == 0 || split[0].isEmpty()) {
+        if (commandLine == null || commandLine.trim().isEmpty()) {
             return false;
         }
 
-        Command command = getCommandIfEnabled(split[0]);
-        if (command == null) {
-            if (tabResults == null) {
-                LOGGER.warn("Command not found. Use 'help' for available commands.");
-            }
-            return false;
-        }
+        ParseResults<BrokerServer> parseResults = commandDispatcher.parse(commandLine, server);
 
-        String[] args = Arrays.copyOfRange(split, 1, split.length);
         try {
-            if (tabResults == null) {
-                command.execute(args);
-            } else if (commandLine.contains(" ") && command instanceof TabExecutor) {
-                for (String s : ((TabExecutor) command).onTabComplete(args)) {
-                    tabResults.add(s);
-                }
-            }
+            commandDispatcher.execute(parseResults);
+            return true;
+        } catch (CommandSyntaxException ex) {
+            String reason = ex.getRawMessage() == null ? ex.getMessage() : ex.getRawMessage().getString();
+            LOGGER.error(reason);
+            return false;
         } catch (Exception ex) {
             LOGGER.error("Error in dispatching command", ex);
+            return false;
         }
-        return true;
+    }
+
+    public List<Suggestion> listSuggestion(String commandLine, int cursor) {
+        ParseResults<BrokerServer> parseResults = commandDispatcher.parse(commandLine, server);
+        Suggestions suggestions = commandDispatcher.getCompletionSuggestions(parseResults, cursor).join();
+        return suggestions.getList();
     }
 
     public Collection<Plugin> getPlugins() {
@@ -305,8 +283,55 @@ public class PluginManager {
         }
     }
 
-    public Collection<Map.Entry<String, Command>> getCommands() {
-        return Collections.unmodifiableCollection(commandMap.entrySet());
+    public Collection<CommandMeta> getCommandMetas() {
+        Map<String, CommandMeta> commands = new LinkedHashMap<>();
+
+        for (BrigadierCommand command : new LinkedHashSet<>(commandsByPlugin.values())) {
+            commands.put(command.getName().toLowerCase(Locale.ROOT), new CommandMeta(
+                    command.getName(),
+                    command.getUsage()
+                    ));
+        }
+
+        return Collections.unmodifiableCollection(commands.values());
+    }
+
+    private void rebuildCommandDispatcher() {
+        commandDispatcher = new CommandDispatcher<>();
+        Set<String> registeredLiterals = new HashSet<>();
+
+        for (BrigadierCommand command : new LinkedHashSet<>(commandsByPlugin.values())) {
+            registerBrigadierCommand(commandDispatcher, registeredLiterals, command);
+        }
+    }
+
+    private void registerBrigadierCommand(CommandDispatcher<BrokerServer> dispatcher, Set<String> registeredLiterals, BrigadierCommand command) {
+        String literal = command.getName().toLowerCase(Locale.ROOT);
+        if (!registeredLiterals.add(literal)) {
+            LOGGER.warn("Skipping duplicated command literal '{}'", command.getName());
+            return;
+        }
+
+        LiteralArgumentBuilder<BrokerServer> builder = command.createBuilder();
+        com.mojang.brigadier.tree.LiteralCommandNode<BrokerServer> root = dispatcher.register(builder);
+    }
+
+    public static final class CommandMeta {
+        private final String name;
+        private final String usage;
+
+        public CommandMeta(String name, String usage) {
+            this.name = name;
+            this.usage = usage;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUsage() {
+            return usage;
+        }
     }
 
     boolean isTransitiveDepend(PluginDescription plugin, PluginDescription depend) {

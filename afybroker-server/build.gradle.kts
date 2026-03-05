@@ -11,6 +11,7 @@ dependencies {
     api(libs.gson)
     api(libs.snakeyaml)
     api(libs.trove4j)
+    api(libs.brigadier)
     api(libs.jline.reader)
     api(libs.jline.terminal)
     runtimeOnly(libs.jline.terminal.jansi)

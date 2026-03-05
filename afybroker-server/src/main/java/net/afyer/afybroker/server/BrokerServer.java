@@ -84,11 +84,11 @@ public class BrokerServer {
         this.playerManager = new BrokerPlayerManager();
         this.serviceRegistry = new BrokerServiceRegistry();
         this.playerHeartbeatValidateTask = new PlayerHeartbeatValidateTask(this);
-        this.pluginManager.registerCommand(null, new CommandStop(this));
-        this.pluginManager.registerCommand(null, new CommandList(this));
-        this.pluginManager.registerCommand(null, new CommandListPlayer(this));
-        this.pluginManager.registerCommand(null, new CommandKick(this));
-        this.pluginManager.registerCommand(null, new CommandHelp(this));
+        this.pluginManager.registerCommand(null, new CommandStop());
+        this.pluginManager.registerCommand(null, new CommandList());
+        this.pluginManager.registerCommand(null, new CommandListPlayer());
+        this.pluginManager.registerCommand(null, new CommandKick());
+        this.pluginManager.registerCommand(null, new CommandHelp());
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

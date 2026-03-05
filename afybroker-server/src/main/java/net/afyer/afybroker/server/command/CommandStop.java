@@ -1,24 +1,31 @@
 package net.afyer.afybroker.server.command;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.afyer.afybroker.server.BrokerServer;
-import net.afyer.afybroker.server.plugin.Command;
+import net.afyer.afybroker.server.plugin.BrigadierCommand;
 
 /**
  * @author Nipuru
  * @since 2022/7/31 13:34
  */
-public class CommandStop extends Command {
+public class CommandStop implements BrigadierCommand {
 
-    private final BrokerServer server;
-
-    public CommandStop(BrokerServer server) {
-        super("stop");
-        setUsage("stop - Gracefully stop the broker server");
-        this.server = server;
+    @Override
+    public String getName() {
+        return "stop";
     }
 
     @Override
-    public void execute(String[] args) {
-        server.shutdown();
+    public String getUsage() {
+        return "stop - Gracefully stop the broker server";
+    }
+
+    @Override
+    public LiteralArgumentBuilder<BrokerServer> createBuilder() {
+        return LiteralArgumentBuilder.<BrokerServer>literal(getName())
+                .executes(context -> {
+                    context.getSource().shutdown();
+                    return 1;
+                });
     }
 }
