@@ -33,21 +33,18 @@ public final class BrigadierCommandAdapter implements BrigadierCommand {
 
     @Override
     public LiteralArgumentBuilder<BrokerServer> createBuilder() {
-        return create(legacy);
-    }
-    public static LiteralArgumentBuilder<BrokerServer> create(Command command) {
-        LiteralArgumentBuilder<BrokerServer> builder = LiteralArgumentBuilder.<BrokerServer>literal(command.getName())
+        LiteralArgumentBuilder<BrokerServer> builder = literal(legacy.getName())
                 .executes(context -> {
-                    command.execute(new String[0]);
+                    legacy.execute(new String[0]);
                     return 1;
                 });
 
-        RequiredArgumentBuilder<BrokerServer, String> argsNode = RequiredArgumentBuilder.<BrokerServer, String>argument("args", greedyString())
+        RequiredArgumentBuilder<BrokerServer, String> argsNode = argument("args", greedyString())
                 .executes(context -> {
-                    command.execute(splitArgs(getString(context, "args"), false));
+                    legacy.execute(splitArgs(getString(context, "args"), false));
                     return 1;
                 })
-                .suggests((context, suggestionsBuilder) -> completeLegacy(command, context.getInput(), suggestionsBuilder));
+                .suggests((context, suggestionsBuilder) -> completeLegacy(legacy, context.getInput(), suggestionsBuilder));
 
         builder.then(argsNode);
         return builder;

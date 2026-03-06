@@ -40,9 +40,9 @@ public class CommandHelp implements BrigadierCommand {
 
     @Override
     public LiteralArgumentBuilder<BrokerServer> createBuilder() {
-        return LiteralArgumentBuilder.<BrokerServer>literal(getName())
+        return literal(getName())
                 .executes(context -> showAll(context.getSource()))
-                .then(com.mojang.brigadier.builder.RequiredArgumentBuilder.<BrokerServer, String>argument("command", word())
+                .then(argument("command", word())
                         .suggests((context, builder) -> {
                             BrokerServer server = context.getSource();
                             for (PluginManager.CommandMeta meta : server.getPluginManager().getCommandMetas()) {

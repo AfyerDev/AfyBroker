@@ -30,7 +30,7 @@ public class CommandList implements BrigadierCommand {
 
     @Override
     public LiteralArgumentBuilder<BrokerServer> createBuilder() {
-        return LiteralArgumentBuilder.<BrokerServer>literal(getName())
+        return literal(getName())
                 .executes(context -> {
                     BrokerServer server = context.getSource();
                     List<BrokerClientItem> clients = new ArrayList<>(server.getClientManager().list());

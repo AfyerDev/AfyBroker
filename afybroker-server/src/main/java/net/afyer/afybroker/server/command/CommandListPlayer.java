@@ -38,7 +38,7 @@ public class CommandListPlayer implements BrigadierCommand {
 
     @Override
     public LiteralArgumentBuilder<BrokerServer> createBuilder() {
-        return LiteralArgumentBuilder.<BrokerServer>literal(getName())
+        return literal(getName())
                 .executes(context -> {
                     BrokerServer server = context.getSource();
                     List<BrokerPlayer> players = new ArrayList<>(server.getPlayerManager().getPlayers());

@@ -22,7 +22,7 @@ public class CommandStop implements BrigadierCommand {
 
     @Override
     public LiteralArgumentBuilder<BrokerServer> createBuilder() {
-        return LiteralArgumentBuilder.<BrokerServer>literal(getName())
+        return literal(getName())
                 .executes(context -> {
                     context.getSource().shutdown();
                     return 1;

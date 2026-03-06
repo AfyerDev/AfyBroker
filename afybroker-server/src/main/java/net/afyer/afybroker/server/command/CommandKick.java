@@ -42,9 +42,9 @@ public class CommandKick implements BrigadierCommand {
 
     @Override
     public LiteralArgumentBuilder<BrokerServer> createBuilder() {
-        return LiteralArgumentBuilder.<BrokerServer>literal(getName())
+        return literal(getName())
                 .executes(context -> { throw USAGE_EXCEPTION.create(); })
-                .then(com.mojang.brigadier.builder.RequiredArgumentBuilder.<BrokerServer, String>argument("player", word())
+                .then(argument("player", word())
                         .suggests((context, builder) -> {
                             context.getSource().getPlayerManager().getPlayers().stream()
                                     .map(BrokerPlayer::getName)
@@ -53,7 +53,7 @@ public class CommandKick implements BrigadierCommand {
                             return builder.buildFuture();
                         })
                         .executes(context -> kick(context.getSource(), getString(context, "player"), ""))
-                        .then(com.mojang.brigadier.builder.RequiredArgumentBuilder.<BrokerServer, String>argument("message", greedyString())
+                        .then(argument("message", greedyString())
                                 .executes(context -> kick(
                                         context.getSource(),
                                         getString(context, "player"),
