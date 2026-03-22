@@ -117,8 +117,6 @@ public class Broker {
         return server.getPluginsFolder();
     }
 
-    // ==================== 属性操作 ====================
-
     /**
      * 设置服务器全局属性
      */

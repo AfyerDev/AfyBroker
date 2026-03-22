@@ -178,9 +178,7 @@ public class BrokerClient {
         }
     }
 
-    // ==================== 属性操作 ====================
-
-    private Serializer getSerializer() {
+    public Serializer getSerializer() {
         return SerializerManager.getSerializer(ConfigManager.serializer());
     }
 
@@ -206,9 +204,7 @@ public class BrokerClient {
                 .setAction(AttributeMessage.ACTION_GET)
                 .setScope(AttributeMessage.SCOPE_SERVER)
                 .setKey(key);
-        byte[] result = invokeSync(msg);
-        if (result == null) return null;
-        return (T) getSerializer().deserialize(result, Object.class.getName());
+        return getSerializer().deserialize(invokeSync(msg), Object.class.getName());
     }
 
     /**
@@ -230,8 +226,7 @@ public class BrokerClient {
                 .setAction(AttributeMessage.ACTION_HAS)
                 .setScope(AttributeMessage.SCOPE_SERVER)
                 .setKey(key);
-        Boolean result = invokeSync(msg);
-        return result != null && result;
+        return Boolean.TRUE.equals(invokeSync(msg));
     }
 
     /**
@@ -258,9 +253,7 @@ public class BrokerClient {
                 .setScope(AttributeMessage.SCOPE_PLAYER)
                 .setUniqueId(uniqueId)
                 .setKey(key);
-        byte[] result = invokeSync(msg);
-        if (result == null) return null;
-        return (T) getSerializer().deserialize(result, Object.class.getName());
+        return getSerializer().deserialize(invokeSync(msg), Object.class.getName());
     }
 
     /**
@@ -284,8 +277,7 @@ public class BrokerClient {
                 .setScope(AttributeMessage.SCOPE_PLAYER)
                 .setUniqueId(uniqueId)
                 .setKey(key);
-        Boolean result = invokeSync(msg);
-        return result != null && result;
+        return Boolean.TRUE.equals(invokeSync(msg));
     }
 
     public void printInformation(Logger logger) {

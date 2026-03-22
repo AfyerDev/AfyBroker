@@ -3,6 +3,7 @@ package net.afyer.afybroker.client;
 import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcResponseFuture;
+import com.alipay.remoting.serialization.Serializer;
 import net.afyer.afybroker.core.BrokerClientInfo;
 
 import java.util.ArrayList;
@@ -132,7 +133,12 @@ public final class Broker {
         return client.getService(serviceInterface, tags);
     }
 
-    // ==================== 属性操作 ====================
+    /**
+     * 获取全局序列化器
+     */
+    public static Serializer getSerializer() {
+        return client.getSerializer();
+    }
 
     /**
      * 设置服务器全局属性
