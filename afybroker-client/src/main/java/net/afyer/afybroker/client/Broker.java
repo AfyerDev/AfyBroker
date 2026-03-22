@@ -8,6 +8,7 @@ import net.afyer.afybroker.core.BrokerClientInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -129,6 +130,64 @@ public final class Broker {
      */
     public static <T> T getService(Class<T> serviceInterface, String... tags) {
         return client.getService(serviceInterface, tags);
+    }
+
+    // ==================== 属性操作 ====================
+
+    /**
+     * 设置服务器全局属性
+     */
+    public static <T> void setServerAttribute(String key, T value) throws RemotingException, InterruptedException {
+        client.setServerAttribute(key, value);
+    }
+
+    /**
+     * 获取服务器全局属性
+     */
+    public static <T> T getServerAttribute(String key) throws RemotingException, InterruptedException {
+        return client.getServerAttribute(key);
+    }
+
+    /**
+     * 移除服务器全局属性
+     */
+    public static void removeServerAttribute(String key) throws RemotingException, InterruptedException {
+        client.removeServerAttribute(key);
+    }
+
+    /**
+     * 判断是否存在服务器全局属性
+     */
+    public static boolean hasServerAttribute(String key) throws RemotingException, InterruptedException {
+        return client.hasServerAttribute(key);
+    }
+
+    /**
+     * 设置玩家属性
+     */
+    public static <T> void setPlayerAttribute(UUID uniqueId, String key, T value) throws RemotingException, InterruptedException {
+        client.setPlayerAttribute(uniqueId, key, value);
+    }
+
+    /**
+     * 获取玩家属性
+     */
+    public static <T> T getPlayerAttribute(UUID uniqueId, String key) throws RemotingException, InterruptedException {
+        return client.getPlayerAttribute(uniqueId, key);
+    }
+
+    /**
+     * 移除玩家属性
+     */
+    public static void removePlayerAttribute(UUID uniqueId, String key) throws RemotingException, InterruptedException {
+        client.removePlayerAttribute(uniqueId, key);
+    }
+
+    /**
+     * 判断是否存在玩家属性
+     */
+    public static boolean hasPlayerAttribute(UUID uniqueId, String key) throws RemotingException, InterruptedException {
+        return client.hasPlayerAttribute(uniqueId, key);
     }
 
     /**

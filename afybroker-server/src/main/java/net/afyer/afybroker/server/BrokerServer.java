@@ -7,6 +7,7 @@ import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.alipay.remoting.serialization.SerializerManager;
 import com.google.common.collect.Lists;
+import net.afyer.afybroker.core.Attributable;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.command.*;
@@ -29,13 +30,15 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Nipuru
  * @since 2022/7/29 20:13
  */
-public class BrokerServer {
+public class BrokerServer implements Attributable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BrokerServer.class);
 
@@ -69,6 +72,9 @@ public class BrokerServer {
     private final BrokerServiceRegistry serviceRegistry;
 
     private final PlayerHeartbeatValidateTask playerHeartbeatValidateTask;
+
+    /** 服务器全局属性 */
+    private final Map<String, byte[]> attributes = new ConcurrentHashMap<>();
 
     BrokerServer() throws IOException {
         this.terminal = TerminalBuilder.builder().system(true).jansi(true).build();
@@ -250,6 +256,26 @@ public class BrokerServer {
         if (object instanceof BrokerServerAware) {
             ((BrokerServerAware) object).setBrokerServer(this);
         }
+    }
+
+    @Override
+    public void setAttribute(String key, byte[] value) {
+        attributes.put(key, value);
+    }
+
+    @Override
+    public byte[] getAttribute(String key) {
+        return attributes.get(key);
+    }
+
+    @Override
+    public boolean hasAttribute(String key) {
+        return attributes.containsKey(key);
+    }
+
+    @Override
+    public byte[] removeAttribute(String key) {
+        return attributes.remove(key);
     }
 
     public static BrokerServerBuilder builder() {

@@ -116,4 +116,35 @@ public class Broker {
     public static File getPluginsFolder() {
         return server.getPluginsFolder();
     }
+
+    // ==================== 属性操作 ====================
+
+    /**
+     * 设置服务器全局属性
+     */
+    public static void setServerAttribute(String key, byte[] value) {
+        server.setAttribute(key, value);
+    }
+
+    /**
+     * 获取服务器全局属性
+     */
+    @Nullable
+    public static byte[] getServerAttribute(String key) {
+        return server.getAttribute(key);
+    }
+
+    /**
+     * 移除服务器全局属性
+     */
+    public static void removeServerAttribute(String key) {
+        server.removeAttribute(key);
+    }
+
+    /**
+     * 判断是否存在服务器全局属性
+     */
+    public static boolean hasServerAttribute(String key) {
+        return server.hasAttribute(key);
+    }
 }

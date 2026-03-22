@@ -2,9 +2,11 @@ package net.afyer.afybroker.client;
 
 import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.LifeCycleException;
+import com.alipay.remoting.config.ConfigManager;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.RpcResponseFuture;
+import com.alipay.remoting.serialization.Serializer;
 import com.alipay.remoting.serialization.SerializerManager;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.client.preprocessor.BrokerInvocationContext;
@@ -13,12 +15,14 @@ import net.afyer.afybroker.client.preprocessor.PreprocessorException;
 import net.afyer.afybroker.client.service.BrokerServiceProxyFactory;
 import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
+import net.afyer.afybroker.core.message.AttributeMessage;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Nipuru
@@ -172,6 +176,116 @@ public class BrokerClient {
                 preprocessor.preprocess(context);
             }
         }
+    }
+
+    // ==================== 属性操作 ====================
+
+    private Serializer getSerializer() {
+        return SerializerManager.getSerializer(ConfigManager.serializer());
+    }
+
+    /**
+     * 设置服务器全局属性
+     */
+    public <T> void setServerAttribute(String key, T value) throws RemotingException, InterruptedException {
+        Serializer serializer = getSerializer();
+        AttributeMessage msg = new AttributeMessage()
+                .setAction(AttributeMessage.ACTION_SET)
+                .setScope(AttributeMessage.SCOPE_SERVER)
+                .setKey(key)
+                .setValue(serializer.serialize(value));
+        invokeSync(msg);
+    }
+
+    /**
+     * 获取服务器全局属性
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getServerAttribute(String key) throws RemotingException, InterruptedException {
+        AttributeMessage msg = new AttributeMessage()
+                .setAction(AttributeMessage.ACTION_GET)
+                .setScope(AttributeMessage.SCOPE_SERVER)
+                .setKey(key);
+        byte[] result = invokeSync(msg);
+        if (result == null) return null;
+        return (T) getSerializer().deserialize(result, Object.class.getName());
+    }
+
+    /**
+     * 移除服务器全局属性
+     */
+    public void removeServerAttribute(String key) throws RemotingException, InterruptedException {
+        AttributeMessage msg = new AttributeMessage()
+                .setAction(AttributeMessage.ACTION_REMOVE)
+                .setScope(AttributeMessage.SCOPE_SERVER)
+                .setKey(key);
+        invokeSync(msg);
+    }
+
+    /**
+     * 判断是否存在服务器全局属性
+     */
+    public boolean hasServerAttribute(String key) throws RemotingException, InterruptedException {
+        AttributeMessage msg = new AttributeMessage()
+                .setAction(AttributeMessage.ACTION_HAS)
+                .setScope(AttributeMessage.SCOPE_SERVER)
+                .setKey(key);
+        Boolean result = invokeSync(msg);
+        return result != null && result;
+    }
+
+    /**
+     * 设置玩家属性
+     */
+    public <T> void setPlayerAttribute(UUID uniqueId, String key, T value) throws RemotingException, InterruptedException {
+        Serializer serializer = getSerializer();
+        AttributeMessage msg = new AttributeMessage()
+                .setAction(AttributeMessage.ACTION_SET)
+                .setScope(AttributeMessage.SCOPE_PLAYER)
+                .setUniqueId(uniqueId)
+                .setKey(key)
+                .setValue(serializer.serialize(value));
+        invokeSync(msg);
+    }
+
+    /**
+     * 获取玩家属性
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getPlayerAttribute(UUID uniqueId, String key) throws RemotingException, InterruptedException {
+        AttributeMessage msg = new AttributeMessage()
+                .setAction(AttributeMessage.ACTION_GET)
+                .setScope(AttributeMessage.SCOPE_PLAYER)
+                .setUniqueId(uniqueId)
+                .setKey(key);
+        byte[] result = invokeSync(msg);
+        if (result == null) return null;
+        return (T) getSerializer().deserialize(result, Object.class.getName());
+    }
+
+    /**
+     * 移除玩家属性
+     */
+    public void removePlayerAttribute(UUID uniqueId, String key) throws RemotingException, InterruptedException {
+        AttributeMessage msg = new AttributeMessage()
+                .setAction(AttributeMessage.ACTION_REMOVE)
+                .setScope(AttributeMessage.SCOPE_PLAYER)
+                .setUniqueId(uniqueId)
+                .setKey(key);
+        invokeSync(msg);
+    }
+
+    /**
+     * 判断是否存在玩家属性
+     */
+    public boolean hasPlayerAttribute(UUID uniqueId, String key) throws RemotingException, InterruptedException {
+        AttributeMessage msg = new AttributeMessage()
+                .setAction(AttributeMessage.ACTION_HAS)
+                .setScope(AttributeMessage.SCOPE_PLAYER)
+                .setUniqueId(uniqueId)
+                .setKey(key);
+        Boolean result = invokeSync(msg);
+        return result != null && result;
     }
 
     public void printInformation(Logger logger) {

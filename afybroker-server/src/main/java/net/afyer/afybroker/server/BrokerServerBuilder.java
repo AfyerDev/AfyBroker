@@ -123,7 +123,8 @@ public class BrokerServerBuilder {
                 .registerUserProcessor(new KickPlayerBrokerProcessor())
                 .registerUserProcessor(new PlayerProfilePropertyBrokerProcessor())
                 .registerUserProcessor(new RpcInvocationBrokerProcessor())
-                .registerUserProcessor(new CloseBrokerClientBrokerProcessor());
+                .registerUserProcessor(new CloseBrokerClientBrokerProcessor())
+                .registerUserProcessor(new AttributeBrokerProcessor());
     }
 
 
