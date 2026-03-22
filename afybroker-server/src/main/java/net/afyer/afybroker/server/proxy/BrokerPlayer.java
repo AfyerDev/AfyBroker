@@ -1,11 +1,14 @@
 package net.afyer.afybroker.server.proxy;
 
+import net.afyer.afybroker.core.Attributable;
 import net.afyer.afybroker.core.message.ConnectToServerMessage;
 import net.afyer.afybroker.core.message.KickPlayerMessage;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 玩家代理
@@ -13,7 +16,7 @@ import java.util.UUID;
  * @author Nipuru
  * @since 2022/7/30 16:47
  */
-public class BrokerPlayer {
+public class BrokerPlayer implements Attributable {
 
     /** 玩家UUID */
     private final UUID uniqueId;
@@ -21,6 +24,8 @@ public class BrokerPlayer {
     private final String name;
     /** 玩家所在的 Proxy 服务器客户端代理 */
     private final BrokerClientItem proxy;
+    /** 玩家属性 */
+    private final Map<String, byte[]> attributes = new ConcurrentHashMap<>();
 
     /** 玩家所在的 Minecraft 服务器客户端代理 */
     @Nullable
@@ -67,6 +72,28 @@ public class BrokerPlayer {
                 .setServerName(serverName);
 
         proxy.oneway(request);
+    }
+
+    @Override
+    public void setAttribute(String key, byte[] value) {
+        attributes.put(key, value);
+    }
+
+    @Nullable
+    @Override
+    public byte[] getAttribute(String key) {
+        return attributes.get(key);
+    }
+
+    @Override
+    public boolean hasAttribute(String key) {
+        return attributes.containsKey(key);
+    }
+
+    @Nullable
+    @Override
+    public byte[] removeAttribute(String key) {
+        return attributes.remove(key);
     }
 
     @Override
