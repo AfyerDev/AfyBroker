@@ -8,6 +8,7 @@ import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.alipay.remoting.serialization.SerializerManager;
 import com.google.common.collect.Lists;
 import net.afyer.afybroker.core.Attributable;
+import net.afyer.afybroker.core.AttributeContainer;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.command.*;
@@ -74,7 +75,7 @@ public class BrokerServer implements Attributable {
     private final PlayerHeartbeatValidateTask playerHeartbeatValidateTask;
 
     /** 服务器全局属性 */
-    private final Map<String, byte[]> attributes = new ConcurrentHashMap<>();
+    private final AttributeContainer attributes = new AttributeContainer();
 
     BrokerServer() throws IOException {
         this.terminal = TerminalBuilder.builder().system(true).jansi(true).build();
@@ -259,23 +260,8 @@ public class BrokerServer implements Attributable {
     }
 
     @Override
-    public void setAttribute(String key, byte[] value) {
-        attributes.put(key, value);
-    }
-
-    @Override
-    public byte[] getAttribute(String key) {
-        return attributes.get(key);
-    }
-
-    @Override
-    public boolean hasAttribute(String key) {
-        return attributes.containsKey(key);
-    }
-
-    @Override
-    public byte[] removeAttribute(String key) {
-        return attributes.remove(key);
+    public AttributeContainer getAttributeContainer() {
+        return attributes;
     }
 
     public static BrokerServerBuilder builder() {

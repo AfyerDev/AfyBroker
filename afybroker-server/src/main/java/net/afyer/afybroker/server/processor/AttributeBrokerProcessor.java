@@ -10,6 +10,8 @@ import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * 属性操作处理器
  * 统一处理 SET/GET/REMOVE/HAS 操作，支持 SERVER/PLAYER 两种作用域
@@ -41,18 +43,18 @@ public class AttributeBrokerProcessor extends SyncUserProcessor<AttributeMessage
             }
             target = player;
         }
+        Map<String, byte[]> rawAttributes = target.getAttributeContainer().getRawAttributes();
 
         switch (request.getAction()) {
             case AttributeMessage.ACTION_SET:
-                target.setAttribute(request.getKey(), request.getValue());
+                rawAttributes.put(request.getKey(), request.getValue());
                 return null;
             case AttributeMessage.ACTION_GET:
-                return target.getAttribute(request.getKey());
+                return rawAttributes.get(request.getKey());
             case AttributeMessage.ACTION_REMOVE:
-                target.removeAttribute(request.getKey());
-                return null;
+                return rawAttributes.remove(request.getKey());
             case AttributeMessage.ACTION_HAS:
-                return target.hasAttribute(request.getKey());
+                return rawAttributes.containsKey(request.getKey());
             default:
                 LOGGER.warn("Unknown attribute action: {}", request.getAction());
                 return null;

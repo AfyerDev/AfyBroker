@@ -1,6 +1,7 @@
 package net.afyer.afybroker.server;
 
 import com.alipay.remoting.BizContext;
+import com.alipay.remoting.exception.CodecException;
 import com.alipay.remoting.rpc.RpcServer;
 import net.afyer.afybroker.server.plugin.PluginManager;
 import net.afyer.afybroker.server.proxy.BrokerClientItem;
@@ -28,9 +29,12 @@ public class Broker {
         return server;
     }
 
-    private Broker() {}
+    private Broker() {
+    }
 
-    /** 设置 broker 服务端 */
+    /**
+     * 设置 broker 服务端
+     */
     public static void setServer(BrokerServer brokerServer) {
         if (Broker.server != null) {
             throw new UnsupportedOperationException("Cannot redefine singleton instance");
@@ -38,7 +42,9 @@ public class Broker {
         Broker.server = brokerServer;
     }
 
-    /** 获取 rpc 服务端 */
+    /**
+     * 获取 rpc 服务端
+     */
     public static RpcServer getRpcServer() {
         return server.getRpcServer();
     }
@@ -120,7 +126,7 @@ public class Broker {
     /**
      * 设置服务器全局属性
      */
-    public static void setServerAttribute(String key, byte[] value) {
+    public static <T> void setAttribute(String key, T value) throws CodecException {
         server.setAttribute(key, value);
     }
 
@@ -128,21 +134,21 @@ public class Broker {
      * 获取服务器全局属性
      */
     @Nullable
-    public static byte[] getServerAttribute(String key) {
+    public static <T> T getAttribute(String key) throws CodecException {
         return server.getAttribute(key);
     }
 
     /**
      * 移除服务器全局属性
      */
-    public static void removeServerAttribute(String key) {
-        server.removeAttribute(key);
+    public static <T> T removeAttribute(String key) throws CodecException {
+        return server.removeAttribute(key);
     }
 
     /**
      * 判断是否存在服务器全局属性
      */
-    public static boolean hasServerAttribute(String key) {
+    public static boolean hasAttribute(String key) {
         return server.hasAttribute(key);
     }
 }

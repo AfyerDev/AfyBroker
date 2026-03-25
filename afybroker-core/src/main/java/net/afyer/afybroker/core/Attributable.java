@@ -1,10 +1,10 @@
 package net.afyer.afybroker.core;
 
+import com.alipay.remoting.exception.CodecException;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * 可属性化接口，提供基于键值对的属性存储能力
- * 值以 byte[] 形式存储（Hessian 序列化）
  *
  * @author Conan-Wen
  * @since 2026/3/22
@@ -15,9 +15,11 @@ public interface Attributable {
      * 设置属性
      *
      * @param key   属性键
-     * @param value 属性值（Hessian 序列化后的字节数组）
+     * @param value 属性值
      */
-    void setAttribute(String key, byte[] value);
+    default <T> void setAttribute(String key, T value) throws CodecException {
+        getAttributeContainer().setAttribute(key, value);
+    }
 
     /**
      * 获取属性
@@ -26,7 +28,9 @@ public interface Attributable {
      * @return 属性值，不存在则返回 null
      */
     @Nullable
-    byte[] getAttribute(String key);
+    default <T> T getAttribute(String key) throws CodecException {
+        return getAttributeContainer().getAttribute(key);
+    }
 
     /**
      * 判断是否存在指定属性
@@ -34,7 +38,9 @@ public interface Attributable {
      * @param key 属性键
      * @return 是否存在
      */
-    boolean hasAttribute(String key);
+    default boolean hasAttribute(String key) {
+        return getAttributeContainer().hasAttribute(key);
+    }
 
     /**
      * 移除属性
@@ -43,5 +49,14 @@ public interface Attributable {
      * @return 被移除的属性值，不存在则返回 null
      */
     @Nullable
-    byte[] removeAttribute(String key);
+    default <T> T removeAttribute(String key) throws CodecException {
+        return getAttributeContainer().removeAttribute(key);
+    }
+
+    /**
+     * 获取属性容器
+     *
+     * @return 属性容器
+     */
+    AttributeContainer getAttributeContainer();
 }

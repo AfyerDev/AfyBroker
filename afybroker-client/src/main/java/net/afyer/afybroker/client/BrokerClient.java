@@ -246,7 +246,6 @@ public class BrokerClient {
     /**
      * 获取玩家属性
      */
-    @SuppressWarnings("unchecked")
     public <T> T getPlayerAttribute(UUID uniqueId, String key) throws RemotingException, InterruptedException {
         AttributeMessage msg = new AttributeMessage()
                 .setAction(AttributeMessage.ACTION_GET)

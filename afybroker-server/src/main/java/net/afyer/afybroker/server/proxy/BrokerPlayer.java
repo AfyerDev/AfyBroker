@@ -1,6 +1,9 @@
 package net.afyer.afybroker.server.proxy;
 
+import com.alipay.remoting.config.ConfigManager;
+import com.alipay.remoting.serialization.SerializerManager;
 import net.afyer.afybroker.core.Attributable;
+import net.afyer.afybroker.core.AttributeContainer;
 import net.afyer.afybroker.core.message.ConnectToServerMessage;
 import net.afyer.afybroker.core.message.KickPlayerMessage;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +28,7 @@ public class BrokerPlayer implements Attributable {
     /** 玩家所在的 Proxy 服务器客户端代理 */
     private final BrokerClientItem proxy;
     /** 玩家属性 */
-    private final Map<String, byte[]> attributes = new ConcurrentHashMap<>();
+    private final AttributeContainer attributes = new AttributeContainer();
 
     /** 玩家所在的 Minecraft 服务器客户端代理 */
     @Nullable
@@ -75,25 +78,8 @@ public class BrokerPlayer implements Attributable {
     }
 
     @Override
-    public void setAttribute(String key, byte[] value) {
-        attributes.put(key, value);
-    }
-
-    @Nullable
-    @Override
-    public byte[] getAttribute(String key) {
-        return attributes.get(key);
-    }
-
-    @Override
-    public boolean hasAttribute(String key) {
-        return attributes.containsKey(key);
-    }
-
-    @Nullable
-    @Override
-    public byte[] removeAttribute(String key) {
-        return attributes.remove(key);
+    public AttributeContainer getAttributeContainer() {
+        return attributes;
     }
 
     @Override
