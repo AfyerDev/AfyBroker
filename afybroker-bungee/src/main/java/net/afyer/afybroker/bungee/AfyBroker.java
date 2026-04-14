@@ -10,6 +10,7 @@ import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.BrokerClientBuilder;
 import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
+import net.afyer.afybroker.client.util.PersistentUniqueIdUtils;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.Bstats;
@@ -20,11 +21,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.YamlConfiguration;
 import org.bstats.bungeecord.Metrics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -37,6 +35,7 @@ public class AfyBroker extends Plugin {
     private Configuration config;
     private boolean syncEnable;
     private Metrics metrics;
+    private static final String UNIQUE_ID = PersistentUniqueIdUtils.getOrCreateUniqueId(AfyBroker.class);
 
     @Override
     public void onEnable() {
@@ -48,7 +47,7 @@ public class AfyBroker extends Plugin {
                     .host(config.getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
                     .port(config.getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
                     .name(config.getString("broker.name", "bungee-%unique_id%")
-                            .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
+                            .replace("%unique_id%", UNIQUE_ID)
                             .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
                     )
                     .addTags(getConfig().getStringList("tags"))

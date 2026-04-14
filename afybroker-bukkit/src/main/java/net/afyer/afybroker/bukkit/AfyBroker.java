@@ -12,6 +12,7 @@ import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.BrokerClientBuilder;
 import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
+import net.afyer.afybroker.client.util.PersistentUniqueIdUtils;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.Bstats;
@@ -24,7 +25,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -35,6 +35,7 @@ import java.util.logging.Level;
 public class AfyBroker extends JavaPlugin {
     private BrokerClient brokerClient;
     private Metrics metrics;
+    private static final String UNIQUE_ID = PersistentUniqueIdUtils.getOrCreateUniqueId(AfyBroker.class);
 
     @Override
     public void onEnable() {
@@ -48,7 +49,7 @@ public class AfyBroker extends JavaPlugin {
                     .host(getConfig().getString("broker.host", BrokerGlobalConfig.BROKER_HOST))
                     .port(getConfig().getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
                     .name(getConfig().getString("broker.name", "bukkit-%unique_id%")
-                            .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
+                            .replace("%unique_id%", UNIQUE_ID)
                             .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME"))))
                     .addTags(getConfig().getStringList("tags"))
                     .addMetadata(MetadataKeys.MC_SERVER_ADDRESS, serverAddress)

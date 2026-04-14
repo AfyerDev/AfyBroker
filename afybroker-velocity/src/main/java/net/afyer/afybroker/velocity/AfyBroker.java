@@ -14,6 +14,7 @@ import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.BrokerClientBuilder;
 import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
+import net.afyer.afybroker.client.util.PersistentUniqueIdUtils;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.Bstats;
@@ -31,7 +32,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -39,6 +39,7 @@ import java.util.function.Consumer;
  * @since 2022/7/28 7:26
  */
 public class AfyBroker {
+    private static final String UNIQUE_ID = PersistentUniqueIdUtils.getOrCreateUniqueId(AfyBroker.class);
 
     private final ProxyServer server;
     private final Logger logger;
@@ -118,7 +119,7 @@ public class AfyBroker {
                     .host(config.getNode("broker", "host").getString(BrokerGlobalConfig.BROKER_HOST))
                     .port(config.getNode("broker", "port").getInt(BrokerGlobalConfig.BROKER_PORT))
                     .name(config.getNode("broker", "name").getString("velocity-%unique_id%")
-                            .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
+                            .replace("%unique_id%", UNIQUE_ID)
                             .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
                     )
                     .addTags(config.getNode("broker", "tags").getList(Object::toString))
