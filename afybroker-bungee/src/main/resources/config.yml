@@ -1,22 +1,27 @@
 broker:
-  # broker 网关服务器地址
+  # broker gateway host
   host: localhost
-  # broker 网关服务器端口
+  # broker gateway port
   port: 11200
-  # 客户端名称 每个客户端应该唯一
+  # unique broker client name
   name: 'bungee-%unique_id%'
-  # 客户端默认标签 可以删除
+  # default client tags
   tags: ['bungee', 'proxy']
-  # 元数据信息 字符串键值对 自行拓展
+  # custom metadata
   metadata:
     #key1: 'value1'
     #key2: 'value2'
 
 player:
-  # 在服务器网关断联后是否踢出全部玩家
+  # kick all players when the broker connection closes
   kick-on-close: false
 
 server:
-  # 是否开启 mc 游戏服务器自动注册到 proxy 的功能
-  # 若要开启则先确认 broker-bukkit 插件的 config.yml
+  # sync backend servers to the proxy
   sync-enable: false
+
+observability:
+  prometheus:
+    enabled: false
+    host: 0.0.0.0
+    port: 9464

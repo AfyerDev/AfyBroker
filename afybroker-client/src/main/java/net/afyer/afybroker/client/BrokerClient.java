@@ -16,6 +16,13 @@ import net.afyer.afybroker.client.service.BrokerServiceProxyFactory;
 import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.message.AttributeMessage;
+import net.afyer.afybroker.core.observability.LifecycleState;
+import net.afyer.afybroker.core.observability.Observability;
+import net.afyer.afybroker.core.observability.ObservabilitySupport;
+import net.afyer.afybroker.core.observability.PlayerEventType;
+import net.afyer.afybroker.core.observability.PlayerObservation;
+import net.afyer.afybroker.core.observability.RpcObservation;
+import net.afyer.afybroker.core.observability.RpcPhase;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import org.slf4j.Logger;
 
@@ -23,29 +30,17 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executor;
 
-/**
- * @author Nipuru
- * @since 2022/7/30 19:15
- */
 public class BrokerClient {
-    /** 客户端信息 */
+
     private BrokerClientInfo clientInfo;
-
-    /** rpc 客户端 */
     private RpcClient rpcClient;
-
-    /** 消息发送超时时间 */
     private int defaultTimeoutMillis;
-
-    /** 服务注册表 */
     private BrokerServiceRegistry serviceRegistry;
-    
-    /** 服务代理工厂 */
     private final BrokerServiceProxyFactory serviceProxyFactory;
-
-    /** 预处理函数列表 */
     private List<BrokerPreprocessor> preprocessors;
+    private Observability observability = Observability.NOOP;
 
     BrokerClient() {
         this.serviceProxyFactory = new BrokerServiceProxyFactory(this);
@@ -71,6 +66,10 @@ public class BrokerClient {
         this.preprocessors = preprocessors;
     }
 
+    void setObservability(Observability observability) {
+        this.observability = observability;
+    }
+
     public BrokerClientInfo getClientInfo() {
         return clientInfo;
     }
@@ -91,6 +90,10 @@ public class BrokerClient {
         return preprocessors;
     }
 
+    public Observability getObservability() {
+        return observability;
+    }
+
     public boolean hasTag(String tag) {
         return clientInfo.getTags().contains(tag);
     }
@@ -102,12 +105,27 @@ public class BrokerClient {
     @SuppressWarnings("unchecked")
     public <T> T invokeSync(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
         executePreprocessors(request, "invokeSync", timeoutMillis);
-        return (T) rpcClient.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
+        long startNanos = System.nanoTime();
+        try {
+            T result = (T) rpcClient.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
+            recordRpc(RpcPhase.OUTBOUND, request, startNanos, null);
+            return result;
+        } catch (RemotingException | InterruptedException | RuntimeException e) {
+            recordRpc(RpcPhase.OUTBOUND, request, startNanos, e);
+            throw e;
+        }
     }
 
     public void oneway(Object request) throws RemotingException, InterruptedException {
         executePreprocessors(request, "oneway", 0);
-        rpcClient.oneway(clientInfo.getAddress(), request);
+        long startNanos = System.nanoTime();
+        try {
+            rpcClient.oneway(clientInfo.getAddress(), request);
+            recordRpc(RpcPhase.OUTBOUND, request, startNanos, null);
+        } catch (RemotingException | InterruptedException | RuntimeException e) {
+            recordRpc(RpcPhase.OUTBOUND, request, startNanos, e);
+            throw e;
+        }
     }
 
     public void invokeWithCallback(Object request, InvokeCallback invokeCallback) throws RemotingException, InterruptedException {
@@ -116,7 +134,9 @@ public class BrokerClient {
 
     public void invokeWithCallback(Object request, InvokeCallback invokeCallback, int timeoutMillis) throws RemotingException, InterruptedException {
         executePreprocessors(request, "invokeWithCallback", timeoutMillis);
-        rpcClient.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
+        long startNanos = System.nanoTime();
+        rpcClient.invokeWithCallback(clientInfo.getAddress(), request,
+                wrapCallback(request, invokeCallback, startNanos), timeoutMillis);
     }
 
     public RpcResponseFuture invokeWithFuture(Object request) throws RemotingException, InterruptedException {
@@ -125,21 +145,40 @@ public class BrokerClient {
 
     public RpcResponseFuture invokeWithFuture(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
         executePreprocessors(request, "invokeWithFuture", timeoutMillis);
-        return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, timeoutMillis);
+        long startNanos = System.nanoTime();
+        try {
+            RpcResponseFuture future = rpcClient.invokeWithFuture(clientInfo.getAddress(), request, timeoutMillis);
+            recordRpc(RpcPhase.OUTBOUND_FUTURE, request, startNanos, null);
+            return future;
+        } catch (RemotingException | InterruptedException | RuntimeException e) {
+            recordRpc(RpcPhase.OUTBOUND_FUTURE, request, startNanos, e);
+            throw e;
+        }
     }
 
     public void startup() throws LifeCycleException {
-        rpcClient.startup();
+        observability.onLifecycle(LifecycleState.STARTING);
+        try {
+            rpcClient.startup();
+            observability.onLifecycle(LifecycleState.STARTED);
+        } catch (LifeCycleException e) {
+            observability.onLifecycle(LifecycleState.START_FAILED);
+            throw e;
+        }
     }
 
     public void shutdown() {
-        rpcClient.shutdown();
+        observability.onLifecycle(LifecycleState.STOPPING);
+        try {
+            rpcClient.shutdown();
+            observability.onLifecycle(LifecycleState.STOPPED);
+        } finally {
+            observability.close();
+        }
     }
 
     public void ping() throws RemotingException, InterruptedException {
-        String address = clientInfo.getAddress();
-
-        rpcClient.getConnection(address, defaultTimeoutMillis);
+        rpcClient.getConnection(clientInfo.getAddress(), defaultTimeoutMillis);
     }
 
     public void aware(Object object) {
@@ -156,20 +195,13 @@ public class BrokerClient {
         return serviceProxyFactory.createProxy(serviceInterface, new HashSet<>(Arrays.asList(tags)));
     }
 
-    /**
-     * 为直接调用方法执行预处理函数
-     * 
-     * @param request 请求对象
-     * @param methodName 方法名称（用于日志）
-     */
     private void executePreprocessors(Object request, String methodName, int timeoutMillis) throws PreprocessorException {
         if (preprocessors != null && !preprocessors.isEmpty()) {
-            // 创建通用的调用上下文
             BrokerInvocationContext context = new BrokerInvocationContext(
-                request.getClass().getName(),
-                methodName,
-                timeoutMillis,
-                Thread.currentThread()
+                    request.getClass().getName(),
+                    methodName,
+                    timeoutMillis,
+                    Thread.currentThread()
             );
 
             for (BrokerPreprocessor preprocessor : preprocessors) {
@@ -182,9 +214,6 @@ public class BrokerClient {
         return SerializerManager.getSerializer(ConfigManager.serializer());
     }
 
-    /**
-     * 设置服务器全局属性
-     */
     public <T> void setServerAttribute(String key, T value) throws RemotingException, InterruptedException {
         Serializer serializer = getSerializer();
         AttributeMessage msg = new AttributeMessage()
@@ -195,10 +224,6 @@ public class BrokerClient {
         invokeSync(msg);
     }
 
-    /**
-     * 获取服务器全局属性
-     */
-    @SuppressWarnings("unchecked")
     public <T> T getServerAttribute(String key) throws RemotingException, InterruptedException {
         AttributeMessage msg = new AttributeMessage()
                 .setAction(AttributeMessage.ACTION_GET)
@@ -207,9 +232,6 @@ public class BrokerClient {
         return getSerializer().deserialize(invokeSync(msg), Object.class.getName());
     }
 
-    /**
-     * 移除服务器全局属性
-     */
     public void removeServerAttribute(String key) throws RemotingException, InterruptedException {
         AttributeMessage msg = new AttributeMessage()
                 .setAction(AttributeMessage.ACTION_REMOVE)
@@ -218,9 +240,6 @@ public class BrokerClient {
         invokeSync(msg);
     }
 
-    /**
-     * 判断是否存在服务器全局属性
-     */
     public boolean hasServerAttribute(String key) throws RemotingException, InterruptedException {
         AttributeMessage msg = new AttributeMessage()
                 .setAction(AttributeMessage.ACTION_HAS)
@@ -229,9 +248,6 @@ public class BrokerClient {
         return Boolean.TRUE.equals(invokeSync(msg));
     }
 
-    /**
-     * 设置玩家属性
-     */
     public <T> void setPlayerAttribute(UUID uniqueId, String key, T value) throws RemotingException, InterruptedException {
         Serializer serializer = getSerializer();
         AttributeMessage msg = new AttributeMessage()
@@ -243,9 +259,6 @@ public class BrokerClient {
         invokeSync(msg);
     }
 
-    /**
-     * 获取玩家属性
-     */
     public <T> T getPlayerAttribute(UUID uniqueId, String key) throws RemotingException, InterruptedException {
         AttributeMessage msg = new AttributeMessage()
                 .setAction(AttributeMessage.ACTION_GET)
@@ -255,9 +268,6 @@ public class BrokerClient {
         return getSerializer().deserialize(invokeSync(msg), Object.class.getName());
     }
 
-    /**
-     * 移除玩家属性
-     */
     public void removePlayerAttribute(UUID uniqueId, String key) throws RemotingException, InterruptedException {
         AttributeMessage msg = new AttributeMessage()
                 .setAction(AttributeMessage.ACTION_REMOVE)
@@ -267,9 +277,6 @@ public class BrokerClient {
         invokeSync(msg);
     }
 
-    /**
-     * 判断是否存在玩家属性
-     */
     public boolean hasPlayerAttribute(UUID uniqueId, String key) throws RemotingException, InterruptedException {
         AttributeMessage msg = new AttributeMessage()
                 .setAction(AttributeMessage.ACTION_HAS)
@@ -290,12 +297,51 @@ public class BrokerClient {
         logger.info("================================================");
     }
 
+    public void recordPlayerEvent(PlayerEventType eventType, int onlinePlayers) {
+        observability.onPlayer(new PlayerObservation(eventType, onlinePlayers));
+    }
+
+    public void recordOnlinePlayers(int onlinePlayers) {
+        observability.onPlayer(new PlayerObservation(null, onlinePlayers));
+    }
+
     public static BrokerClientBuilder newBuilder() {
         return new BrokerClientBuilder();
     }
 
+    private void recordRpc(RpcPhase phase, Object request, long startNanos, Throwable error) {
+        observability.onRpc(new RpcObservation(
+                phase,
+                ObservabilitySupport.requestType(request),
+                ObservabilitySupport.serviceInterface(request),
+                ObservabilitySupport.methodName(request),
+                error == null,
+                System.nanoTime() - startNanos
+        ));
+    }
+
+    private InvokeCallback wrapCallback(Object request, InvokeCallback invokeCallback, long startNanos) {
+        return new InvokeCallback() {
+            @Override
+            public void onResponse(Object result) {
+                recordRpc(RpcPhase.OUTBOUND, request, startNanos, null);
+                invokeCallback.onResponse(result);
+            }
+
+            @Override
+            public void onException(Throwable e) {
+                recordRpc(RpcPhase.OUTBOUND, request, startNanos, e);
+                invokeCallback.onException(e);
+            }
+
+            @Override
+            public Executor getExecutor() {
+                return invokeCallback.getExecutor();
+            }
+        };
+    }
+
     static {
-        // 添加默认序列化器
         ClassLoader classLoader = BrokerClient.class.getClassLoader();
         SerializerManager.addSerializer(SerializerManager.Hessian2, new HessianSerializer(classLoader));
     }

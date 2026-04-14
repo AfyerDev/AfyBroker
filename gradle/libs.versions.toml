@@ -25,6 +25,8 @@ jline-terminal = { module = "org.jline:jline-terminal", version.ref = "jline3" }
 jline-terminal-jansi = { module = "org.jline:jline-terminal-jansi", version.ref = "jline3" }
 hessian = "com.caucho:hessian:4.0.66"
 annotations = "org.jetbrains:annotations:22.0.0"
+prometheus-simpleclient = "io.prometheus:simpleclient:0.16.0"
+prometheus-httpserver = "io.prometheus:simpleclient_httpserver:0.16.0"
 spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot"}
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
 bungeecord-api = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord" }

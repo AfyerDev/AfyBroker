@@ -14,10 +14,6 @@ import net.afyer.afybroker.velocity.AfyBroker;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-/**
- * @author Nipuru
- * @since 2022/7/30 18:44
- */
 public class PlayerListener {
 
     private final AfyBroker plugin;
@@ -38,17 +34,20 @@ public class PlayerListener {
 
             if (!result) {
                 event.setResult(ResultedEvent.ComponentResult.denied(
-                        Component.text("登录失败").color(NamedTextColor.RED)));
+                        Component.text("Login failed").color(NamedTextColor.RED)));
+            } else {
+                plugin.recordPlayerJoin();
             }
         } catch (Exception e) {
             plugin.getLogger().error(e.getMessage(), e);
             event.setResult(ResultedEvent.ComponentResult.denied(
-                    Component.text("产生了一个错误").color(NamedTextColor.RED)));
+                    Component.text("An error occurred").color(NamedTextColor.RED)));
         }
     }
 
     @Subscribe
     public void onDisConnect(DisconnectEvent event) {
+        plugin.recordPlayerLeave();
         PlayerProxyDisconnectMessage msg = new PlayerProxyDisconnectMessage()
                 .setUniqueId(event.getPlayer().getUniqueId())
                 .setName(event.getPlayer().getUsername());
@@ -73,5 +72,4 @@ public class PlayerListener {
             plugin.getLogger().error(e.getMessage(), e);
         }
     }
-
 }

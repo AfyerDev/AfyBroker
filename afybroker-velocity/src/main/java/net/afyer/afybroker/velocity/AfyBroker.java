@@ -17,9 +17,16 @@ import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.Bstats;
+import net.afyer.afybroker.core.observability.PlayerEventType;
+import net.afyer.afybroker.core.observability.PrometheusObservabilityOptions;
 import net.afyer.afybroker.core.util.BoltUtils;
 import net.afyer.afybroker.velocity.listener.PlayerListener;
-import net.afyer.afybroker.velocity.processor.*;
+import net.afyer.afybroker.velocity.processor.ConnectToServerVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.KickPlayerVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.PlayerHeartbeatValidateVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.PlayerProfilePropertyVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.RequestPlayerInfoVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.SyncServerVelocityProcessor;
 import net.afyer.afybroker.velocity.processor.connection.CloseEventVelocityProcessor;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
@@ -34,10 +41,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-/**
- * @author Nipuru
- * @since 2022/7/28 7:26
- */
 public class AfyBroker {
 
     private final ProxyServer server;
@@ -92,6 +95,18 @@ public class AfyBroker {
         return syncEnable;
     }
 
+    public void recordPlayerJoin() {
+        if (brokerClient != null) {
+            brokerClient.recordPlayerEvent(PlayerEventType.JOIN, server.getPlayerCount());
+        }
+    }
+
+    public void recordPlayerLeave() {
+        if (brokerClient != null) {
+            brokerClient.recordPlayerEvent(PlayerEventType.LEAVE, server.getPlayerCount());
+        }
+    }
+
     @Subscribe(order = PostOrder.LAST)
     public void onProxyInitializeLast(ProxyInitializeEvent event) {
         metrics = metricsFactory.make(this, Bstats.VELOCITY);
@@ -119,8 +134,7 @@ public class AfyBroker {
                     .port(config.getNode("broker", "port").getInt(BrokerGlobalConfig.BROKER_PORT))
                     .name(config.getNode("broker", "name").getString("velocity-%unique_id%")
                             .replace("%unique_id%", UUID.randomUUID().toString().substring(0, 8))
-                            .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
-                    )
+                            .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME"))))
                     .addTags(config.getNode("broker", "tags").getList(Object::toString))
                     .type(BrokerClientType.PROXY)
                     .registerUserProcessor(new ConnectToServerVelocityProcessor(this))
@@ -131,9 +145,13 @@ public class AfyBroker {
                     .registerUserProcessor(new PlayerProfilePropertyVelocityProcessor(this))
                     .registerUserProcessor(new CloseBrokerClientProcessor(server::shutdown))
                     .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventVelocityProcessor(this));
-            config.getNode("broker", "metadata").getChildrenMap().forEach((key, value) -> {
-               builder.addMetadata(key.toString(), value.getString());
-            });
+            if (config.getNode("observability", "prometheus", "enabled").getBoolean(false)) {
+                builder.enablePrometheus(new PrometheusObservabilityOptions()
+                        .setHost(config.getNode("observability", "prometheus", "host").getString("0.0.0.0"))
+                        .setPort(config.getNode("observability", "prometheus", "port").getInt(9464)));
+            }
+            config.getNode("broker", "metadata").getChildrenMap().forEach((key, value) ->
+                    builder.addMetadata(key.toString(), value.getString()));
             for (Consumer<BrokerClientBuilder> buildAction : Broker.getBuildActions()) {
                 buildAction.accept(builder);
             }
@@ -143,6 +161,7 @@ public class AfyBroker {
             brokerClient.startup();
             brokerClient.printInformation(logger);
             brokerClient.ping();
+            brokerClient.recordOnlinePlayers(server.getPlayerCount());
         } catch (RemotingException | InterruptedException e) {
             logger.error("Broker client initialization failed!", e);
         }

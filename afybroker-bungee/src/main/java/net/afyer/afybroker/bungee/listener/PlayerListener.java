@@ -17,10 +17,6 @@ import net.md_5.bungee.event.EventHandler;
 
 import java.util.logging.Level;
 
-/**
- * @author Nipuru
- * @since 2022/7/30 18:44
- */
 public class PlayerListener implements Listener {
 
     private final AfyBroker plugin;
@@ -44,11 +40,13 @@ public class PlayerListener implements Listener {
 
                 if (!result) {
                     event.setCancelled(true);
-                    event.setCancelReason(new TextComponent("§c登录失败"));
+                    event.setCancelReason(new TextComponent("Login failed"));
+                } else {
+                    plugin.recordPlayerJoin();
                 }
             } catch (Exception ex) {
                 event.setCancelled(true);
-                event.setCancelReason(new TextComponent("§c产生了一个错误"));
+                event.setCancelReason(new TextComponent("An error occurred"));
             } finally {
                 event.completeIntent(plugin);
             }
@@ -57,6 +55,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onDisConnect(PlayerDisconnectEvent event) {
+        plugin.recordPlayerLeave();
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             PlayerProxyDisconnectMessage msg = new PlayerProxyDisconnectMessage()
                     .setUniqueId(event.getPlayer().getUniqueId())
@@ -87,5 +86,4 @@ public class PlayerListener implements Listener {
             }
         });
     }
-
 }

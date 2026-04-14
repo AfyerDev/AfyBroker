@@ -24,6 +24,10 @@ public class BrokerPlayerManager {
         return view.values();
     }
 
+    public int size() {
+        return byUid.size();
+    }
+
     @Nullable
     public BrokerPlayer addPlayer(BrokerPlayer player) {
         UUID uid = player.getUniqueId();

@@ -4,6 +4,7 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.message.PlayerProxyConnectMessage;
+import net.afyer.afybroker.core.observability.PlayerEventType;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.event.PlayerProxyLoginEvent;
@@ -53,6 +54,7 @@ public class PlayerProxyConnectBrokerProcessor extends SyncUserProcessor<PlayerP
         BrokerPlayer player = playerManager.addPlayer(brokerPlayer);
         boolean success = player == null;
         if (success) {
+            brokerServer.recordPlayerEvent(PlayerEventType.JOIN, playerManager.size());
             brokerServer.getPluginManager().callEvent(new PlayerProxyLoginEvent(brokerPlayer));
         }
         return success;

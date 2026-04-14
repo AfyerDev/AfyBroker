@@ -1,5 +1,7 @@
 package net.afyer.afybroker.server;
 
+import net.afyer.afybroker.core.observability.PrometheusObservabilityOptions;
+
 import java.io.IOException;
 
 /**
@@ -18,7 +20,13 @@ public class BootStrap {
     }
 
     public static void main(String[] args) throws IOException {
-        BrokerServer brokerServer = BrokerServer.builder().build();
+        BrokerServerBuilder builder = BrokerServer.builder();
+        if (Boolean.parseBoolean(System.getProperty("afybroker.observability.prometheus.enabled", "false"))) {
+            builder.enablePrometheus(new PrometheusObservabilityOptions()
+                    .setHost(System.getProperty("afybroker.observability.prometheus.host", "0.0.0.0"))
+                    .setPort(Integer.parseInt(System.getProperty("afybroker.observability.prometheus.port", "9464"))));
+        }
+        BrokerServer brokerServer = builder.build();
 
         Broker.setServer(brokerServer);
 

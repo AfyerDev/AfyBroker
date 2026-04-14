@@ -1,0 +1,29 @@
+package net.afyer.afybroker.server.processor.connection;
+
+import com.alipay.remoting.Connection;
+import com.alipay.remoting.ConnectionEventProcessor;
+import net.afyer.afybroker.core.observability.ConnectionState;
+import net.afyer.afybroker.server.BrokerServer;
+import net.afyer.afybroker.server.aware.BrokerServerAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ExceptionEventBrokerProcessor implements ConnectionEventProcessor, BrokerServerAware {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionEventBrokerProcessor.class);
+
+    private BrokerServer brokerServer;
+
+    @Override
+    public void setBrokerServer(BrokerServer brokerServer) {
+        this.brokerServer = brokerServer;
+    }
+
+    @Override
+    public void onEvent(String remoteAddress, Connection connection) {
+        brokerServer.getObservability().onConnection(ConnectionState.EXCEPTION);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Connection error! remoteAddress {}", remoteAddress);
+        }
+    }
+}

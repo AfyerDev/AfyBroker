@@ -5,6 +5,7 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.message.PlayerProxyDisconnectMessage;
+import net.afyer.afybroker.core.observability.PlayerEventType;
 import net.afyer.afybroker.server.BrokerServer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
 import net.afyer.afybroker.server.event.PlayerProxyLogoutEvent;
@@ -55,6 +56,7 @@ public class PlayerProxyDisconnectBrokerProcessor extends AsyncUserProcessor<Pla
         if (brokerPlayer != null) {
             brokerServer.getPluginManager().callEvent(new PlayerProxyLogoutEvent(brokerPlayer));
             playerManager.removePlayer(uniqueId);
+            brokerServer.recordPlayerEvent(PlayerEventType.LEAVE, playerManager.size());
         }
     }
 

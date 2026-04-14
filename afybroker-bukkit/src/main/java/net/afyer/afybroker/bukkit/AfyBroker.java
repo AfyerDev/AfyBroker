@@ -16,6 +16,8 @@ import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.Bstats;
 import net.afyer.afybroker.core.MetadataKeys;
+import net.afyer.afybroker.core.observability.PlayerEventType;
+import net.afyer.afybroker.core.observability.PrometheusObservabilityOptions;
 import net.afyer.afybroker.core.util.BoltUtils;
 import net.afyer.afybroker.core.util.LoggerAdapter;
 import org.bstats.bukkit.Metrics;
@@ -28,10 +30,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-/**
- * @author Nipuru
- * @since 2022/7/28 7:26
- */
 public class AfyBroker extends JavaPlugin {
     private BrokerClient brokerClient;
     private Metrics metrics;
@@ -60,6 +58,11 @@ public class AfyBroker extends JavaPlugin {
                     .registerUserProcessor(new CloseBrokerClientProcessor(Bukkit::shutdown))
                     .registerPreprocessor(new BukkitServerThreadPreprocessor(
                             getConfig().getBoolean("server.thread-check", true)));
+            if (getConfig().getBoolean("observability.prometheus.enabled", false)) {
+                builder.enablePrometheus(new PrometheusObservabilityOptions()
+                        .setHost(getConfig().getString("observability.prometheus.host", "0.0.0.0"))
+                        .setPort(getConfig().getInt("observability.prometheus.port", 9464)));
+            }
             ConfigurationSection metadata = getConfig().getConfigurationSection("metadata");
             if (metadata != null) {
                 for (String key : metadata.getKeys(false)) {
@@ -75,11 +78,12 @@ public class AfyBroker extends JavaPlugin {
             brokerClient.startup();
             brokerClient.printInformation(LoggerAdapter.toSlf4j(getLogger()));
             brokerClient.ping();
+            brokerClient.recordOnlinePlayers(Bukkit.getOnlinePlayers().size());
         } catch (LifeCycleException e) {
             getLogger().log(Level.SEVERE, "Broker client startup failed!", e);
             Bukkit.shutdown();
         } catch (RemotingException | InterruptedException e) {
-            getLogger().log(Level.SEVERE,"Ping to the broker server failed!", e);
+            getLogger().log(Level.SEVERE, "Ping to the broker server failed!", e);
         }
         registerListeners();
     }
@@ -99,6 +103,14 @@ public class AfyBroker extends JavaPlugin {
         return brokerClient;
     }
 
+    public void recordPlayerJoin() {
+        brokerClient.recordPlayerEvent(PlayerEventType.JOIN, Bukkit.getOnlinePlayers().size());
+    }
+
+    public void recordPlayerLeave() {
+        brokerClient.recordPlayerEvent(PlayerEventType.LEAVE, Bukkit.getOnlinePlayers().size());
+    }
+
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
     }
@@ -110,5 +122,4 @@ public class AfyBroker extends JavaPlugin {
         }
         return ip;
     }
-
 }
