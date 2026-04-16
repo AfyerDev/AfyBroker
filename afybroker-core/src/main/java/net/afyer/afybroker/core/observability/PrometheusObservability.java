@@ -5,6 +5,7 @@ import io.prometheus.metrics.core.metrics.Counter;
 import io.prometheus.metrics.core.metrics.Gauge;
 import io.prometheus.metrics.core.metrics.Histogram;
 import io.prometheus.metrics.exporter.httpserver.HTTPServer;
+import io.prometheus.metrics.instrumentation.jvm.JvmMetrics;
 import io.prometheus.metrics.model.registry.PrometheusRegistry;
 import io.prometheus.metrics.model.snapshots.Labels;
 
@@ -34,6 +35,7 @@ public class PrometheusObservability implements Observability {
     public PrometheusObservability(Role role, String localType, PrometheusObservabilityOptions options) throws IOException {
         Labels constLabels = Labels.of(LABEL_ROLE, role.name().toLowerCase()).add(LABEL_LOCAL_TYPE, localType);
         PrometheusRegistry registry = new PrometheusRegistry();
+        JvmMetrics.builder().register(registry);
         this.connectionCounter = Counter.builder()
                 .name("afybroker_connection_events_total")
                 .help("AfyBroker connection event count.")
