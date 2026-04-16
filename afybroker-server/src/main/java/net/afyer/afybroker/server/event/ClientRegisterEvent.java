@@ -15,23 +15,23 @@ public class ClientRegisterEvent extends Event {
     /**
      * 客户端信息
      */
-    private final BrokerClientInfoMessage brokerClientInfo;
+    private final BrokerClientInfoMessage clientInfo;
 
     /**
      * 客户端代理
      */
-    private final BrokerClientItem brokerClientItem;
+    private final BrokerClientItem client;
 
-    public ClientRegisterEvent(BrokerClientInfoMessage brokerClientInfo, BrokerClientItem brokerClientItem) {
-        this.brokerClientInfo = brokerClientInfo;
-        this.brokerClientItem = brokerClientItem;
+    public ClientRegisterEvent(BrokerClientInfoMessage clientInfo, BrokerClientItem client) {
+        this.clientInfo = clientInfo;
+        this.client = client;
     }
 
-    public BrokerClientInfoMessage getBrokerClientInfo() {
-        return brokerClientInfo;
+    public BrokerClientInfoMessage getClientInfo() {
+        return clientInfo;
     }
 
-    public BrokerClientItem getBrokerClientItem() {
-        return brokerClientItem;
+    public BrokerClientItem getClient() {
+        return client;
     }
 }
