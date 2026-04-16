@@ -3,7 +3,6 @@ package net.afyer.afybroker.velocity;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.exception.RemotingException;
 import com.google.inject.Inject;
-import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -18,9 +17,15 @@ import net.afyer.afybroker.client.util.PersistentUniqueIdUtils;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.Bstats;
+import net.afyer.afybroker.core.observability.PlayerObservation;
 import net.afyer.afybroker.core.util.BoltUtils;
 import net.afyer.afybroker.velocity.listener.PlayerListener;
-import net.afyer.afybroker.velocity.processor.*;
+import net.afyer.afybroker.velocity.processor.ConnectToServerVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.KickPlayerVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.PlayerHeartbeatValidateVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.PlayerProfilePropertyVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.RequestPlayerInfoVelocityProcessor;
+import net.afyer.afybroker.velocity.processor.SyncServerVelocityProcessor;
 import net.afyer.afybroker.velocity.processor.connection.CloseEventVelocityProcessor;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
@@ -43,7 +48,6 @@ public class AfyBroker {
 
     private final ProxyServer server;
     private final Logger logger;
-    private final CommandManager commandManager;
     private final Path dataDirectory;
     private final Metrics.Factory metricsFactory;
     private BrokerClient brokerClient;
@@ -55,12 +59,10 @@ public class AfyBroker {
     public AfyBroker(
             ProxyServer server,
             Logger logger,
-            CommandManager commandManager,
             @DataDirectory Path dataDirectory,
             Metrics.Factory metricsFactory) {
         this.server = server;
         this.logger = logger;
-        this.commandManager = commandManager;
         this.dataDirectory = dataDirectory;
         this.metricsFactory = metricsFactory;
     }
@@ -71,14 +73,6 @@ public class AfyBroker {
 
     public Logger getLogger() {
         return logger;
-    }
-
-    public CommandManager getCommandManager() {
-        return commandManager;
-    }
-
-    public Path getDataDirectory() {
-        return dataDirectory;
     }
 
     public BrokerClient getBrokerClient() {
@@ -132,9 +126,8 @@ public class AfyBroker {
                     .registerUserProcessor(new PlayerProfilePropertyVelocityProcessor(this))
                     .registerUserProcessor(new CloseBrokerClientProcessor(server::shutdown))
                     .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventVelocityProcessor(this));
-            config.getNode("broker", "metadata").getChildrenMap().forEach((key, value) -> {
-               builder.addMetadata(key.toString(), value.getString());
-            });
+            config.getNode("broker", "metadata").getChildrenMap().forEach((key, value) ->
+                    builder.addMetadata(key.toString(), value.getString()));
             for (Consumer<BrokerClientBuilder> buildAction : Broker.getBuildActions()) {
                 buildAction.accept(builder);
             }
@@ -144,6 +137,7 @@ public class AfyBroker {
             brokerClient.startup();
             brokerClient.printInformation(logger);
             brokerClient.ping();
+            brokerClient.getObservability().onPlayer(new PlayerObservation(server.getPlayerCount()));
         } catch (RemotingException | InterruptedException e) {
             logger.error("Broker client initialization failed!", e);
         }

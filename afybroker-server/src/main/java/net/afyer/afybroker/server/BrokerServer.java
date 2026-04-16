@@ -9,13 +9,24 @@ import com.alipay.remoting.serialization.SerializerManager;
 import com.google.common.collect.Lists;
 import net.afyer.afybroker.core.Attributable;
 import net.afyer.afybroker.core.AttributeContainer;
+import net.afyer.afybroker.core.observability.LifecycleState;
+import net.afyer.afybroker.core.observability.Observability;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.command.*;
+import net.afyer.afybroker.server.command.CommandHelp;
+import net.afyer.afybroker.server.command.CommandKick;
+import net.afyer.afybroker.server.command.CommandList;
+import net.afyer.afybroker.server.command.CommandListPlayer;
+import net.afyer.afybroker.server.command.CommandStop;
+import net.afyer.afybroker.server.command.ConsoleCommandCompleter;
 import net.afyer.afybroker.server.plugin.BrokerClassLoader;
 import net.afyer.afybroker.server.plugin.Plugin;
 import net.afyer.afybroker.server.plugin.PluginManager;
-import net.afyer.afybroker.server.proxy.*;
+import net.afyer.afybroker.server.proxy.BrokerClientItem;
+import net.afyer.afybroker.server.proxy.BrokerClientManager;
+import net.afyer.afybroker.server.proxy.BrokerPlayer;
+import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
+import net.afyer.afybroker.server.proxy.BrokerServiceRegistry;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
 import net.afyer.afybroker.server.task.PlayerHeartbeatValidateTask;
 import org.jetbrains.annotations.Nullable;
@@ -31,9 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Nipuru
@@ -45,13 +54,15 @@ public class BrokerServer implements Attributable {
 
     /** rpc server */
     private RpcServer rpcServer;
+    /** broker 地址 */
+    private String host;
     /** broker 端口 */
     private int port;
     /**
      * broker 运行状态
      */
     private boolean start;
-
+    private Observability observability = Observability.NOOP;
     private final Terminal terminal;
     private final LineReader consoleReader;
     private final PluginManager pluginManager;
@@ -100,12 +111,20 @@ public class BrokerServer implements Attributable {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     void initServer() {
-        this.rpcServer = new RpcServer(port, true);
+        this.rpcServer = new RpcServer(host, port, true);
         pluginsFolder.mkdirs();
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     void setPort(int port) {
         this.port = port;
+    }
+
+    void setObservability(Observability observability) {
+        this.observability = observability;
     }
 
     public RpcServer getRpcServer() {
@@ -148,10 +167,15 @@ public class BrokerServer implements Attributable {
         return serviceRegistry;
     }
 
+    public Observability getObservability() {
+        return observability;
+    }
+
     public void registerUserProcessor(UserProcessor<?> processor) {
         aware(processor);
         rpcServer.registerUserProcessor(processor);
     }
+
     public void addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {
         aware(processor);
         rpcServer.addConnectionEventProcessor(type, processor);
@@ -183,19 +207,25 @@ public class BrokerServer implements Attributable {
                 LOGGER.info("Server already started!");
                 return;
             }
+            observability.onLifecycle(LifecycleState.STARTING);
             this.start = true;
             LOGGER.info("Server port: [{}], Starting", this.port);
-            long start = System.currentTimeMillis();
+            long startMillis = System.currentTimeMillis();
 
-            pluginManager.detectPlugins(pluginsFolder);
-            pluginManager.loadPlugins();
-            pluginManager.enablePlugins();
-            playerHeartbeatValidateTask.start();
+            try {
+                pluginManager.detectPlugins(pluginsFolder);
+                pluginManager.loadPlugins();
+                pluginManager.enablePlugins();
+                playerHeartbeatValidateTask.start();
 
-            // 启动 bolt rpc
-            this.rpcServer.startup();
-
-            LOGGER.info("Done ({}ms)", System.currentTimeMillis() - start);
+                // 启动 bolt rpc
+                this.rpcServer.startup();
+                observability.onLifecycle(LifecycleState.STARTED);
+                LOGGER.info("Done ({}ms)", System.currentTimeMillis() - startMillis);
+            } catch (RuntimeException e) {
+                observability.onLifecycle(LifecycleState.START_FAILED);
+                throw e;
+            }
         }
     }
 
@@ -206,6 +236,7 @@ public class BrokerServer implements Attributable {
                 return;
             }
             start = false;
+            observability.onLifecycle(LifecycleState.STOPPING);
             LOGGER.info("Stopping the server");
             new Thread("Shutdown Thread") {
                 @Override
@@ -215,9 +246,8 @@ public class BrokerServer implements Attributable {
                     for (Plugin plugin : Lists.reverse(new ArrayList<>(pluginManager.getPlugins()))) {
                         try {
                             plugin.onDisable();
-                        }
-                        catch (Throwable t) {
-                            LOGGER.error("Exception disabling plugin " + plugin.getDescription().getName(), t);
+                        } catch (Throwable t) {
+                            LOGGER.error("Exception disabling plugin {}", plugin.getDescription().getName(), t);
                         }
                         scheduler.cancel(plugin);
                     }
@@ -227,6 +257,8 @@ public class BrokerServer implements Attributable {
                         terminal.close();
                     } catch (IOException ignored) {
                     }
+                    observability.onLifecycle(LifecycleState.STOPPED);
+                    observability.close();
                     System.exit(0);
                 }
             }.start();
@@ -273,5 +305,6 @@ public class BrokerServer implements Attributable {
         ClassLoader classLoader = new BrokerClassLoader();
         SerializerManager.addSerializer(SerializerManager.Hessian2, new HessianSerializer(classLoader));
     }
+
 
 }

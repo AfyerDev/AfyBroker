@@ -18,7 +18,9 @@ import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.observability.Role;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
+import net.afyer.afybroker.core.observability.*;
 import net.afyer.afybroker.core.util.ConnectionEventTypeProcessor;
 
 import java.util.*;
@@ -68,7 +70,20 @@ public class BrokerClientBuilder {
     private final Map<String, BrokerServiceEntry> serviceMap = new HashMap<>();
 
     /** 预处理函数列表 */
-    private final List<BrokerPreprocessor> preprocessors = new ArrayList<>();
+    private final List<BrokerPreprocessor> preprocessorList = new ArrayList<>();
+
+    /** 指标收集器列表 */
+    private final List<Observability> observabilityList = new ArrayList<>();
+
+    BrokerClientBuilder() {
+        // 初始化一些处理器
+        defaultProcessor();
+
+        // 通过系统属性来开和关，如果一个进程有多个 RpcClient，则同时生效
+        // 开启 bolt 重连
+        System.setProperty(Configs.CONN_MONITOR_SWITCH, "true");
+        System.setProperty(Configs.CONN_RECONNECT_SWITCH, "true");
+    }
 
     public String name() {
         return name;
@@ -115,21 +130,8 @@ public class BrokerClientBuilder {
         return this;
     }
 
-    BrokerClientBuilder() {
-        // 初始化一些处理器
-        this.defaultProcessor();
-
-        // 通过系统属性来开和关，如果一个进程有多个 RpcClient，则同时生效
-        // 开启 bolt 重连
-        System.setProperty(Configs.CONN_MONITOR_SWITCH, "true");
-        System.setProperty(Configs.CONN_RECONNECT_SWITCH, "true");
-    }
-
     public BrokerClient build() {
-        this.check();
-
         BrokerAddress address = new BrokerAddress(host, port);
-
         BrokerServiceRegistry serviceRegistry = new BrokerServiceRegistry(serviceMap);
         BrokerClientInfo clientInfo = new BrokerClientInfoMessage()
                 .setName(name)
@@ -149,26 +151,16 @@ public class BrokerClientBuilder {
         brokerClient.setRpcClient(rpcClient);
         brokerClient.setServiceRegistry(serviceRegistry);
         brokerClient.setDefaultTimeoutMillis(defaultTimeoutMillis);
-        brokerClient.setPreprocessors(preprocessors);
+        brokerClient.setPreprocessors(preprocessorList);
+        brokerClient.setObservability(CompositeObservability.of(
+                observabilityList.toArray(new Observability[0])));
 
-
-        this.processorList.forEach(brokerClient::aware);
-        this.processorList.forEach(rpcClient::registerUserProcessor);
-        this.connectionEventProcessorMap.forEach(rpcClient::addConnectionEventProcessor);
-        this.connectionEventProcessorMap.values().forEach(brokerClient::aware);
+        processorList.forEach(brokerClient::aware);
+        processorList.forEach(rpcClient::registerUserProcessor);
+        connectionEventProcessorMap.forEach(rpcClient::addConnectionEventProcessor);
+        connectionEventProcessorMap.values().forEach(brokerClient::aware);
 
         return brokerClient;
-    }
-
-    private void check() {
-        if (name == null || name.isEmpty()) {
-            name = String.format("%s-%s", BrokerClientType.UNKNOWN,
-                    UUID.randomUUID().toString().substring(0, 8));
-        }
-
-        if (type == null) {
-            throw new RuntimeException("BrokerClientType cannot be null");
-        }
     }
 
     /**
@@ -223,6 +215,7 @@ public class BrokerClientBuilder {
      * @return this
      */
     public BrokerClientBuilder registerUserProcessor(UserProcessor<?> processor) {
+        Objects.requireNonNull(processor);
         this.processorList.add(processor);
         return this;
     }
@@ -235,6 +228,8 @@ public class BrokerClientBuilder {
      * @return this
      */
     public BrokerClientBuilder addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(processor);
         this.connectionEventProcessorMap.put(type, processor);
         return this;
     }
@@ -246,7 +241,8 @@ public class BrokerClientBuilder {
      * @return this
      */
     public BrokerClientBuilder addConnectionEventProcessor(ConnectionEventTypeProcessor processor) {
-        this.connectionEventProcessorMap.put(processor.getType(), processor);
+        Objects.requireNonNull(processor);
+        this.addConnectionEventProcessor(processor.getType(), processor);
         return this;
     }
 
@@ -309,7 +305,8 @@ public class BrokerClientBuilder {
      * @return this
      */
     public BrokerClientBuilder registerPreprocessor(BrokerPreprocessor preprocessor) {
-        this.preprocessors.add(preprocessor);
+        Objects.requireNonNull(preprocessor);
+        this.preprocessorList.add(preprocessor);
         return this;
     }
 
@@ -319,22 +316,38 @@ public class BrokerClientBuilder {
      * @return this
      */
     public BrokerClientBuilder clearPreprocessors() {
-        this.preprocessors.clear();
+        this.preprocessorList.clear();
         return this;
     }
 
+    public BrokerClientBuilder observability(Observability observability) {
+        Objects.requireNonNull(observability);
+        if (observability != Observability.NOOP) {
+            this.observabilityList.add(observability);
+        }
+        return this;
+    }
+
+    public BrokerClientBuilder clearObservability() {
+        this.observabilityList.clear();
+        return this;
+    }
+
+    public BrokerClientBuilder enablePrometheus(PrometheusObservabilityOptions options) {
+        try {
+            return observability(new PrometheusObservability(Role.CLIENT, type, options));
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to initialize Prometheus observability", e);
+        }
+    }
+
     private void defaultProcessor() {
-        this
-                .addConnectionEventProcessor(ConnectionEventType.CONNECT, new ConnectEventClientProcessor())
+        addConnectionEventProcessor(ConnectionEventType.CONNECT, new ConnectEventClientProcessor())
                 .addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventClientProcessor())
                 .addConnectionEventProcessor(ConnectionEventType.CONNECT_FAILED, new ConnectFailedEventClientProcessor())
                 .addConnectionEventProcessor(ConnectionEventType.EXCEPTION, new ExceptionEventClientProcessor());
 
-        this
-                .registerUserProcessor(new RequestBrokerClientInfoClientProcessor())
+        registerUserProcessor(new RequestBrokerClientInfoClientProcessor())
                 .registerUserProcessor(new RpcInvocationClientProcessor());
     }
-
-
-
 }

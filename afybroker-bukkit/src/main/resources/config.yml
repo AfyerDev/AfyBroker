@@ -12,7 +12,6 @@ broker:
     #key1: 'value1'
     #key2: 'value2'
 
-
 server:
   # 主线程安全检查 防止在主线程中发起远程调用，避免阻塞主线程 ，默认启用
   thread-check: true

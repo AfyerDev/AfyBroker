@@ -6,6 +6,9 @@ import com.alipay.remoting.serialization.Serializer;
 import com.alipay.remoting.serialization.SerializerManager;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.RpcInvocationMessage;
+import net.afyer.afybroker.core.observability.ObservabilitySupport;
+import net.afyer.afybroker.core.observability.RpcObservation;
+import net.afyer.afybroker.core.observability.RpcPhase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,14 +84,25 @@ public class BrokerServiceProxyFactory {
                 .setParameterTypes(getParameterTypeNames(method.getParameterTypes()))
                 .setParameters(parameters)
                 .setServiceTags(serviceTags);
-            
+
+            long startNanos = System.nanoTime();
+            boolean success = false;
             try {
                 LOGGER.debug("Invoking remote service: {}.{}", serviceInterface, method.getName());
                 byte[] result = brokerClient.invokeSync(message);
+                success = true;
                 return serializer.deserialize(result, Object.class.getName());
             } catch (Exception e) {
                 LOGGER.error("RPC invocation failed: {}.{}", serviceInterface, method.getName(), e);
                 throw new InvokeException("RPC invocation failed: " + serviceInterface + "." + method.getName(), e);
+            } finally {
+                brokerClient.getObservability().onRpc(new RpcObservation(
+                        RpcPhase.OUTBOUND,
+                        serviceInterface,
+                        method.getName(),
+                        success,
+                        System.nanoTime() - startNanos
+                ));
             }
         }
 

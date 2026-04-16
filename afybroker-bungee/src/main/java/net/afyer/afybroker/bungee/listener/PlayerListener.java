@@ -6,6 +6,8 @@ import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.PlayerProxyConnectMessage;
 import net.afyer.afybroker.core.message.PlayerProxyDisconnectMessage;
 import net.afyer.afybroker.core.message.PlayerServerConnectedMessage;
+import net.afyer.afybroker.core.observability.PlayerEventType;
+import net.afyer.afybroker.core.observability.PlayerObservation;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -44,11 +46,13 @@ public class PlayerListener implements Listener {
 
                 if (!result) {
                     event.setCancelled(true);
-                    event.setCancelReason(new TextComponent("§c登录失败"));
+                    event.setCancelReason(new TextComponent("Login failed"));
+                } else {
+                    plugin.getBrokerClient().getObservability().onPlayer(new PlayerObservation(PlayerEventType.JOIN, ProxyServer.getInstance().getOnlineCount()));
                 }
             } catch (Exception ex) {
                 event.setCancelled(true);
-                event.setCancelReason(new TextComponent("§c产生了一个错误"));
+                event.setCancelReason(new TextComponent("An error occurred"));
             } finally {
                 event.completeIntent(plugin);
             }
@@ -57,6 +61,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onDisConnect(PlayerDisconnectEvent event) {
+        plugin.getBrokerClient().getObservability().onPlayer(new PlayerObservation(PlayerEventType.LEAVE, ProxyServer.getInstance().getOnlineCount()));
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             PlayerProxyDisconnectMessage msg = new PlayerProxyDisconnectMessage()
                     .setUniqueId(event.getPlayer().getUniqueId())
@@ -87,5 +92,4 @@ public class PlayerListener implements Listener {
             }
         });
     }
-
 }

@@ -3,11 +3,14 @@ package net.afyer.afybroker.bukkit.listener;
 import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.bukkit.AfyBroker;
 import net.afyer.afybroker.core.message.PlayerServerJoinMessage;
+import net.afyer.afybroker.core.observability.PlayerEventType;
+import net.afyer.afybroker.core.observability.PlayerObservation;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.logging.Level;
 
@@ -25,6 +28,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent event) {
+        plugin.getBrokerClient().getObservability().onPlayer(new PlayerObservation(PlayerEventType.JOIN, Bukkit.getOnlinePlayers().size()));
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             PlayerServerJoinMessage message = new PlayerServerJoinMessage()
                     .setName(event.getPlayer().getName())
@@ -36,5 +40,10 @@ public class PlayerListener implements Listener {
                 Bukkit.getScheduler().runTask(plugin, () -> event.getPlayer().kickPlayer(null));
             }
         });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onQuit(PlayerQuitEvent event) {
+        plugin.getBrokerClient().getObservability().onPlayer(new PlayerObservation(PlayerEventType.LEAVE, Bukkit.getOnlinePlayers().size()));
     }
 }

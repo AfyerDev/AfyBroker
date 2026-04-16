@@ -10,6 +10,8 @@ import com.velocitypowered.api.proxy.Player;
 import net.afyer.afybroker.core.message.PlayerProxyConnectMessage;
 import net.afyer.afybroker.core.message.PlayerProxyDisconnectMessage;
 import net.afyer.afybroker.core.message.PlayerServerConnectedMessage;
+import net.afyer.afybroker.core.observability.PlayerEventType;
+import net.afyer.afybroker.core.observability.PlayerObservation;
 import net.afyer.afybroker.velocity.AfyBroker;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -38,17 +40,20 @@ public class PlayerListener {
 
             if (!result) {
                 event.setResult(ResultedEvent.ComponentResult.denied(
-                        Component.text("登录失败").color(NamedTextColor.RED)));
+                        Component.text("Login failed").color(NamedTextColor.RED)));
+            } else {
+                plugin.getBrokerClient().getObservability().onPlayer(new PlayerObservation(PlayerEventType.JOIN, plugin.getServer().getPlayerCount()));
             }
         } catch (Exception e) {
             plugin.getLogger().error(e.getMessage(), e);
             event.setResult(ResultedEvent.ComponentResult.denied(
-                    Component.text("产生了一个错误").color(NamedTextColor.RED)));
+                    Component.text("An error occurred").color(NamedTextColor.RED)));
         }
     }
 
     @Subscribe
     public void onDisConnect(DisconnectEvent event) {
+        plugin.getBrokerClient().getObservability().onPlayer(new PlayerObservation(PlayerEventType.LEAVE, plugin.getServer().getPlayerCount()));
         PlayerProxyDisconnectMessage msg = new PlayerProxyDisconnectMessage()
                 .setUniqueId(event.getPlayer().getUniqueId())
                 .setName(event.getPlayer().getUsername());
@@ -73,5 +78,4 @@ public class PlayerListener {
             plugin.getLogger().error(e.getMessage(), e);
         }
     }
-
 }

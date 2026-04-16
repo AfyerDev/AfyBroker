@@ -17,6 +17,7 @@ import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.Bstats;
 import net.afyer.afybroker.core.MetadataKeys;
+import net.afyer.afybroker.core.observability.PlayerObservation;
 import net.afyer.afybroker.core.util.BoltUtils;
 import net.afyer.afybroker.core.util.LoggerAdapter;
 import org.bstats.bukkit.Metrics;
@@ -76,11 +77,12 @@ public class AfyBroker extends JavaPlugin {
             brokerClient.startup();
             brokerClient.printInformation(LoggerAdapter.toSlf4j(getLogger()));
             brokerClient.ping();
+            brokerClient.getObservability().onPlayer(new PlayerObservation(Bukkit.getOnlinePlayers().size()));
         } catch (LifeCycleException e) {
             getLogger().log(Level.SEVERE, "Broker client startup failed!", e);
             Bukkit.shutdown();
         } catch (RemotingException | InterruptedException e) {
-            getLogger().log(Level.SEVERE,"Ping to the broker server failed!", e);
+            getLogger().log(Level.SEVERE, "Ping to the broker server failed!", e);
         }
         registerListeners();
     }
@@ -111,5 +113,4 @@ public class AfyBroker extends JavaPlugin {
         }
         return ip;
     }
-
 }

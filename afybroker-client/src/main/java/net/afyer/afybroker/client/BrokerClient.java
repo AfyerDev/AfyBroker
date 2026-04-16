@@ -16,6 +16,8 @@ import net.afyer.afybroker.client.service.BrokerServiceProxyFactory;
 import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.message.AttributeMessage;
+import net.afyer.afybroker.core.observability.LifecycleState;
+import net.afyer.afybroker.core.observability.Observability;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import org.slf4j.Logger;
 
@@ -46,6 +48,8 @@ public class BrokerClient {
 
     /** 预处理函数列表 */
     private List<BrokerPreprocessor> preprocessors;
+    /** 指标收集器 */
+    private Observability observability = Observability.NOOP;
 
     BrokerClient() {
         this.serviceProxyFactory = new BrokerServiceProxyFactory(this);
@@ -71,6 +75,10 @@ public class BrokerClient {
         this.preprocessors = preprocessors;
     }
 
+    void setObservability(Observability observability) {
+        this.observability = observability;
+    }
+
     public BrokerClientInfo getClientInfo() {
         return clientInfo;
     }
@@ -89,6 +97,10 @@ public class BrokerClient {
 
     public List<BrokerPreprocessor> getPreprocessors() {
         return preprocessors;
+    }
+
+    public Observability getObservability() {
+        return observability;
     }
 
     public boolean hasTag(String tag) {
@@ -129,11 +141,24 @@ public class BrokerClient {
     }
 
     public void startup() throws LifeCycleException {
-        rpcClient.startup();
+        observability.onLifecycle(LifecycleState.STARTING);
+        try {
+            rpcClient.startup();
+            observability.onLifecycle(LifecycleState.STARTED);
+        } catch (LifeCycleException e) {
+            observability.onLifecycle(LifecycleState.START_FAILED);
+            throw e;
+        }
     }
 
     public void shutdown() {
-        rpcClient.shutdown();
+        observability.onLifecycle(LifecycleState.STOPPING);
+        try {
+            rpcClient.shutdown();
+            observability.onLifecycle(LifecycleState.STOPPED);
+        } finally {
+            observability.close();
+        }
     }
 
     public void ping() throws RemotingException, InterruptedException {
@@ -166,10 +191,10 @@ public class BrokerClient {
         if (preprocessors != null && !preprocessors.isEmpty()) {
             // 创建通用的调用上下文
             BrokerInvocationContext context = new BrokerInvocationContext(
-                request.getClass().getName(),
-                methodName,
-                timeoutMillis,
-                Thread.currentThread()
+                    request.getClass().getName(),
+                    methodName,
+                    timeoutMillis,
+                    Thread.currentThread()
             );
 
             for (BrokerPreprocessor preprocessor : preprocessors) {
@@ -198,7 +223,6 @@ public class BrokerClient {
     /**
      * 获取服务器全局属性
      */
-    @SuppressWarnings("unchecked")
     public <T> T getServerAttribute(String key) throws RemotingException, InterruptedException {
         AttributeMessage msg = new AttributeMessage()
                 .setAction(AttributeMessage.ACTION_GET)
