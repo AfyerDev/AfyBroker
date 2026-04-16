@@ -16,7 +16,6 @@ import net.afyer.afybroker.client.service.BrokerServiceProxyFactory;
 import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.message.AttributeMessage;
-import net.afyer.afybroker.core.observability.LifecycleState;
 import net.afyer.afybroker.core.observability.Observability;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import org.slf4j.Logger;
@@ -155,24 +154,11 @@ public class BrokerClient {
     }
 
     public void startup() throws LifeCycleException {
-        observability.onLifecycle(LifecycleState.STARTING);
-        try {
-            rpcClient.startup();
-            observability.onLifecycle(LifecycleState.STARTED);
-        } catch (LifeCycleException e) {
-            observability.onLifecycle(LifecycleState.START_FAILED);
-            throw e;
-        }
+        rpcClient.startup();
     }
 
     public void shutdown() {
-        observability.onLifecycle(LifecycleState.STOPPING);
-        try {
-            rpcClient.shutdown();
-            observability.onLifecycle(LifecycleState.STOPPED);
-        } finally {
-            observability.close();
-        }
+        rpcClient.shutdown();
     }
 
     public void ping() throws RemotingException, InterruptedException {

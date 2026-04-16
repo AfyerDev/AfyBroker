@@ -32,13 +32,6 @@ public class CompositeObservability implements Observability {
     }
 
     @Override
-    public void onLifecycle(LifecycleState state) {
-        for (Observability delegate : delegates) {
-            delegate.onLifecycle(state);
-        }
-    }
-
-    @Override
     public void onConnection(ConnectionEventType state) {
         for (Observability delegate : delegates) {
             delegate.onConnection(state);

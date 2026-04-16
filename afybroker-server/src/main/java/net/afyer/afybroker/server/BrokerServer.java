@@ -9,7 +9,6 @@ import com.alipay.remoting.serialization.SerializerManager;
 import com.google.common.collect.Lists;
 import net.afyer.afybroker.core.Attributable;
 import net.afyer.afybroker.core.AttributeContainer;
-import net.afyer.afybroker.core.observability.LifecycleState;
 import net.afyer.afybroker.core.observability.Observability;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
@@ -206,25 +205,18 @@ public class BrokerServer implements Attributable {
                 LOGGER.info("Server already started!");
                 return;
             }
-            observability.onLifecycle(LifecycleState.STARTING);
             this.start = true;
             LOGGER.info("Server port: [{}], Starting", this.port);
             long startMillis = System.currentTimeMillis();
 
-            try {
-                pluginManager.detectPlugins(pluginsFolder);
-                pluginManager.loadPlugins();
-                pluginManager.enablePlugins();
-                playerHeartbeatValidateTask.start();
+            pluginManager.detectPlugins(pluginsFolder);
+            pluginManager.loadPlugins();
+            pluginManager.enablePlugins();
+            playerHeartbeatValidateTask.start();
 
-                // 启动 bolt rpc
-                this.rpcServer.startup();
-                observability.onLifecycle(LifecycleState.STARTED);
-                LOGGER.info("Done ({}ms)", System.currentTimeMillis() - startMillis);
-            } catch (RuntimeException e) {
-                observability.onLifecycle(LifecycleState.START_FAILED);
-                throw e;
-            }
+            // 启动 bolt rpc
+            this.rpcServer.startup();
+            LOGGER.info("Done ({}ms)", System.currentTimeMillis() - startMillis);
         }
     }
 
@@ -235,7 +227,6 @@ public class BrokerServer implements Attributable {
                 return;
             }
             start = false;
-            observability.onLifecycle(LifecycleState.STOPPING);
             LOGGER.info("Stopping the server");
             new Thread("Shutdown Thread") {
                 @Override
@@ -256,7 +247,6 @@ public class BrokerServer implements Attributable {
                         terminal.close();
                     } catch (IOException ignored) {
                     }
-                    observability.onLifecycle(LifecycleState.STOPPED);
                     observability.close();
                     System.exit(0);
                 }

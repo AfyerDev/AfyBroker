@@ -24,7 +24,6 @@ public class PrometheusObservability implements Observability {
     private static final String RESULT_FAILURE = "failure";
 
     private final HTTPServer server;
-    private final Counter lifecycleCounter;
     private final Counter connectionCounter;
     private final Gauge activeConnections;
     private final Counter rpcCounter;
@@ -35,12 +34,6 @@ public class PrometheusObservability implements Observability {
     public PrometheusObservability(Role role, String localType, PrometheusObservabilityOptions options) throws IOException {
         Labels constLabels = Labels.of(LABEL_ROLE, role.name().toLowerCase()).add(LABEL_LOCAL_TYPE, localType);
         PrometheusRegistry registry = new PrometheusRegistry();
-        this.lifecycleCounter = Counter.builder()
-                .name("afybroker_lifecycle_events_total")
-                .help("AfyBroker lifecycle event count.")
-                .constLabels(constLabels)
-                .labelNames(LABEL_STATE)
-                .register(registry);
         this.connectionCounter = Counter.builder()
                 .name("afybroker_connection_events_total")
                 .help("AfyBroker connection event count.")
@@ -80,11 +73,6 @@ public class PrometheusObservability implements Observability {
                 .port(options.getPort())
                 .registry(registry);
         this.server = serverBuilder.buildAndStart();
-    }
-
-    @Override
-    public void onLifecycle(LifecycleState state) {
-        lifecycleCounter.labelValues(state.name().toLowerCase()).inc();
     }
 
     @Override

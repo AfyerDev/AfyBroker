@@ -6,9 +6,6 @@ public interface Observability extends AutoCloseable {
 
     Observability NOOP = new NoopObservability();
 
-    default void onLifecycle(LifecycleState state) {
-    }
-
     default void onConnection(ConnectionEventType state) {
     }
 
