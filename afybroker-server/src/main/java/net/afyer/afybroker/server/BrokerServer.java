@@ -13,20 +13,11 @@ import net.afyer.afybroker.core.observability.LifecycleState;
 import net.afyer.afybroker.core.observability.Observability;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
-import net.afyer.afybroker.server.command.CommandHelp;
-import net.afyer.afybroker.server.command.CommandKick;
-import net.afyer.afybroker.server.command.CommandList;
-import net.afyer.afybroker.server.command.CommandListPlayer;
-import net.afyer.afybroker.server.command.CommandStop;
-import net.afyer.afybroker.server.command.ConsoleCommandCompleter;
+import net.afyer.afybroker.server.command.*;
 import net.afyer.afybroker.server.plugin.BrokerClassLoader;
 import net.afyer.afybroker.server.plugin.Plugin;
 import net.afyer.afybroker.server.plugin.PluginManager;
-import net.afyer.afybroker.server.proxy.BrokerClientItem;
-import net.afyer.afybroker.server.proxy.BrokerClientManager;
-import net.afyer.afybroker.server.proxy.BrokerPlayer;
-import net.afyer.afybroker.server.proxy.BrokerPlayerManager;
-import net.afyer.afybroker.server.proxy.BrokerServiceRegistry;
+import net.afyer.afybroker.server.proxy.*;
 import net.afyer.afybroker.server.scheduler.BrokerScheduler;
 import net.afyer.afybroker.server.task.PlayerHeartbeatValidateTask;
 import org.jetbrains.annotations.Nullable;
@@ -52,11 +43,17 @@ public class BrokerServer implements Attributable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BrokerServer.class);
 
-    /** rpc server */
+    /**
+     * rpc server
+     */
     private RpcServer rpcServer;
-    /** broker 地址 */
+    /**
+     * broker 地址
+     */
     private String host;
-    /** broker 端口 */
+    /**
+     * broker 端口
+     */
     private int port;
     /**
      * broker 运行状态
@@ -77,7 +74,7 @@ public class BrokerServer implements Attributable {
      * 玩家代理 管理器
      */
     private final BrokerPlayerManager playerManager;
-    
+
     /**
      * 服务注册表
      */
@@ -85,7 +82,9 @@ public class BrokerServer implements Attributable {
 
     private final PlayerHeartbeatValidateTask playerHeartbeatValidateTask;
 
-    /** 服务器全局属性 */
+    /**
+     * 服务器全局属性
+     */
     private final AttributeContainer attributes = new AttributeContainer();
 
     BrokerServer() throws IOException {

@@ -10,8 +10,6 @@ import com.caucho.hessian.io.SerializerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 /**
@@ -76,6 +74,7 @@ public class HessianSerializer implements Serializer {
         public TypeInternHessian2Output(ByteArrayOutputStream byteArray) {
             super(byteArray);
         }
+
         @Override
         public int writeObjectBegin(String type) throws IOException {
             // 修复某些自定义类 Class.getName() 返回对象不同的问题

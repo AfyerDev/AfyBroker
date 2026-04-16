@@ -13,10 +13,14 @@ import java.util.UUID;
 public class PlayerProxyConnectMessage implements Serializable {
     private static final long serialVersionUID = 1791475059445212432L;
 
-    /** 玩家uuid */
+    /**
+     * 玩家uuid
+     */
     private UUID uniqueId;
 
-    /** 玩家名 */
+    /**
+     * 玩家名
+     */
     private String name;
 
     public UUID getUniqueId() {

@@ -159,8 +159,7 @@ public class PluginManager {
                 }
             }
 
-            if (dependStatus == Boolean.FALSE && plugin.getDepends().contains(dependName))
-            {
+            if (dependStatus == Boolean.FALSE && plugin.getDepends().contains(dependName)) {
                 LOGGER.warn("{} (required by {}) is unavailable", dependName, plugin.getName());
                 status = false;
             }
@@ -197,11 +196,11 @@ public class PluginManager {
         } else {
             plugin = (Plugin) main.getDeclaredConstructor().newInstance();
         }
-        
+
         return plugin;
     }
 
-    private static Field getSingletonField(Class<?> clazz)  {
+    private static Field getSingletonField(Class<?> clazz) {
         try {
             Field instanceField = clazz.getDeclaredField("INSTANCE");
 
@@ -290,7 +289,7 @@ public class PluginManager {
             commands.put(command.getName().toLowerCase(Locale.ROOT), new CommandMeta(
                     command.getName(),
                     command.getUsage()
-                    ));
+            ));
         }
 
         return Collections.unmodifiableCollection(commands.values());

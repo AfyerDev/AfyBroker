@@ -10,10 +10,14 @@ import java.util.UUID;
 public class PlayerServerJoinMessage implements Serializable {
     private static final long serialVersionUID = -1132388839270494188L;
 
-    /** 玩家uuid */
+    /**
+     * 玩家uuid
+     */
     private UUID uniqueId;
 
-    /** 玩家名 */
+    /**
+     * 玩家名
+     */
     private String name;
 
     public UUID getUniqueId() {

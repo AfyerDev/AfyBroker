@@ -14,7 +14,7 @@ public interface BrigadierCommand {
         return LiteralArgumentBuilder.literal(name);
     }
 
-    default  <T> RequiredArgumentBuilder<BrokerServer, T> argument(String name, ArgumentType<T> type) {
+    default <T> RequiredArgumentBuilder<BrokerServer, T> argument(String name, ArgumentType<T> type) {
         return RequiredArgumentBuilder.argument(name, type);
     }
 

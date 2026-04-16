@@ -11,14 +11,20 @@ import org.jetbrains.annotations.Nullable;
  */
 public class PlayerServerJoinEvent extends Event {
 
-    /** 玩家代理 */
+    /**
+     * 玩家代理
+     */
     private final BrokerPlayer player;
 
-    /** 玩家之前所在的 server 代理 */
+    /**
+     * 玩家之前所在的 server 代理
+     */
     @Nullable
     private final BrokerClientItem previous;
 
-    /** 玩家当前所在的 server 代理 */
+    /**
+     * 玩家当前所在的 server 代理
+     */
     private final BrokerClientItem current;
 
     public PlayerServerJoinEvent(BrokerPlayer player, @Nullable BrokerClientItem previous, BrokerClientItem current) {

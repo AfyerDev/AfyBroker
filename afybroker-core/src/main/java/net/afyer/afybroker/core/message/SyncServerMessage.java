@@ -8,7 +8,9 @@ import java.util.Map;
  */
 public class SyncServerMessage implements Serializable {
 
-    /** 在线的 mc 服务器列表， key:name, value:address */
+    /**
+     * 在线的 mc 服务器列表， key:name, value:address
+     */
     private Map<String, String> servers;
 
     public Map<String, String> getServers() {

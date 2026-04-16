@@ -11,10 +11,12 @@ import java.util.concurrent.Executor;
 public abstract class AbstractInvokeCallback implements InvokeCallback {
 
     @Override
-    public void onResponse(Object result) { }
+    public void onResponse(Object result) {
+    }
 
     @Override
-    public void onException(Throwable e) { }
+    public void onException(Throwable e) {
+    }
 
     @Override
     public Executor getExecutor() {

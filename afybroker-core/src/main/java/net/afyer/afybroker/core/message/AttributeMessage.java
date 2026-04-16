@@ -14,29 +14,43 @@ import java.util.UUID;
 public class AttributeMessage implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /** 操作类型常量 */
+    /**
+     * 操作类型常量
+     */
     public static final int ACTION_SET = 0;
     public static final int ACTION_GET = 1;
     public static final int ACTION_REMOVE = 2;
     public static final int ACTION_HAS = 3;
 
-    /** 作用域常量 */
+    /**
+     * 作用域常量
+     */
     public static final int SCOPE_SERVER = 0;
     public static final int SCOPE_PLAYER = 1;
 
-    /** 操作类型 */
+    /**
+     * 操作类型
+     */
     private int action;
 
-    /** 作用域 */
+    /**
+     * 作用域
+     */
     private int scope;
 
-    /** 属性键 */
+    /**
+     * 属性键
+     */
     private String key;
 
-    /** 属性值（Hessian 序列化后的字节数组，仅 SET 时使用） */
+    /**
+     * 属性值（Hessian 序列化后的字节数组，仅 SET 时使用）
+     */
     private byte[] value;
 
-    /** 玩家UUID（仅 SCOPE_PLAYER 时使用） */
+    /**
+     * 玩家UUID（仅 SCOPE_PLAYER 时使用）
+     */
     private UUID uniqueId;
 
     public int getAction() {

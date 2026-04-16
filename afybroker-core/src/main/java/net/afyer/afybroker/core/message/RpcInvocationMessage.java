@@ -5,26 +5,36 @@ import java.util.Set;
 
 /**
  * RPC调用消息
- * 
+ *
  * @author Nipuru
  * @since 2025/7/11 18:04
  */
 public class RpcInvocationMessage implements Serializable {
     private static final long serialVersionUID = 1L;
-    
-    /** 服务接口名 */
+
+    /**
+     * 服务接口名
+     */
     private String serviceInterface;
-    
-    /** 方法名 */
+
+    /**
+     * 方法名
+     */
     private String methodName;
-    
-    /** 参数类型 */
+
+    /**
+     * 参数类型
+     */
     private String[] parameterTypes;
-    
-    /** 参数值 */
+
+    /**
+     * 参数值
+     */
     private byte[] parameters;
-    
-    /** 服务标签，用于服务选择 */
+
+    /**
+     * 服务标签，用于服务选择
+     */
     private Set<String> serviceTags;
 
     public String getServiceInterface() {

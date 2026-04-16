@@ -3,7 +3,6 @@ package net.afyer.afybroker.core.observability;
 import com.alipay.remoting.ConnectionEventType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

@@ -13,9 +13,7 @@ import net.afyer.afybroker.server.proxy.BrokerPlayer;
 
 import java.util.Comparator;
 
-import static com.mojang.brigadier.arguments.StringArgumentType.getString;
-import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
-import static com.mojang.brigadier.arguments.StringArgumentType.word;
+import static com.mojang.brigadier.arguments.StringArgumentType.*;
 
 /**
  * @author Nipuru
@@ -43,7 +41,9 @@ public class CommandKick implements BrigadierCommand {
     @Override
     public LiteralArgumentBuilder<BrokerServer> createBuilder() {
         return literal(getName())
-                .executes(context -> { throw USAGE_EXCEPTION.create(); })
+                .executes(context -> {
+                    throw USAGE_EXCEPTION.create();
+                })
                 .then(argument("player", word())
                         .suggests((context, builder) -> {
                             context.getSource().getPlayerManager().getPlayers().stream()

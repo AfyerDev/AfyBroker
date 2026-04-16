@@ -12,10 +12,14 @@ import java.util.UUID;
 public class ConnectToServerMessage implements Serializable {
     private static final long serialVersionUID = -2031147618861482881L;
 
-    /** 玩家uuid */
+    /**
+     * 玩家uuid
+     */
     private UUID uniqueId;
 
-    /** minecraft 服务器名（在 proxy 中的名字） */
+    /**
+     * minecraft 服务器名（在 proxy 中的名字）
+     */
     private String serverName;
 
     public UUID getUniqueId() {

@@ -23,25 +23,33 @@ public class BrokerClientManager {
 
     private final Map<String, BrokerClientItem> byAddress = new ConcurrentHashMap<>();
 
-    /** 注册客户端代理 */
+    /**
+     * 注册客户端代理
+     */
     public void register(BrokerClientItem brokerClientItem) {
         String address = brokerClientItem.getAddress();
 
         byAddress.put(address, brokerClientItem);
     }
 
-    /** 移除客户端代理 */
+    /**
+     * 移除客户端代理
+     */
     public void remove(String address) {
         byAddress.remove(address);
     }
 
-    /** 通过地址获取客户端代理 */
+    /**
+     * 通过地址获取客户端代理
+     */
     @Nullable
     public BrokerClientItem getByAddress(String address) {
         return byAddress.get(address);
     }
 
-    /** 通过名称（唯一标识）获取客户端代理 */
+    /**
+     * 通过名称（唯一标识）获取客户端代理
+     */
     @Nullable
     public BrokerClientItem getByName(String name) {
         for (BrokerClientItem brokerClientItem : byAddress.values()) {
@@ -52,12 +60,14 @@ public class BrokerClientManager {
         return null;
     }
 
-    /** 通过自定义过滤器获取客户端代理 */
-    public List<BrokerClientItem> getByFilter(Predicate<BrokerClientItem> filter){
+    /**
+     * 通过自定义过滤器获取客户端代理
+     */
+    public List<BrokerClientItem> getByFilter(Predicate<BrokerClientItem> filter) {
         List<BrokerClientItem> list = new ArrayList<>();
 
-        for(BrokerClientItem client : byAddress.values()){
-            if(filter.test(client)){
+        for (BrokerClientItem client : byAddress.values()) {
+            if (filter.test(client)) {
                 list.add(client);
             }
         }
@@ -65,12 +75,16 @@ public class BrokerClientManager {
         return list;
     }
 
-    /** 通过标签获取客户端代理 */
+    /**
+     * 通过标签获取客户端代理
+     */
     public List<BrokerClientItem> getByTag(String tag) {
         return this.getByFilter(clientProxy -> clientProxy.hasTag(tag));
     }
 
-    /** 通过标签获取客户端代理 */
+    /**
+     * 通过标签获取客户端代理
+     */
     public List<BrokerClientItem> getByAnyTags(String... tags) {
         return this.getByFilter(clientProxy -> clientProxy.hasAnyTags(tags));
     }
@@ -87,7 +101,9 @@ public class BrokerClientManager {
         return this.getByFilter(clientProxy -> clientProxy.hasAllTags(tags));
     }
 
-    /** 通过类型获取客户端代理 */
+    /**
+     * 通过类型获取客户端代理
+     */
     public List<BrokerClientItem> getByType(String type) {
         return this.getByFilter(clientProxy -> Objects.equals(clientProxy.getType(), type));
     }

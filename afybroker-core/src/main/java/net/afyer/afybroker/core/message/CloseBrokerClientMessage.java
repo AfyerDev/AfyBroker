@@ -8,13 +8,19 @@ import java.util.List;
  * @since 2025/10/04 16:22
  */
 public class CloseBrokerClientMessage implements Serializable {
-    /** 指定名称 */
+    /**
+     * 指定名称
+     */
     public List<String> names;
 
-    /** 指定类型 */
+    /**
+     * 指定类型
+     */
     public List<String> types;
 
-    /** 指定标签 */
+    /**
+     * 指定标签
+     */
     public List<String> tags;
 
     public List<String> getNames() {

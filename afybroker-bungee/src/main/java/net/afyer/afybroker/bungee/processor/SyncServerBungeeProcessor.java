@@ -17,6 +17,7 @@ public class SyncServerBungeeProcessor extends AsyncUserProcessor<SyncServerMess
     public SyncServerBungeeProcessor(AfyBroker plugin) {
         this.plugin = plugin;
     }
+
     @Override
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, SyncServerMessage request) {
         if (!plugin.isSyncEnable()) {

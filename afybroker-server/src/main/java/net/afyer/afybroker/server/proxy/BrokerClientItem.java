@@ -21,12 +21,16 @@ import java.util.Set;
  */
 public class BrokerClientItem {
 
-    /** 客户端信息 */
+    /**
+     * 客户端信息
+     */
     private final BrokerClientInfo clientInfo;
 
     private final RpcServer rpcServer;
 
-    /** 默认消息发送超时时间 */
+    /**
+     * 默认消息发送超时时间
+     */
     private final int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
 
     public BrokerClientItem(BrokerClientInfoMessage clientInfo, RpcServer rpcServer) {

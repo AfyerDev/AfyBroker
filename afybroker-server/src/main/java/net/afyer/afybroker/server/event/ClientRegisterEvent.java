@@ -12,10 +12,14 @@ import net.afyer.afybroker.server.proxy.BrokerClientItem;
  */
 public class ClientRegisterEvent extends Event {
 
-    /** 客户端信息 */
+    /**
+     * 客户端信息
+     */
     private final BrokerClientInfoMessage brokerClientInfo;
 
-    /** 客户端代理 */
+    /**
+     * 客户端代理
+     */
     private final BrokerClientItem brokerClientItem;
 
     public ClientRegisterEvent(BrokerClientInfoMessage brokerClientInfo, BrokerClientItem brokerClientItem) {

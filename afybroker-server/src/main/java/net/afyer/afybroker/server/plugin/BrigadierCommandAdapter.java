@@ -7,8 +7,8 @@ import net.afyer.afybroker.server.BrokerServer;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 
 /**
  * Bridges legacy command API to brigadier runtime.

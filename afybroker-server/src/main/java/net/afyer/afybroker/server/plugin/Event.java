@@ -7,7 +7,8 @@ import net.afyer.afybroker.server.Broker;
  * @since 2022/7/31 11:36
  */
 public class Event {
-    public void postCall() {}
+    public void postCall() {
+    }
 
     public boolean call() {
         Broker.getPluginManager().callEvent(this);

@@ -10,7 +10,8 @@ import org.slf4j.Marker;
  */
 public final class LoggerAdapter {
 
-    private LoggerAdapter() {}
+    private LoggerAdapter() {
+    }
 
     /**
      * 将 jul 转换为 slf4j logger

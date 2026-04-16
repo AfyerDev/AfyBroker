@@ -27,10 +27,10 @@ hessian = "com.caucho:hessian:4.0.66"
 annotations = "org.jetbrains:annotations:22.0.0"
 prometheus-core = "io.prometheus:prometheus-metrics-core:1.5.1"
 prometheus-httpserver = "io.prometheus:prometheus-metrics-exporter-httpserver:1.5.1"
-spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot"}
+spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
 bungeecord-api = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord" }
-bungeecord-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord"}
+bungeecord-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord" }
 bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
 bstats-velocity = { module = "org.bstats:bstats-velocity", version.ref = "bstats" }
 bstats-bungeecord = { module = "org.bstats:bstats-bungeecord", version.ref = "bstats" }

@@ -15,8 +15,6 @@
 - 支持 Bungee 集群架构，本项目专门为大型服务器设计，可承载万人级别。
 - 可灵活添加自定义的服务器类型，满足各种通信业务需求。
 
-
-
 ## ⚡快速安装
 
 1、假设你已经克隆了此项目，输入以下指令以构建项目。
@@ -39,7 +37,8 @@ java -jar afybroker-server-bootstrap-版本号.jar
 
 4、将 broker-bukkit，broker-bungee 模块下生成的 jar 包分别放入到 bukkit，bungee 服务端的插件 plugins 目录下，并启动服务器。
 
-5、如果 broker-server 与 bukkit、bungee 服务器不在同一台设备上，则需修改 bukkit、bungee 插件目录下 AfyBroker 目录里的 config.yml 文件，将主机 host 改为 broker-server 的网络ip地址，并重启服务器。
+5、如果 broker-server 与 bukkit、bungee 服务器不在同一台设备上，则需修改 bukkit、bungee 插件目录下 AfyBroker 目录里的
+config.yml 文件，将主机 host 改为 broker-server 的网络ip地址，并重启服务器。
 
 ```yaml
 broker:
@@ -53,7 +52,7 @@ broker:
 
 ## 📖功能开发
 
-可以参考运用此框架的演示项目来快速上手 
+可以参考运用此框架的演示项目来快速上手
 
 - 跨服私聊：https://github.com/Nipuru/MsgDemo
 - 跨服传送：https://github.com/Nipuru/TpaDemo
@@ -65,8 +64,10 @@ rpc协议的具体实现过程，请参考 [sofabolt](https://github.com/sofasta
 特别感谢以下项目和开发者为本框架的设计提供了宝贵的灵感和技术支持：
 
 **设计灵感来源**
+
 - [IoGame](https://github.com/iohao/ioGame) - 无锁异步化、事件驱动的Java网络游戏框架，本项目的主要设计灵感来源
 
 **技术贡献者**
+
 - [CarmJos](https://github.com/CarmJos) - service 功能的核心设计思路
 - [Ling556](https://github.com/Ling556) - docker 环境部署方案，优化了项目的 CI/CD 流程

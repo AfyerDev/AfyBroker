@@ -14,17 +14,29 @@ import java.util.Set;
  */
 public class BrokerClientInfo {
 
-    /** 客户端名称(唯一标识) */
+    /**
+     * 客户端名称(唯一标识)
+     */
     private final String name;
-    /** 客户端标签 */
+    /**
+     * 客户端标签
+     */
     private final Set<String> tags;
-    /** 客户端类型 */
+    /**
+     * 客户端类型
+     */
     private final String type;
-    /** 客户端地址 */
+    /**
+     * 客户端地址
+     */
     private final String address;
-    /** 客户端元数据 */
+    /**
+     * 客户端元数据
+     */
     private final Map<String, String> metadata;
-    /** 客户端服务列表 */
+    /**
+     * 客户端服务列表
+     */
     private final List<BrokerServiceDescriptor> services;
 
     public BrokerClientInfo(String name, Set<String> tags, String type, String address, Map<String, String> metadata, List<BrokerServiceDescriptor> services) {

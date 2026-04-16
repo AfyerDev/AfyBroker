@@ -11,7 +11,8 @@ import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.protocol.Property;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Nipuru
@@ -59,6 +60,7 @@ public class PlayerProfilePropertyBungeeProcessor extends SyncUserProcessor<Play
     }
 
     private static final Field loginResultField;
+
     static {
         try {
             Field field = InitialHandler.class.getDeclaredField("loginProfile");

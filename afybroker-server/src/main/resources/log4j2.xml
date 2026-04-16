@@ -2,7 +2,9 @@
 <Configuration status="WARN">
     <Properties>
         <Property name="LOG_DIR">./logs</Property>
-        <Property name="CONSOLE_PATTERN">%d{HH:mm:ss.SSS} %highlight{%level}{FATAL=bright red, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=blue}: %msg%n%throwable</Property>
+        <Property name="CONSOLE_PATTERN">%d{HH:mm:ss.SSS} %highlight{%level}{FATAL=bright red, ERROR=red, WARN=yellow,
+            INFO=green, DEBUG=cyan, TRACE=blue}: %msg%n%throwable
+        </Property>
         <Property name="FILE_PATTERN">%d{HH:mm:ss.SSS} [%t] %level: %msg%n%throwable</Property>
     </Properties>
 

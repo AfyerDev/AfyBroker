@@ -39,7 +39,7 @@ public class ConnectToServerBungeeProcessor extends AsyncUserProcessor<ConnectTo
                 field.setAccessible(true);
                 PENDING_CONNECT_FIELD = field;
             }
-            if (((Collection<ServerInfo>)PENDING_CONNECT_FIELD.get(player)).contains(target)) {
+            if (((Collection<ServerInfo>) PENDING_CONNECT_FIELD.get(player)).contains(target)) {
                 return;
             }
             player.connect(target);

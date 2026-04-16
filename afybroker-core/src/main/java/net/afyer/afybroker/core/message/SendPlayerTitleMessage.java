@@ -29,10 +29,14 @@ public class SendPlayerTitleMessage implements Serializable {
      */
     private int fadein;
 
-    /** 停留时间 */
+    /**
+     * 停留时间
+     */
     private int stay;
 
-    /** 淡出 */
+    /**
+     * 淡出
+     */
     private int fadeout;
 
     public String getName() {

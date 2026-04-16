@@ -8,11 +8,17 @@ import java.util.*;
  * @since 2024/12/03 10:14
  */
 public class PlayerProfilePropertyMessage implements Serializable {
-    /** 玩家uuid */
+    /**
+     * 玩家uuid
+     */
     private UUID uniqueId;
-    /** 需要移除的 Property */
+    /**
+     * 需要移除的 Property
+     */
     private List<String> removeList;
-    /** 需要更新的 Property */
+    /**
+     * 需要更新的 Property
+     */
     private Map<String, String[]> updateMap;
 
     public UUID getUniqueId() {

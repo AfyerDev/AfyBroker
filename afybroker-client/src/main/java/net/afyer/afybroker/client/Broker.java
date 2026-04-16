@@ -20,7 +20,9 @@ import java.util.function.Consumer;
  */
 public final class Broker {
 
-    /** broker 客户端 */
+    /**
+     * broker 客户端
+     */
     private static BrokerClient client;
 
     public static BrokerClient getClient() {
@@ -29,9 +31,12 @@ public final class Broker {
 
     private static List<Consumer<BrokerClientBuilder>> buildActions;
 
-    private Broker() {}
+    private Broker() {
+    }
 
-    /** 设置 broker 客户端 */
+    /**
+     * 设置 broker 客户端
+     */
     public static void setClient(BrokerClient client) {
         if (Broker.client != null) {
             throw new UnsupportedOperationException("Cannot redefine singleton instance");

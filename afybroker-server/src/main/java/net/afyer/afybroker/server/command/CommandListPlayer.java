@@ -1,8 +1,8 @@
 package net.afyer.afybroker.server.command;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.server.Broker;
 import net.afyer.afybroker.server.BrokerServer;
@@ -12,11 +12,7 @@ import net.afyer.afybroker.server.proxy.BrokerPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * @author Nipuru

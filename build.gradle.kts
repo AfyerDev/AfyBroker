@@ -27,7 +27,7 @@ subprojects {
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
     }
-    
+
     tasks.withType<Test> {
         useJUnitPlatform()
     }

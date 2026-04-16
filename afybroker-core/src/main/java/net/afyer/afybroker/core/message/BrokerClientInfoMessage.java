@@ -15,17 +15,29 @@ import java.util.Set;
 public class BrokerClientInfoMessage implements Serializable {
     private static final long serialVersionUID = 5964124139341528361L;
 
-    /** 客户端名称(唯一标识) */
+    /**
+     * 客户端名称(唯一标识)
+     */
     private String name;
-    /** 客户端标签 */
+    /**
+     * 客户端标签
+     */
     private Set<String> tags;
-    /** 客户端类型 */
+    /**
+     * 客户端类型
+     */
     private String type;
-    /** 服务器/客户端 地址 */
+    /**
+     * 服务器/客户端 地址
+     */
     private String address;
-    /** 客户端元数据 */
+    /**
+     * 客户端元数据
+     */
     private Map<String, String> metadata;
-    /** 客户端服务列表 */
+    /**
+     * 客户端服务列表
+     */
     private List<BrokerServiceDescriptor> services;
 
     public String getName() {
@@ -83,7 +95,7 @@ public class BrokerClientInfoMessage implements Serializable {
     }
 
     public BrokerClientInfo build() {
-        return new BrokerClientInfo(name, tags, type, address, metadata,  services);
+        return new BrokerClientInfo(name, tags, type, address, metadata, services);
     }
 
     @Override

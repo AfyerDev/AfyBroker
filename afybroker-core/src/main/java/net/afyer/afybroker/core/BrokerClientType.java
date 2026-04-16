@@ -8,13 +8,19 @@ package net.afyer.afybroker.core;
  */
 public interface BrokerClientType {
 
-    /** BungeeCord 客户端 */
+    /**
+     * BungeeCord 客户端
+     */
     String PROXY = "proxy";
 
-    /** Bukkit 客户端 */
+    /**
+     * Bukkit 客户端
+     */
     String SERVER = "server";
 
-    /** 未知类型的客户端 */
+    /**
+     * 未知类型的客户端
+     */
     String UNKNOWN = "unknown";
 
 }

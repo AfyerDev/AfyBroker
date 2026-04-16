@@ -18,7 +18,6 @@ import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
-import net.afyer.afybroker.core.observability.Role;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.observability.*;
 import net.afyer.afybroker.core.util.ConnectionEventTypeProcessor;
@@ -51,28 +50,44 @@ public class BrokerClientBuilder {
      */
     private int port = BrokerGlobalConfig.BROKER_PORT;
 
-    /** 消息发送超时时间 */
+    /**
+     * 消息发送超时时间
+     */
     private int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
 
-    /** 客户端标签 */
+    /**
+     * 客户端标签
+     */
     private final Set<String> tags = new HashSet<>();
 
-    /** 客户端元数据 */
+    /**
+     * 客户端元数据
+     */
     private final Map<String, String> metadata = new HashMap<>();
 
-    /** 用户处理器 */
+    /**
+     * 用户处理器
+     */
     private final List<UserProcessor<?>> processorList = new ArrayList<>();
 
-    /** bolt 连接器 */
+    /**
+     * bolt 连接器
+     */
     private final Map<ConnectionEventType, ConnectionEventProcessor> connectionEventProcessorMap = new HashMap<>();
 
-    /** 服务注册表 */
+    /**
+     * 服务注册表
+     */
     private final Map<String, BrokerServiceEntry> serviceMap = new HashMap<>();
 
-    /** 预处理函数列表 */
+    /**
+     * 预处理函数列表
+     */
     private final List<BrokerPreprocessor> preprocessorList = new ArrayList<>();
 
-    /** 指标收集器列表 */
+    /**
+     * 指标收集器列表
+     */
     private final List<Observability> observabilityList = new ArrayList<>();
 
     BrokerClientBuilder() {
@@ -223,8 +238,8 @@ public class BrokerClientBuilder {
     /**
      * 注册连接器
      *
-     * @param type       type
-     * @param processor  processor
+     * @param type      type
+     * @param processor processor
      * @return this
      */
     public BrokerClientBuilder addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {
@@ -237,7 +252,7 @@ public class BrokerClientBuilder {
     /**
      * 注册连接器
      *
-     * @param processor  processor
+     * @param processor processor
      * @return this
      */
     public BrokerClientBuilder addConnectionEventProcessor(ConnectionEventTypeProcessor processor) {
@@ -300,7 +315,7 @@ public class BrokerClientBuilder {
     /**
      * 注册预处理函数
      * 在每次远程调用前执行，用于安全检查、权限验证等
-     * 
+     *
      * @param preprocessor 预处理函数
      * @return this
      */
@@ -312,7 +327,7 @@ public class BrokerClientBuilder {
 
     /**
      * 清除所有预处理函数
-     * 
+     *
      * @return this
      */
     public BrokerClientBuilder clearPreprocessors() {

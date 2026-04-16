@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class BoltUtils {
 
-    private static final ProtocolCode[] PROTOCOL_CODES = new ProtocolCode[] {
+    private static final ProtocolCode[] PROTOCOL_CODES = new ProtocolCode[]{
             ProtocolCode.fromBytes(RpcProtocol.PROTOCOL_CODE),
             ProtocolCode.fromBytes(RpcProtocolV2.PROTOCOL_CODE)
     };

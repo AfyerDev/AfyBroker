@@ -13,7 +13,9 @@ import java.util.UUID;
 public class PlayerHeartbeatValidateMessage implements Serializable {
     private static final long serialVersionUID = -3464928414600404140L;
 
-    /** 需要验证的玩家集合 */
+    /**
+     * 需要验证的玩家集合
+     */
     private List<UUID> uniqueIdList;
 
     public List<UUID> getUniqueIdList() {

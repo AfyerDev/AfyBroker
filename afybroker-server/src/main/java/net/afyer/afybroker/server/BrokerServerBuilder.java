@@ -5,22 +5,8 @@ import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
-import net.afyer.afybroker.core.observability.Role;
 import net.afyer.afybroker.core.observability.*;
-import net.afyer.afybroker.server.processor.AttributeBrokerProcessor;
-import net.afyer.afybroker.server.processor.BroadcastChatBrokerProcessor;
-import net.afyer.afybroker.server.processor.CloseBrokerClientBrokerProcessor;
-import net.afyer.afybroker.server.processor.ConnectToServerBrokerProcessor;
-import net.afyer.afybroker.server.processor.ForwardingMessageBrokerProcessor;
-import net.afyer.afybroker.server.processor.KickPlayerBrokerProcessor;
-import net.afyer.afybroker.server.processor.PlayerProfilePropertyBrokerProcessor;
-import net.afyer.afybroker.server.processor.PlayerProxyConnectBrokerProcessor;
-import net.afyer.afybroker.server.processor.PlayerProxyDisconnectBrokerProcessor;
-import net.afyer.afybroker.server.processor.PlayerServerConnectedBrokerProcessor;
-import net.afyer.afybroker.server.processor.PlayerServerJoinBrokerProcessor;
-import net.afyer.afybroker.server.processor.RpcInvocationBrokerProcessor;
-import net.afyer.afybroker.server.processor.SendPlayerChatBrokerProcessor;
-import net.afyer.afybroker.server.processor.SendPlayerTitleBrokerProcessor;
+import net.afyer.afybroker.server.processor.*;
 import net.afyer.afybroker.server.processor.connection.CloseEventBrokerProcessor;
 import net.afyer.afybroker.server.processor.connection.ConnectEventBrokerProcessor;
 import net.afyer.afybroker.server.processor.connection.ConnectFailedEventBrokerProcessor;
@@ -108,8 +94,8 @@ public class BrokerServerBuilder {
     /**
      * 注册连接器
      *
-     * @param type       type
-     * @param processor  processor
+     * @param type      type
+     * @param processor processor
      * @return this
      */
     public BrokerServerBuilder addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {

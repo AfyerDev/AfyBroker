@@ -5,16 +5,21 @@ import java.util.UUID;
 
 /**
  * 玩家从 proxy 断开连接的消息
+ *
  * @author Nipuru
  * @since 2022/11/21 17:30
  */
 public class PlayerProxyDisconnectMessage implements Serializable {
     private static final long serialVersionUID = -5160344925177364814L;
 
-    /** 玩家uuid */
+    /**
+     * 玩家uuid
+     */
     private UUID uniqueId;
 
-    /** 玩家名 */
+    /**
+     * 玩家名
+     */
     private String name;
 
     public UUID getUniqueId() {

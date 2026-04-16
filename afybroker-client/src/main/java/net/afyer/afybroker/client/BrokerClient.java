@@ -31,24 +31,38 @@ import java.util.UUID;
  * @since 2022/7/30 19:15
  */
 public class BrokerClient {
-    /** 客户端信息 */
+    /**
+     * 客户端信息
+     */
     private BrokerClientInfo clientInfo;
 
-    /** rpc 客户端 */
+    /**
+     * rpc 客户端
+     */
     private RpcClient rpcClient;
 
-    /** 消息发送超时时间 */
+    /**
+     * 消息发送超时时间
+     */
     private int defaultTimeoutMillis;
 
-    /** 服务注册表 */
+    /**
+     * 服务注册表
+     */
     private BrokerServiceRegistry serviceRegistry;
-    
-    /** 服务代理工厂 */
+
+    /**
+     * 服务代理工厂
+     */
     private final BrokerServiceProxyFactory serviceProxyFactory;
 
-    /** 预处理函数列表 */
+    /**
+     * 预处理函数列表
+     */
     private List<BrokerPreprocessor> preprocessors;
-    /** 指标收集器 */
+    /**
+     * 指标收集器
+     */
     private Observability observability = Observability.NOOP;
 
     BrokerClient() {
@@ -183,8 +197,8 @@ public class BrokerClient {
 
     /**
      * 为直接调用方法执行预处理函数
-     * 
-     * @param request 请求对象
+     *
+     * @param request    请求对象
      * @param methodName 方法名称（用于日志）
      */
     private void executePreprocessors(Object request, String methodName, int timeoutMillis) throws PreprocessorException {

@@ -9,7 +9,9 @@ import net.afyer.afybroker.server.proxy.BrokerPlayer;
  */
 public class PlayerServerConnectedEvent extends Event {
 
-    /** 玩家代理 */
+    /**
+     * 玩家代理
+     */
     private final BrokerPlayer player;
 
     public PlayerServerConnectedEvent(BrokerPlayer player) {

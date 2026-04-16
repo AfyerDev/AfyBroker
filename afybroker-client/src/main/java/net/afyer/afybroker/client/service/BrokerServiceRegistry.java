@@ -46,12 +46,11 @@ public class BrokerServiceRegistry {
         // 从缓存中获取Method
         Method method = entry.getMethod(methodName, parameterTypeNames);
         if (method == null) {
-            throw new InvokeException("Method not found: " + methodName + 
+            throw new InvokeException("Method not found: " + methodName +
                     " with parameters: " + Arrays.toString(parameterTypeNames));
         }
         return method.invoke(entry.getServiceImpl(), parameters);
     }
 
 
-
-} 
+}

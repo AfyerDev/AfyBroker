@@ -5,7 +5,6 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.exception.InvokeException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import net.afyer.afybroker.core.message.RpcInvocationMessage;
-import net.afyer.afybroker.core.observability.ObservabilitySupport;
 import net.afyer.afybroker.core.observability.RpcObservation;
 import net.afyer.afybroker.core.observability.RpcPhase;
 import net.afyer.afybroker.core.util.AbstractInvokeCallback;
@@ -17,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 服务器端RPC调用处理器
- * 
+ *
  * @author Nipuru
  * @since 2025/7/11 18:04
  */
@@ -37,7 +36,7 @@ public class RpcInvocationBrokerProcessor extends AsyncUserProcessor<RpcInvocati
         long startNanos = System.nanoTime();
         try {
             LOGGER.debug("Handling RPC invocation: {}.{}", request.getServiceInterface(), request.getMethodName());
-            
+
             // 根据服务接口和标签选择合适的服务提供者
             BrokerClientItem serviceProvider = brokerServer.getServiceRegistry().selectServiceProvider(
                     request.getServiceInterface(),

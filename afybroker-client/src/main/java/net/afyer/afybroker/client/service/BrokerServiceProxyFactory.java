@@ -6,7 +6,6 @@ import com.alipay.remoting.serialization.Serializer;
 import com.alipay.remoting.serialization.SerializerManager;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.core.message.RpcInvocationMessage;
-import net.afyer.afybroker.core.observability.ObservabilitySupport;
 import net.afyer.afybroker.core.observability.RpcObservation;
 import net.afyer.afybroker.core.observability.RpcPhase;
 import org.slf4j.Logger;
@@ -20,16 +19,16 @@ import java.util.Set;
 
 /**
  * 服务代理工厂
- * 
+ *
  * @author Nipuru
  * @since 2025/7/11 17:04
  */
 public class BrokerServiceProxyFactory {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(BrokerServiceProxyFactory.class);
-    
+
     private final BrokerClient brokerClient;
-    
+
     public BrokerServiceProxyFactory(BrokerClient brokerClient) {
         this.brokerClient = brokerClient;
     }
@@ -40,19 +39,19 @@ public class BrokerServiceProxyFactory {
     public <T> T createProxy(Class<T> serviceInterface) {
         return createProxy(serviceInterface, Collections.emptySet());
     }
-    
+
     /**
      * 创建服务代理（带标签选择）
      */
     @SuppressWarnings("unchecked")
     public <T> T createProxy(Class<T> serviceInterface, Set<String> tags) {
         return (T) Proxy.newProxyInstance(
-            serviceInterface.getClassLoader(),
-            new Class[]{serviceInterface},
-            new ServiceInvocationHandler(brokerClient, serviceInterface.getName(), tags)
+                serviceInterface.getClassLoader(),
+                new Class[]{serviceInterface},
+                new ServiceInvocationHandler(brokerClient, serviceInterface.getName(), tags)
         );
     }
-    
+
     /**
      * 服务调用处理器
      */
@@ -66,7 +65,7 @@ public class BrokerServiceProxyFactory {
             this.serviceInterface = serviceInterface;
             this.serviceTags = serviceTags;
         }
-        
+
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             // 处理Object类的方法
@@ -79,11 +78,11 @@ public class BrokerServiceProxyFactory {
             byte[] parameters = serializer.serialize(args);
             // 构建调用消息
             RpcInvocationMessage message = new RpcInvocationMessage()
-                .setServiceInterface(serviceInterface)
-                .setMethodName(method.getName())
-                .setParameterTypes(getParameterTypeNames(method.getParameterTypes()))
-                .setParameters(parameters)
-                .setServiceTags(serviceTags);
+                    .setServiceInterface(serviceInterface)
+                    .setMethodName(method.getName())
+                    .setParameterTypes(getParameterTypeNames(method.getParameterTypes()))
+                    .setParameters(parameters)
+                    .setServiceTags(serviceTags);
 
             long startNanos = System.nanoTime();
             boolean success = false;

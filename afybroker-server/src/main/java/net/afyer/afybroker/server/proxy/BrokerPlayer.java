@@ -1,17 +1,13 @@
 package net.afyer.afybroker.server.proxy;
 
-import com.alipay.remoting.config.ConfigManager;
-import com.alipay.remoting.serialization.SerializerManager;
 import net.afyer.afybroker.core.Attributable;
 import net.afyer.afybroker.core.AttributeContainer;
 import net.afyer.afybroker.core.message.ConnectToServerMessage;
 import net.afyer.afybroker.core.message.KickPlayerMessage;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 玩家代理
@@ -21,16 +17,26 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BrokerPlayer implements Attributable {
 
-    /** 玩家UUID */
+    /**
+     * 玩家UUID
+     */
     private final UUID uniqueId;
-    /** 玩家名字 */
+    /**
+     * 玩家名字
+     */
     private final String name;
-    /** 玩家所在的 Proxy 服务器客户端代理 */
+    /**
+     * 玩家所在的 Proxy 服务器客户端代理
+     */
     private final BrokerClientItem proxy;
-    /** 玩家属性 */
+    /**
+     * 玩家属性
+     */
     private final AttributeContainer attributes = new AttributeContainer();
 
-    /** 玩家所在的 Minecraft 服务器客户端代理 */
+    /**
+     * 玩家所在的 Minecraft 服务器客户端代理
+     */
     @Nullable
     private BrokerClientItem server;
 

@@ -10,10 +10,14 @@ import net.afyer.afybroker.server.plugin.Event;
  * @since 2022/9/10 17:54
  */
 public class ClientConnectEvent extends Event {
-    /** 客户端地址 */
+    /**
+     * 客户端地址
+     */
     private final String remoteAddress;
 
-    /** 客户端连接 */
+    /**
+     * 客户端连接
+     */
     private final Connection connection;
 
     public ClientConnectEvent(String remoteAddress, Connection connection) {

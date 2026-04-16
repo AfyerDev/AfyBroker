@@ -12,10 +12,14 @@ import java.util.UUID;
 public class KickPlayerMessage implements Serializable {
     private static final long serialVersionUID = 225514412094976346L;
 
-    /** 玩家名 */
+    /**
+     * 玩家名
+     */
     private UUID uniqueId;
 
-    /** 踢出消息 */
+    /**
+     * 踢出消息
+     */
     private String message;
 
     public UUID getUniqueId() {

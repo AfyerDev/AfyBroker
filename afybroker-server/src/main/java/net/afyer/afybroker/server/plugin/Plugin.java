@@ -30,9 +30,9 @@ public class Plugin {
 
     public Plugin() {
         ClassLoader classLoader = getClass().getClassLoader();
-        Preconditions.checkState( classLoader instanceof PluginClassloader, "Plugin requires " + PluginClassloader.class.getName() );
+        Preconditions.checkState(classLoader instanceof PluginClassloader, "Plugin requires " + PluginClassloader.class.getName());
 
-        ((PluginClassloader)classLoader).init(this);
+        ((PluginClassloader) classLoader).init(this);
     }
 
     public void onLoad() {
@@ -46,17 +46,15 @@ public class Plugin {
     public void onDisable() {
     }
 
-    public final File getDataFolder()
-    {
-        return new File( getServer().getPluginsFolder(), getDescription().getName() );
+    public final File getDataFolder() {
+        return new File(getServer().getPluginsFolder(), getDescription().getName());
     }
 
     public final InputStream getResourceAsStream(String name) {
-        return getClass().getClassLoader().getResourceAsStream( name );
+        return getClass().getClassLoader().getResourceAsStream(name);
     }
 
-    final void init(BrokerServer server, PluginDescription description)
-    {
+    final void init(BrokerServer server, PluginDescription description) {
         this.server = server;
         this.description = description;
         this.file = description.getFile();

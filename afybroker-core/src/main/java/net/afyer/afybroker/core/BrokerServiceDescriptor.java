@@ -12,10 +12,14 @@ import java.util.Set;
 public class BrokerServiceDescriptor implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /** 服务接口名 */
+    /**
+     * 服务接口名
+     */
     private String serviceInterface;
 
-    /** 服务标签 */
+    /**
+     * 服务标签
+     */
     private Set<String> tags;
 
     public String getServiceInterface() {
