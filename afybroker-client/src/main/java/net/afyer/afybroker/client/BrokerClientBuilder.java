@@ -24,6 +24,8 @@ import net.afyer.afybroker.core.util.ConnectionEventTypeProcessor;
 
 import java.util.*;
 
+import static net.afyer.afybroker.core.BrokerGlobalConfig.ENV_CLIENT_TAG;
+
 /**
  * @author Nipuru
  * @since 2022/7/31 10:10
@@ -93,6 +95,18 @@ public class BrokerClientBuilder {
     BrokerClientBuilder() {
         // 初始化一些处理器
         defaultProcessor();
+
+        // 读取环境变量中的标签
+        String envTags = System.getenv(ENV_CLIENT_TAG);
+        if (envTags != null && !envTags.trim().isEmpty()) {
+            String[] tagParts = envTags.split(",");
+            for (String tagPart : tagParts) {
+                String trimmedTag = tagPart.trim();
+                if (!trimmedTag.isEmpty()) {
+                    tags.add(trimmedTag);
+                }
+            }
+        }
 
         // 通过系统属性来开和关，如果一个进程有多个 RpcClient，则同时生效
         // 开启 bolt 重连

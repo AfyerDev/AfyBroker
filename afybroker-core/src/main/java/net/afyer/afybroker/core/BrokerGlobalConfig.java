@@ -22,4 +22,14 @@ public interface BrokerGlobalConfig {
      */
     int DEFAULT_TIMEOUT_MILLIS = 3000;
 
+    /**
+     * 环境变量：主机名
+     */
+    String ENV_HOSTNAME = "HOSTNAME";
+
+    /**
+     * 环境变量：客户端标签
+     */
+    String ENV_CLIENT_TAG = "AFYBROKER_CLIENT_TAG";
+
 }

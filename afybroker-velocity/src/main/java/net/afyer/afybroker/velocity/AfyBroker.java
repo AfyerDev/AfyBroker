@@ -34,6 +34,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import static net.afyer.afybroker.core.BrokerGlobalConfig.ENV_HOSTNAME;
+
 /**
  * @author Nipuru
  * @since 2022/7/28 7:26
@@ -109,7 +111,7 @@ public class AfyBroker {
                     .port(config.getNode("broker", "port").getInt(BrokerGlobalConfig.BROKER_PORT))
                     .name(config.getNode("broker", "name").getString("velocity-%unique_id%")
                             .replace("%unique_id%", UNIQUE_ID)
-                            .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME")))
+                            .replace("%hostname%", Objects.toString(System.getenv(ENV_HOSTNAME)))
                     )
                     .addTags(config.getNode("broker", "tags").getList(Object::toString))
                     .type(BrokerClientType.PROXY)

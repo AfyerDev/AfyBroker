@@ -29,6 +29,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import static net.afyer.afybroker.core.BrokerGlobalConfig.ENV_HOSTNAME;
+
 /**
  * @author Nipuru
  * @since 2022/7/28 7:26
@@ -51,7 +53,7 @@ public class AfyBroker extends JavaPlugin {
                     .port(getConfig().getInt("broker.port", BrokerGlobalConfig.BROKER_PORT))
                     .name(getConfig().getString("broker.name", "bukkit-%unique_id%")
                             .replace("%unique_id%", UNIQUE_ID)
-                            .replace("%hostname%", Objects.toString(System.getenv("HOSTNAME"))))
+                            .replace("%hostname%", Objects.toString(System.getenv(ENV_HOSTNAME))))
                     .addTags(getConfig().getStringList("tags"))
                     .addMetadata(MetadataKeys.MC_SERVER_ADDRESS, serverAddress)
                     .type(BrokerClientType.SERVER)
