@@ -60,6 +60,34 @@ public final class Broker {
     }
 
     /**
+     * 获取名称
+     */
+    public static String getName() {
+        return client.getName();
+    }
+
+    /**
+     * 获取类型
+     */
+    public static String getType() {
+        return client.getType();
+    }
+
+    /**
+     * 是否存在元数据
+     */
+    public static boolean hasMetadata(String key) {
+        return client.hasMetadata(key);
+    }
+
+    /**
+     * 获取元数据
+     */
+    public static String getMetadata(String key) {
+        return client.getMetadata(key);
+    }
+
+    /**
      * 判断客户端是否含有指定标签
      */
     public static boolean hasTag(String tag) {

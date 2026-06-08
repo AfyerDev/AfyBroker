@@ -72,6 +72,10 @@ public class BrokerClientInfo {
         return services;
     }
 
+    public boolean hasMetadata(String key) {
+        return metadata.containsKey(key);
+    }
+
     @Nullable
     public String getMetadata(String key) {
         return metadata.get(key);

@@ -206,6 +206,16 @@ public class BrokerClientBuilder {
     }
 
     /**
+     * 判断客户端是否包含指定标签
+     *
+     * @param tag 待判断的标签
+     * @return 是否包含
+     */
+    public boolean hasTag(String tag) {
+        return tags.contains(tag);
+    }
+
+    /**
      * 添加客户端标签
      *
      * @param tags 客户端标签
@@ -284,6 +294,26 @@ public class BrokerClientBuilder {
         this.processorList.clear();
         this.connectionEventProcessorMap.clear();
         return this;
+    }
+
+    /**
+     * 是否包含客户端元数据
+     *
+     * @param key 键
+     * @return 是否包含
+     */
+    public boolean hasMetadata(String key) {
+        return metadata.containsKey(key);
+    }
+
+    /**
+     * 获取客户端元数据
+     *
+     * @param key 键
+     * @return 值
+     */
+    public String getMetadata(String key) {
+        return metadata.get(key);
     }
 
     /**

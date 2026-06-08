@@ -116,8 +116,24 @@ public class BrokerClient {
         return observability;
     }
 
+    public String getName() {
+        return clientInfo.getName();
+    }
+
+    public String getType() {
+        return clientInfo.getType();
+    }
+
+    public boolean hasMetadata(String key) {
+        return clientInfo.hasMetadata(key);
+    }
+
+    public String getMetadata(String key) {
+        return clientInfo.getMetadata(key);
+    }
+
     public boolean hasTag(String tag) {
-        return clientInfo.getTags().contains(tag);
+        return clientInfo.hasTag(tag);
     }
 
     public <T> T invokeSync(Object request) throws RemotingException, InterruptedException {
