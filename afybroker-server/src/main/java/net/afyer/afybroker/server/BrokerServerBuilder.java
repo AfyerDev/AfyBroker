@@ -21,6 +21,9 @@ import java.util.*;
  */
 public class BrokerServerBuilder {
 
+    private static final String ENV_BROKER_HOST = "AFYBROKER_HOST";
+    private static final String ENV_BROKER_PORT = "AFYBROKER_PORT";
+
     /**
      * broker 地址
      */
@@ -46,6 +49,8 @@ public class BrokerServerBuilder {
     private final List<Observability> observabilityList = new ArrayList<>();
 
     BrokerServerBuilder() {
+        applyEnvironmentOverrides();
+
         // 初始化一些处理器
         defaultProcessor();
 
@@ -53,6 +58,18 @@ public class BrokerServerBuilder {
         // 开启 bolt 重连
         System.setProperty(Configs.CONN_MONITOR_SWITCH, "true");
         System.setProperty(Configs.CONN_RECONNECT_SWITCH, "true");
+    }
+
+    private void applyEnvironmentOverrides() {
+        String envHost = System.getenv(ENV_BROKER_HOST);
+        if (envHost != null && !envHost.trim().isEmpty()) {
+            this.host = envHost.trim();
+        }
+
+        String envPort = System.getenv(ENV_BROKER_PORT);
+        if (envPort != null && !envPort.trim().isEmpty()) {
+            this.port = Integer.parseInt(envPort.trim());
+        }
     }
 
     public BrokerServerBuilder host(String host) {

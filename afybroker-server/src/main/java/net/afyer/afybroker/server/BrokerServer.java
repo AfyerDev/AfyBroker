@@ -6,7 +6,6 @@ import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.rpc.RpcServer;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.alipay.remoting.serialization.SerializerManager;
-import com.google.common.collect.Lists;
 import net.afyer.afybroker.core.Attributable;
 import net.afyer.afybroker.core.AttributeContainer;
 import net.afyer.afybroker.core.observability.Observability;
@@ -32,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -221,36 +222,67 @@ public class BrokerServer implements Attributable {
     }
 
     public void shutdown() {
+        shutdownGracefully();
+        System.exit(0);
+    }
+
+    public void shutdownGracefully() {
         synchronized (this) {
             if (!start) {
-                LOGGER.info("Server already closed");
+                logInfo("Server already closed");
                 return;
             }
             start = false;
-            LOGGER.info("Stopping the server");
-            new Thread("Shutdown Thread") {
-                @Override
-                public void run() {
-                    LOGGER.info("Stopping server");
-                    LOGGER.info("Disabling plugins");
-                    for (Plugin plugin : Lists.reverse(new ArrayList<>(pluginManager.getPlugins()))) {
-                        try {
-                            plugin.onDisable();
-                        } catch (Throwable t) {
-                            LOGGER.error("Exception disabling plugin {}", plugin.getDescription().getName(), t);
-                        }
-                        scheduler.cancel(plugin);
-                    }
-                    playerHeartbeatValidateTask.cancel();
-                    rpcServer.shutdown();
-                    try {
-                        terminal.close();
-                    } catch (IOException ignored) {
-                    }
-                    observability.close();
-                    System.exit(0);
+            logInfo("Stopping the server");
+            logInfo("Disabling plugins");
+            List<Plugin> plugins = new ArrayList<>(pluginManager.getPlugins());
+            Collections.reverse(plugins);
+            for (Plugin plugin : plugins) {
+                try {
+                    plugin.onDisable();
+                } catch (Throwable t) {
+                    logError("Exception disabling plugin " + plugin.getDescription().getName(), t);
                 }
-            }.start();
+                try {
+                    scheduler.cancel(plugin);
+                } catch (Throwable t) {
+                    logError("Exception cancelling tasks for plugin " + plugin.getDescription().getName(), t);
+                }
+            }
+            try {
+                playerHeartbeatValidateTask.cancel();
+            } catch (Throwable t) {
+                logError("Exception cancelling player heartbeat validation", t);
+            }
+            try {
+                rpcServer.shutdown();
+            } catch (Throwable t) {
+                logError("Exception shutting down rpc server", t);
+            }
+            try {
+                terminal.close();
+            } catch (Throwable t) {
+                logError("Exception closing terminal", t);
+            }
+            try {
+                observability.close();
+            } catch (Throwable t) {
+                logError("Exception closing observability", t);
+            }
+        }
+    }
+
+    private void logInfo(String message) {
+        try {
+            LOGGER.info(message);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private void logError(String message, Throwable throwable) {
+        try {
+            LOGGER.error(message, throwable);
+        } catch (Throwable ignored) {
         }
     }
 
