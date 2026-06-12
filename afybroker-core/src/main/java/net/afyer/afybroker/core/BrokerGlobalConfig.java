@@ -32,4 +32,15 @@ public interface BrokerGlobalConfig {
      */
     String ENV_CLIENT_TAG = "AFYBROKER_CLIENT_TAG";
 
+    /**
+     * 环境变量：broker 地址
+     */
+    String ENV_BROKER_HOST = "AFYBROKER_HOST";
+
+    /**
+     * 环境变量：broker 端口
+     */
+    String ENV_BROKER_PORT = "AFYBROKER_PORT";
+
+
 }

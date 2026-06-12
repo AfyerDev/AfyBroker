@@ -15,14 +15,14 @@ import net.afyer.afybroker.server.processor.connection.ExceptionEventBrokerProce
 import java.io.IOException;
 import java.util.*;
 
+import static net.afyer.afybroker.core.BrokerGlobalConfig.ENV_BROKER_HOST;
+import static net.afyer.afybroker.core.BrokerGlobalConfig.ENV_BROKER_PORT;
+
 /**
  * @author Nipuru
  * @since 2022/7/29 20:13
  */
 public class BrokerServerBuilder {
-
-    private static final String ENV_BROKER_HOST = "AFYBROKER_HOST";
-    private static final String ENV_BROKER_PORT = "AFYBROKER_PORT";
 
     /**
      * broker 地址
