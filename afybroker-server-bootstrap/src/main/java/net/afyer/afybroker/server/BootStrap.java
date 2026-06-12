@@ -21,6 +21,7 @@ public class BootStrap {
         BrokerServer brokerServer = BrokerServer.builder().build();
 
         Broker.setServer(brokerServer);
+        Runtime.getRuntime().addShutdownHook(new Thread(brokerServer::shutdownGracefully, "Broker Shutdown Hook"));
 
         brokerServer.startup();
         brokerServer.runConsoleLoop();
