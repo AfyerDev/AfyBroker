@@ -25,6 +25,7 @@ public class HessianSerializer implements Serializer {
 
     public HessianSerializer(ClassLoader classLoader) {
         this.serializerFactory = new SerializerFactory(classLoader);
+        this.serializerFactory.addFactory(new JdkValueSerializerFactory());
         this.outputFactory = useTypeIntern()
                 ? TypeInternHessian2Output::new
                 : Hessian2Output::new;
