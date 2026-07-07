@@ -70,7 +70,7 @@ public class RpcInvocationBrokerProcessor extends AsyncUserProcessor<RpcInvocati
                 @Override
                 public void onException(Throwable e) {
                     record(request, startNanos, false);
-                    LOGGER.error("RPC invocation failed: {}.{}",
+                    LOGGER.debug("RPC invocation failed: {}.{}",
                             request.getServiceInterface(), request.getMethodName(), e);
                     asyncCtx.sendException(unwrapRemoteException(e));
                 }
