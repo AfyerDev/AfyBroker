@@ -54,7 +54,7 @@ public class RpcInvocationClientProcessor extends AsyncUserProcessor<RpcInvocati
             // 返回结果
             success = true;
             asyncCtx.sendResponse(response);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.error("RPC invocation failed: {}.{}", request.getServiceInterface(), request.getMethodName(), e);
             asyncCtx.sendException(e);
         } finally {

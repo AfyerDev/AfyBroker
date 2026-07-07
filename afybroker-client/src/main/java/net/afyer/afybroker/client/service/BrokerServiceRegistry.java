@@ -3,6 +3,7 @@ package net.afyer.afybroker.client.service;
 import com.alipay.remoting.rpc.exception.InvokeException;
 import net.afyer.afybroker.core.BrokerServiceDescriptor;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +38,7 @@ public class BrokerServiceRegistry {
      */
     public Object invoke(String serviceInterface, String methodName,
                          String[] parameterTypeNames, Object[] parameters)
-            throws Exception {
+            throws Throwable {
         BrokerServiceEntry entry = services.get(serviceInterface);
         if (entry == null) {
             throw new InvokeException("Service not found: " + serviceInterface);
@@ -49,7 +50,12 @@ public class BrokerServiceRegistry {
             throw new InvokeException("Method not found: " + methodName +
                     " with parameters: " + Arrays.toString(parameterTypeNames));
         }
-        return method.invoke(entry.getServiceImpl(), parameters);
+        try {
+            return method.invoke(entry.getServiceImpl(), parameters);
+        } catch (InvocationTargetException e) {
+            Throwable targetException = e.getTargetException();
+            throw targetException != null ? targetException : e;
+        }
     }
 
 

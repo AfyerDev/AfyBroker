@@ -3,6 +3,7 @@ package net.afyer.afybroker.server.processor;
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.exception.InvokeException;
+import com.alipay.remoting.rpc.exception.InvokeServerException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import net.afyer.afybroker.core.message.RpcInvocationMessage;
 import net.afyer.afybroker.core.observability.RpcObservation;
@@ -71,7 +72,7 @@ public class RpcInvocationBrokerProcessor extends AsyncUserProcessor<RpcInvocati
                     record(request, startNanos, false);
                     LOGGER.error("RPC invocation failed: {}.{}",
                             request.getServiceInterface(), request.getMethodName(), e);
-                    asyncCtx.sendException(e);
+                    asyncCtx.sendException(unwrapRemoteException(e));
                 }
             });
 
@@ -96,5 +97,13 @@ public class RpcInvocationBrokerProcessor extends AsyncUserProcessor<RpcInvocati
                 success,
                 System.nanoTime() - startNanos
         ));
+    }
+
+    private Throwable unwrapRemoteException(Throwable e) {
+        Throwable current = e;
+        while (current instanceof InvokeServerException && current.getCause() != null) {
+            current = current.getCause();
+        }
+        return current;
     }
 }
