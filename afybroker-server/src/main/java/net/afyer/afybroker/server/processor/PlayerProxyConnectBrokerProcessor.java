@@ -32,7 +32,7 @@ public class PlayerProxyConnectBrokerProcessor extends SyncUserProcessor<PlayerP
     }
 
     @Override
-    public Object handleRequest(BizContext bizCtx, PlayerProxyConnectMessage request) throws Exception {
+    public Object handleRequest(BizContext bizCtx, PlayerProxyConnectMessage request) {
         BrokerClientItem playerBungee = brokerServer.getClient(bizCtx);
         if (playerBungee == null) {
             return false;

@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
+import static net.afyer.afybroker.core.util.BoltUtils.unwrapRemoteException;
+
 /**
  * @author Nipuru
  * @since 2022/9/4 18:23
@@ -48,7 +50,7 @@ public class ForwardingMessageBrokerProcessor extends AsyncUserProcessor<Forward
 
                     @Override
                     public void onException(Throwable e) {
-                        asyncCtx.sendException(e);
+                        asyncCtx.sendException(unwrapRemoteException(e));
                     }
                 }, bizCtx.getClientTimeout());
             } else {
@@ -56,6 +58,7 @@ public class ForwardingMessageBrokerProcessor extends AsyncUserProcessor<Forward
             }
         } catch (RemotingException | InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
+            asyncCtx.sendException(unwrapRemoteException(e));
         }
     }
 

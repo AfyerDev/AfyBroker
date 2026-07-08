@@ -31,7 +31,7 @@ public class AttributeBrokerProcessor extends SyncUserProcessor<AttributeMessage
     }
 
     @Override
-    public Object handleRequest(BizContext bizCtx, AttributeMessage request) throws Exception {
+    public Object handleRequest(BizContext bizCtx, AttributeMessage request) {
         Attributable target;
         if (request.getScope() == AttributeMessage.SCOPE_SERVER) {
             target = brokerServer;

@@ -4,6 +4,7 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.Protocol;
 import com.alipay.remoting.ProtocolCode;
 import com.alipay.remoting.ProtocolManager;
+import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.protocol.*;
 
 import java.util.ArrayList;
@@ -83,5 +84,15 @@ public class BoltUtils {
 
         // 通过过期时间判断 过期时间大于0则有返回结果
         return bizCtx.getClientTimeout() > 0;
+    }
+
+    /**
+     * 获取 Remote 异常的 cause
+     */
+    public static Throwable unwrapRemoteException(Throwable e) {
+        if (e instanceof RemotingException && e.getCause() != null) {
+            return unwrapRemoteException(e.getCause());
+        }
+        return e;
     }
 }

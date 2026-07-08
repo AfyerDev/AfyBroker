@@ -15,6 +15,8 @@ import net.afyer.afybroker.server.proxy.BrokerClientItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static net.afyer.afybroker.core.util.BoltUtils.unwrapRemoteException;
+
 /**
  * 服务器端RPC调用处理器
  *
@@ -76,7 +78,7 @@ public class RpcInvocationBrokerProcessor extends AsyncUserProcessor<RpcInvocati
             record(request, startNanos, false);
             LOGGER.error("Failed to handle RPC invocation: {}.{}",
                     request.getServiceInterface(), request.getMethodName(), e);
-            asyncCtx.sendException(e);
+            asyncCtx.sendException(unwrapRemoteException(e));
         }
     }
 
@@ -95,10 +97,5 @@ public class RpcInvocationBrokerProcessor extends AsyncUserProcessor<RpcInvocati
         ));
     }
 
-    private Throwable unwrapRemoteException(Throwable e) {
-        if (e instanceof RemotingException && e.getCause() != null) {
-            return unwrapRemoteException(e.getCause());
-        }
-        return e;
-    }
+
 }

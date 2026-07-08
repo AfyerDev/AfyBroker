@@ -92,7 +92,6 @@ public class BrokerServiceProxyFactory {
                 success = true;
                 return serializer.deserialize(result, Object.class.getName());
             } catch (Exception e) {
-                LOGGER.error("RPC invocation failed: {}.{}", serviceInterface, method.getName(), e);
                 throw new InvokeException("RPC invocation failed: " + serviceInterface + "." + method.getName(), e);
             } finally {
                 brokerClient.getObservability().onRpc(new RpcObservation(

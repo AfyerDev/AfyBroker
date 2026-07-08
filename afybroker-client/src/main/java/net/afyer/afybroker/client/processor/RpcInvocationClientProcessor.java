@@ -55,7 +55,7 @@ public class RpcInvocationClientProcessor extends AsyncUserProcessor<RpcInvocati
             success = true;
             asyncCtx.sendResponse(response);
         } catch (Throwable e) {
-            LOGGER.error("RPC invocation failed: {}.{}", request.getServiceInterface(), request.getMethodName(), e);
+            LOGGER.error("Handling RPC invocation failed: {}.{}", request.getServiceInterface(), request.getMethodName(), e);
             asyncCtx.sendException(e);
         } finally {
             brokerClient.getObservability().onRpc(new RpcObservation(
