@@ -2,8 +2,8 @@ package net.afyer.afybroker.server.processor;
 
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
+import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.exception.InvokeException;
-import com.alipay.remoting.rpc.exception.InvokeServerException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import net.afyer.afybroker.core.message.RpcInvocationMessage;
 import net.afyer.afybroker.core.observability.RpcObservation;
@@ -96,10 +96,9 @@ public class RpcInvocationBrokerProcessor extends AsyncUserProcessor<RpcInvocati
     }
 
     private Throwable unwrapRemoteException(Throwable e) {
-        Throwable current = e;
-        while (current instanceof InvokeServerException && current.getCause() != null) {
-            current = current.getCause();
+        if (e instanceof RemotingException && e.getCause() != null) {
+            return unwrapRemoteException(e.getCause());
         }
-        return current;
+        return e;
     }
 }

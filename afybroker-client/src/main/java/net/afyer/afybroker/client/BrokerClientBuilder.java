@@ -25,6 +25,7 @@ import net.afyer.afybroker.core.util.ConnectionEventTypeProcessor;
 import java.util.*;
 
 import static net.afyer.afybroker.core.BrokerGlobalConfig.ENV_CLIENT_TAG;
+import static net.afyer.afybroker.core.util.BoltUtils.checkInterest;
 
 /**
  * @author Nipuru
@@ -255,6 +256,7 @@ public class BrokerClientBuilder {
      */
     public BrokerClientBuilder registerUserProcessor(UserProcessor<?> processor) {
         Objects.requireNonNull(processor);
+        checkInterest(processor);
         this.processorList.add(processor);
         return this;
     }

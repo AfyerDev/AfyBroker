@@ -35,6 +35,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static net.afyer.afybroker.core.util.BoltUtils.checkInterest;
+
 /**
  * @author Nipuru
  * @since 2022/7/29 20:13
@@ -172,6 +174,7 @@ public class BrokerServer implements Attributable {
 
     public void registerUserProcessor(UserProcessor<?> processor) {
         aware(processor);
+        checkInterest(processor);
         rpcServer.registerUserProcessor(processor);
     }
 

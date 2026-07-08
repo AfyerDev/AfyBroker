@@ -23,7 +23,7 @@ public class BoltUtils {
             ProtocolCode.fromBytes(RpcProtocolV2.PROTOCOL_CODE)
     };
 
-    public static void loadMessageClass(UserProcessor<?> userProcessor) {
+    public static void checkInterest(UserProcessor<?> userProcessor) {
         List<String> messageClassNameList = new ArrayList<>();
         if (userProcessor instanceof MultiInterestUserProcessor) {
             MultiInterestUserProcessor<?> multiInterestUserProcessor = (MultiInterestUserProcessor<?>) userProcessor;
@@ -33,9 +33,9 @@ public class BoltUtils {
         }
         for (String messageClassName : messageClassNameList) {
             try {
-                Class.forName(messageClassName);
+                Class.forName(messageClassName, false, userProcessor.getClass().getClassLoader());
             } catch (ClassNotFoundException e) {
-                String message = String.format("Message class [%s] not found from processor [%s]", messageClassName, userProcessor.getClass().getName());
+                String message = String.format("Interest class [%s] not found from processor [%s]", messageClassName, userProcessor.getClass().getName());
                 throw new IllegalArgumentException(message, e);
             }
         }
