@@ -2,7 +2,6 @@ package net.afyer.afybroker.server.processor;
 
 import com.alipay.remoting.AsyncContext;
 import com.alipay.remoting.BizContext;
-import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.exception.InvokeException;
 import com.alipay.remoting.rpc.protocol.AsyncUserProcessor;
 import net.afyer.afybroker.core.message.RpcInvocationMessage;

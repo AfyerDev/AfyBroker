@@ -5,6 +5,7 @@ import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.interceptor.Interceptor;
 import net.afyer.afybroker.core.observability.*;
 import net.afyer.afybroker.server.processor.*;
 import net.afyer.afybroker.server.processor.connection.CloseEventBrokerProcessor;
@@ -48,6 +49,8 @@ public class BrokerServerBuilder {
      */
     private final List<Observability> observabilityList = new ArrayList<>();
 
+    private final List<Interceptor> interceptorList = new ArrayList<>();
+
     BrokerServerBuilder() {
         applyEnvironmentOverrides();
 
@@ -86,6 +89,7 @@ public class BrokerServerBuilder {
         BrokerServer brokerServer = new BrokerServer();
         brokerServer.setHost(host);
         brokerServer.setPort(port);
+        brokerServer.setInterceptors(Collections.unmodifiableList(new ArrayList<>(interceptorList)));
         brokerServer.setObservability(CompositeObservability.of(
                 observabilityList.toArray(new Observability[0])));
         brokerServer.initServer();
@@ -143,6 +147,17 @@ public class BrokerServerBuilder {
 
     public BrokerServerBuilder clearObservability() {
         this.observabilityList.clear();
+        return this;
+    }
+
+    public BrokerServerBuilder registerInterceptor(Interceptor interceptor) {
+        Objects.requireNonNull(interceptor);
+        this.interceptorList.add(interceptor);
+        return this;
+    }
+
+    public BrokerServerBuilder clearInterceptors() {
+        this.interceptorList.clear();
         return this;
     }
 

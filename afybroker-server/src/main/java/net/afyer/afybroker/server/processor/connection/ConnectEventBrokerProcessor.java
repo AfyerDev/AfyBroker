@@ -75,7 +75,8 @@ public class ConnectEventBrokerProcessor implements ConnectionEventProcessor, Br
                 BrokerClientInfoMessage clientInfoMessage = cast(result);
                 clientInfoMessage.setAddress(remoteAddress);
 
-                BrokerClientItem client = new BrokerClientItem(clientInfoMessage, brokerServer.getRpcServer());
+                BrokerClientItem client = new BrokerClientItem(clientInfoMessage,
+                        brokerServer.getRpcServer(), brokerServer.getInterceptors());
                 brokerServer.getClientManager().register(client);
 
                 ClientRegisterEvent event = new ClientRegisterEvent(clientInfoMessage, client);

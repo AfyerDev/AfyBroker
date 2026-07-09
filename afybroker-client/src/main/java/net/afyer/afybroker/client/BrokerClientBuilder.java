@@ -6,7 +6,6 @@ import com.alipay.remoting.config.BoltClientOption;
 import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
-import net.afyer.afybroker.client.preprocessor.BrokerPreprocessor;
 import net.afyer.afybroker.client.processor.RequestBrokerClientInfoClientProcessor;
 import net.afyer.afybroker.client.processor.RpcInvocationClientProcessor;
 import net.afyer.afybroker.client.processor.connection.CloseEventClientProcessor;
@@ -18,6 +17,7 @@ import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.interceptor.Interceptor;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.observability.*;
 import net.afyer.afybroker.core.util.ConnectionEventTypeProcessor;
@@ -83,10 +83,7 @@ public class BrokerClientBuilder {
      */
     private final Map<String, BrokerServiceEntry> serviceMap = new HashMap<>();
 
-    /**
-     * 预处理函数列表
-     */
-    private final List<BrokerPreprocessor> preprocessorList = new ArrayList<>();
+    private final List<Interceptor> interceptorList = new ArrayList<>();
 
     /**
      * 指标收集器列表
@@ -181,7 +178,7 @@ public class BrokerClientBuilder {
         brokerClient.setRpcClient(rpcClient);
         brokerClient.setServiceRegistry(serviceRegistry);
         brokerClient.setDefaultTimeoutMillis(defaultTimeoutMillis);
-        brokerClient.setPreprocessors(preprocessorList);
+        brokerClient.setInterceptors(Collections.unmodifiableList(new ArrayList<>(interceptorList)));
         brokerClient.setObservability(CompositeObservability.of(
                 observabilityList.toArray(new Observability[0])));
 
@@ -358,26 +355,14 @@ public class BrokerClientBuilder {
         return this;
     }
 
-    /**
-     * 注册预处理函数
-     * 在每次远程调用前执行，用于安全检查、权限验证等
-     *
-     * @param preprocessor 预处理函数
-     * @return this
-     */
-    public BrokerClientBuilder registerPreprocessor(BrokerPreprocessor preprocessor) {
-        Objects.requireNonNull(preprocessor);
-        this.preprocessorList.add(preprocessor);
+    public BrokerClientBuilder registerInterceptor(Interceptor interceptor) {
+        Objects.requireNonNull(interceptor);
+        this.interceptorList.add(interceptor);
         return this;
     }
 
-    /**
-     * 清除所有预处理函数
-     *
-     * @return this
-     */
-    public BrokerClientBuilder clearPreprocessors() {
-        this.preprocessorList.clear();
+    public BrokerClientBuilder clearInterceptors() {
+        this.interceptorList.clear();
         return this;
     }
 

@@ -8,6 +8,7 @@ import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.alipay.remoting.serialization.SerializerManager;
 import net.afyer.afybroker.core.Attributable;
 import net.afyer.afybroker.core.AttributeContainer;
+import net.afyer.afybroker.core.interceptor.Interceptor;
 import net.afyer.afybroker.core.observability.Observability;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import net.afyer.afybroker.server.aware.BrokerServerAware;
@@ -62,6 +63,7 @@ public class BrokerServer implements Attributable {
      */
     private boolean start;
     private Observability observability = Observability.NOOP;
+    private List<Interceptor> interceptors = Collections.emptyList();
     private final Terminal terminal;
     private final LineReader consoleReader;
     private final PluginManager pluginManager;
@@ -128,6 +130,10 @@ public class BrokerServer implements Attributable {
         this.observability = observability;
     }
 
+    void setInterceptors(List<Interceptor> interceptors) {
+        this.interceptors = interceptors == null ? Collections.emptyList() : interceptors;
+    }
+
     public RpcServer getRpcServer() {
         return rpcServer;
     }
@@ -170,6 +176,10 @@ public class BrokerServer implements Attributable {
 
     public Observability getObservability() {
         return observability;
+    }
+
+    public List<Interceptor> getInterceptors() {
+        return interceptors;
     }
 
     public void registerUserProcessor(UserProcessor<?> processor) {

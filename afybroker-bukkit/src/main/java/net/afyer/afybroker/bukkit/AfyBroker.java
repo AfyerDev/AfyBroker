@@ -2,8 +2,8 @@ package net.afyer.afybroker.bukkit;
 
 import com.alipay.remoting.LifeCycleException;
 import com.alipay.remoting.exception.RemotingException;
+import net.afyer.afybroker.bukkit.interceptor.BukkitServerThreadInterceptor;
 import net.afyer.afybroker.bukkit.listener.PlayerListener;
-import net.afyer.afybroker.bukkit.preprocessor.BukkitServerThreadPreprocessor;
 import net.afyer.afybroker.bukkit.processor.BroadcastChatBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.RequestPlayerInfoBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.SendPlayerChatBukkitProcessor;
@@ -62,7 +62,7 @@ public class AfyBroker extends JavaPlugin {
                     .registerUserProcessor(new SendPlayerTitleBukkitProcessor())
                     .registerUserProcessor(new RequestPlayerInfoBukkitProcessor())
                     .registerUserProcessor(new CloseBrokerClientProcessor(Bukkit::shutdown))
-                    .registerPreprocessor(new BukkitServerThreadPreprocessor(
+                    .registerInterceptor(new BukkitServerThreadInterceptor(
                             getConfig().getBoolean("server.thread-check", true)));
             ConfigurationSection metadata = getConfig().getConfigurationSection("metadata");
             if (metadata != null) {

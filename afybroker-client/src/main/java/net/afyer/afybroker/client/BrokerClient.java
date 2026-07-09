@@ -9,18 +9,17 @@ import com.alipay.remoting.rpc.RpcResponseFuture;
 import com.alipay.remoting.serialization.Serializer;
 import com.alipay.remoting.serialization.SerializerManager;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
-import net.afyer.afybroker.client.preprocessor.BrokerInvocationContext;
-import net.afyer.afybroker.client.preprocessor.BrokerPreprocessor;
-import net.afyer.afybroker.client.preprocessor.PreprocessorException;
 import net.afyer.afybroker.client.service.BrokerServiceProxyFactory;
 import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
+import net.afyer.afybroker.core.interceptor.*;
 import net.afyer.afybroker.core.message.AttributeMessage;
 import net.afyer.afybroker.core.observability.Observability;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -55,10 +54,7 @@ public class BrokerClient {
      */
     private final BrokerServiceProxyFactory serviceProxyFactory;
 
-    /**
-     * 预处理函数列表
-     */
-    private List<BrokerPreprocessor> preprocessors;
+    private List<Interceptor> interceptors = Collections.emptyList();
     /**
      * 指标收集器
      */
@@ -84,8 +80,8 @@ public class BrokerClient {
         this.serviceRegistry = serviceRegistry;
     }
 
-    void setPreprocessors(List<BrokerPreprocessor> preprocessors) {
-        this.preprocessors = preprocessors;
+    void setInterceptors(List<Interceptor> interceptors) {
+        this.interceptors = interceptors == null ? Collections.emptyList() : interceptors;
     }
 
     void setObservability(Observability observability) {
@@ -106,10 +102,6 @@ public class BrokerClient {
 
     public BrokerServiceProxyFactory getServiceProxyFactory() {
         return serviceProxyFactory;
-    }
-
-    public List<BrokerPreprocessor> getPreprocessors() {
-        return preprocessors;
     }
 
     public Observability getObservability() {
@@ -142,13 +134,25 @@ public class BrokerClient {
 
     @SuppressWarnings("unchecked")
     public <T> T invokeSync(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
-        executePreprocessors(request, "invokeSync", timeoutMillis);
-        return (T) rpcClient.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
+        InvocationContext context = newInvocationContext(request, InvocationType.SYNC, timeoutMillis);
+        return (T) invokeWithInterceptors(context, new Invoker() {
+            @Override
+            public Object invoke(InvocationContext invocationContext) throws Throwable {
+                return rpcClient.invokeSync(invocationContext.getAddress(),
+                        invocationContext.getRequest(), invocationContext.getTimeoutMillis());
+            }
+        });
     }
 
     public void oneway(Object request) throws RemotingException, InterruptedException {
-        executePreprocessors(request, "oneway", 0);
-        rpcClient.oneway(clientInfo.getAddress(), request);
+        InvocationContext context = newInvocationContext(request, InvocationType.ONEWAY, 0);
+        invokeWithInterceptors(context, new Invoker() {
+            @Override
+            public Object invoke(InvocationContext invocationContext) throws Throwable {
+                rpcClient.oneway(invocationContext.getAddress(), invocationContext.getRequest());
+                return null;
+            }
+        });
     }
 
     public void invokeWithCallback(Object request, InvokeCallback invokeCallback) throws RemotingException, InterruptedException {
@@ -156,8 +160,16 @@ public class BrokerClient {
     }
 
     public void invokeWithCallback(Object request, InvokeCallback invokeCallback, int timeoutMillis) throws RemotingException, InterruptedException {
-        executePreprocessors(request, "invokeWithCallback", timeoutMillis);
-        rpcClient.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
+        InvocationContext context = newInvocationContext(request, InvocationType.CALLBACK, timeoutMillis)
+                .setCallback(invokeCallback);
+        invokeWithInterceptors(context, new Invoker() {
+            @Override
+            public Object invoke(InvocationContext invocationContext) throws Throwable {
+                rpcClient.invokeWithCallback(invocationContext.getAddress(), invocationContext.getRequest(),
+                        (InvokeCallback) invocationContext.getCallback(), invocationContext.getTimeoutMillis());
+                return null;
+            }
+        });
     }
 
     public RpcResponseFuture invokeWithFuture(Object request) throws RemotingException, InterruptedException {
@@ -165,8 +177,13 @@ public class BrokerClient {
     }
 
     public RpcResponseFuture invokeWithFuture(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
-        executePreprocessors(request, "invokeWithFuture", timeoutMillis);
-        return rpcClient.invokeWithFuture(clientInfo.getAddress(), request, timeoutMillis);
+        InvocationContext context = newInvocationContext(request, InvocationType.FUTURE, timeoutMillis);
+        return (RpcResponseFuture) invokeWithInterceptors(context, new Invoker() {
+            @Override
+            public Object invoke(InvocationContext invocationContext) throws Throwable {
+                return rpcClient.invokeWithFuture(invocationContext.getAddress(), invocationContext.getRequest(), invocationContext.getTimeoutMillis());
+            }
+        });
     }
 
     public void startup() throws LifeCycleException {
@@ -197,30 +214,26 @@ public class BrokerClient {
         return serviceProxyFactory.createProxy(serviceInterface, new HashSet<>(Arrays.asList(tags)));
     }
 
-    /**
-     * 为直接调用方法执行预处理函数
-     *
-     * @param request    请求对象
-     * @param methodName 方法名称（用于日志）
-     */
-    private void executePreprocessors(Object request, String methodName, int timeoutMillis) throws PreprocessorException {
-        if (preprocessors != null && !preprocessors.isEmpty()) {
-            // 创建通用的调用上下文
-            BrokerInvocationContext context = new BrokerInvocationContext(
-                    request.getClass().getName(),
-                    methodName,
-                    timeoutMillis,
-                    Thread.currentThread()
-            );
-
-            for (BrokerPreprocessor preprocessor : preprocessors) {
-                preprocessor.preprocess(context);
-            }
-        }
-    }
-
     public Serializer getSerializer() {
         return SerializerManager.getSerializer(ConfigManager.serializer());
+    }
+
+    private InvocationContext newInvocationContext(Object request, InvocationType mode, int timeoutMillis) {
+        return new InvocationContext(request, mode, clientInfo.getAddress(), timeoutMillis);
+    }
+
+    private Object invokeWithInterceptors(InvocationContext context, Invoker invoker)
+            throws RemotingException, InterruptedException {
+        try {
+            return InterceptorChain.invoke(interceptors, context, invoker);
+        } catch (RemotingException e) {
+            throw e;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw e;
+        } catch (Throwable throwable) {
+            throw new RemotingException(throwable.getMessage(), throwable);
+        }
     }
 
     /**

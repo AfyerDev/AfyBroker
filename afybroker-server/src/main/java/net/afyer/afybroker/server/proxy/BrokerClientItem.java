@@ -6,10 +6,13 @@ import com.alipay.remoting.rpc.RpcResponseFuture;
 import com.alipay.remoting.rpc.RpcServer;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
+import net.afyer.afybroker.core.interceptor.*;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.message.CloseBrokerClientMessage;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,14 +31,21 @@ public class BrokerClientItem {
 
     private final RpcServer rpcServer;
 
+    private final List<Interceptor> interceptors;
+
     /**
      * 默认消息发送超时时间
      */
     private final int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
 
     public BrokerClientItem(BrokerClientInfoMessage clientInfo, RpcServer rpcServer) {
+        this(clientInfo, rpcServer, Collections.emptyList());
+    }
+
+    public BrokerClientItem(BrokerClientInfoMessage clientInfo, RpcServer rpcServer, List<Interceptor> interceptors) {
         this.clientInfo = clientInfo.build();
         this.rpcServer = rpcServer;
+        this.interceptors = interceptors == null ? Collections.emptyList() : interceptors;
     }
 
     public BrokerClientInfo getClientInfo() {
@@ -97,11 +107,25 @@ public class BrokerClientItem {
 
     @SuppressWarnings("unchecked")
     public <T> T invokeSync(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
-        return (T) rpcServer.invokeSync(clientInfo.getAddress(), request, timeoutMillis);
+        InvocationContext context = newInvocationContext(request, InvocationType.SYNC, timeoutMillis);
+        return (T) invokeWithInterceptors(context, new Invoker() {
+            @Override
+            public Object invoke(InvocationContext invocationContext) throws Throwable {
+                return rpcServer.invokeSync(clientInfo.getAddress(),
+                        invocationContext.getRequest(), invocationContext.getTimeoutMillis());
+            }
+        });
     }
 
     public void oneway(Object request) throws RemotingException, InterruptedException {
-        rpcServer.oneway(clientInfo.getAddress(), request);
+        InvocationContext context = newInvocationContext(request, InvocationType.ONEWAY, 0);
+        invokeWithInterceptors(context, new Invoker() {
+            @Override
+            public Object invoke(InvocationContext invocationContext) throws Throwable {
+                rpcServer.oneway(invocationContext.getAddress(), invocationContext.getRequest());
+                return null;
+            }
+        });
     }
 
     public void invokeWithCallback(Object request, InvokeCallback invokeCallback) throws RemotingException, InterruptedException {
@@ -109,7 +133,16 @@ public class BrokerClientItem {
     }
 
     public void invokeWithCallback(Object request, InvokeCallback invokeCallback, int timeoutMillis) throws RemotingException, InterruptedException {
-        rpcServer.invokeWithCallback(clientInfo.getAddress(), request, invokeCallback, timeoutMillis);
+        InvocationContext context = newInvocationContext(request, InvocationType.CALLBACK, timeoutMillis)
+                .setCallback(invokeCallback);
+        invokeWithInterceptors(context, new Invoker() {
+            @Override
+            public Object invoke(InvocationContext invocationContext) throws Throwable {
+                rpcServer.invokeWithCallback(invocationContext.getAddress(), invocationContext.getRequest(),
+                        (InvokeCallback) invocationContext.getCallback(), invocationContext.getTimeoutMillis());
+                return null;
+            }
+        });
     }
 
     public RpcResponseFuture invokeWithFuture(Object request) throws RemotingException, InterruptedException {
@@ -117,10 +150,32 @@ public class BrokerClientItem {
     }
 
     public RpcResponseFuture invokeWithFuture(Object request, int timeoutMillis) throws RemotingException, InterruptedException {
-        return rpcServer.invokeWithFuture(clientInfo.getAddress(), request, timeoutMillis);
+        InvocationContext context = newInvocationContext(request, InvocationType.FUTURE, timeoutMillis);
+        return (RpcResponseFuture) invokeWithInterceptors(context, new Invoker() {
+            @Override
+            public Object invoke(InvocationContext invocationContext) throws Throwable {
+                return rpcServer.invokeWithFuture(invocationContext.getAddress(),
+                        invocationContext.getRequest(), invocationContext.getTimeoutMillis());
+            }
+        });
     }
 
     public void shutdown() throws Exception {
         this.oneway(new CloseBrokerClientMessage());
+    }
+
+    private InvocationContext newInvocationContext(Object request, InvocationType mode, int timeoutMillis) {
+        return new InvocationContext(request, mode, clientInfo.getAddress(), timeoutMillis);
+    }
+
+    private Object invokeWithInterceptors(InvocationContext context, Invoker invoker)
+            throws RemotingException, InterruptedException {
+        try {
+            return InterceptorChain.invoke(interceptors, context, invoker);
+        } catch (RemotingException | InterruptedException e) {
+            throw e;
+        } catch (Throwable throwable) {
+            throw new RemotingException(throwable.getMessage(), throwable);
+        }
     }
 }
