@@ -12,7 +12,6 @@ public class InvocationContext {
     private Throwable throwable;
     private Object callback;
     private int timeoutMillis;
-    private String targetName;
     private String address;
     private final InvocationType type;
     private final Thread thread;

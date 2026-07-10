@@ -9,6 +9,7 @@ import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.interceptor.*;
 import net.afyer.afybroker.core.message.BrokerClientInfoMessage;
 import net.afyer.afybroker.core.message.CloseBrokerClientMessage;
+import net.afyer.afybroker.core.util.ThrowableUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -168,14 +169,11 @@ public class BrokerClientItem {
         return new InvocationContext(request, mode, clientInfo.getAddress(), timeoutMillis);
     }
 
-    private Object invokeWithInterceptors(InvocationContext context, Invoker invoker)
-            throws RemotingException, InterruptedException {
+    private Object invokeWithInterceptors(InvocationContext context, Invoker invoker) {
         try {
             return InterceptorChain.invoke(interceptors, context, invoker);
-        } catch (RemotingException | InterruptedException e) {
-            throw e;
         } catch (Throwable throwable) {
-            throw new RemotingException(throwable.getMessage(), throwable);
+            return ThrowableUtils.throwUnchecked(throwable);
         }
     }
 }

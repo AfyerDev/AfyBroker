@@ -16,6 +16,7 @@ import net.afyer.afybroker.core.interceptor.*;
 import net.afyer.afybroker.core.message.AttributeMessage;
 import net.afyer.afybroker.core.observability.Observability;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
+import net.afyer.afybroker.core.util.ThrowableUtils;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
@@ -180,7 +181,7 @@ public class BrokerClient {
         InvocationContext context = newInvocationContext(request, InvocationType.FUTURE, timeoutMillis);
         return (RpcResponseFuture) invokeWithInterceptors(context, new Invoker() {
             @Override
-            public Object invoke(InvocationContext invocationContext) throws Throwable {
+            public Object invoke(InvocationContext invocationContext) throws RemotingException, InterruptedException {
                 return rpcClient.invokeWithFuture(invocationContext.getAddress(), invocationContext.getRequest(), invocationContext.getTimeoutMillis());
             }
         });
@@ -222,17 +223,11 @@ public class BrokerClient {
         return new InvocationContext(request, mode, clientInfo.getAddress(), timeoutMillis);
     }
 
-    private Object invokeWithInterceptors(InvocationContext context, Invoker invoker)
-            throws RemotingException, InterruptedException {
+    private Object invokeWithInterceptors(InvocationContext context, Invoker invoker) {
         try {
             return InterceptorChain.invoke(interceptors, context, invoker);
-        } catch (RemotingException e) {
-            throw e;
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw e;
         } catch (Throwable throwable) {
-            throw new RemotingException(throwable.getMessage(), throwable);
+            return ThrowableUtils.throwUnchecked(throwable);
         }
     }
 
