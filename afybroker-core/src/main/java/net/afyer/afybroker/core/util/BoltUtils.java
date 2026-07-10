@@ -28,7 +28,7 @@ public class BoltUtils {
         List<String> messageClassNameList = new ArrayList<>();
         if (userProcessor instanceof MultiInterestUserProcessor) {
             MultiInterestUserProcessor<?> multiInterestUserProcessor = (MultiInterestUserProcessor<?>) userProcessor;
-            messageClassNameList.add(multiInterestUserProcessor.interest());
+            messageClassNameList.addAll(multiInterestUserProcessor.multiInterest());
         } else {
             messageClassNameList.add(userProcessor.interest());
         }
