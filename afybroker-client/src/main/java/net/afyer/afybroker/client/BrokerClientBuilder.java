@@ -76,7 +76,7 @@ public class BrokerClientBuilder {
     /**
      * bolt 连接器
      */
-    private final Map<ConnectionEventType, ConnectionEventProcessor> connectionEventProcessorMap = new HashMap<>();
+    private final List<ConnectionEventTypeProcessor> connectionEventTypeProcessorList = new ArrayList<>();
 
     /**
      * 服务注册表
@@ -184,8 +184,8 @@ public class BrokerClientBuilder {
 
         processorList.forEach(brokerClient::aware);
         processorList.forEach(rpcClient::registerUserProcessor);
-        connectionEventProcessorMap.forEach(rpcClient::addConnectionEventProcessor);
-        connectionEventProcessorMap.values().forEach(brokerClient::aware);
+        connectionEventTypeProcessorList.forEach(brokerClient::aware);
+        connectionEventTypeProcessorList.forEach(processor -> rpcClient.addConnectionEventProcessor(processor.getType(), processor));
 
         return brokerClient;
     }
@@ -268,8 +268,7 @@ public class BrokerClientBuilder {
     public BrokerClientBuilder addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {
         Objects.requireNonNull(type);
         Objects.requireNonNull(processor);
-        this.connectionEventProcessorMap.put(type, processor);
-        return this;
+        return this.addConnectionEventProcessor(ConnectionEventTypeProcessor.wrap(type, processor));
     }
 
     /**
@@ -280,7 +279,7 @@ public class BrokerClientBuilder {
      */
     public BrokerClientBuilder addConnectionEventProcessor(ConnectionEventTypeProcessor processor) {
         Objects.requireNonNull(processor);
-        this.addConnectionEventProcessor(processor.getType(), processor);
+        this.connectionEventTypeProcessorList.add(processor);
         return this;
     }
 
@@ -291,7 +290,7 @@ public class BrokerClientBuilder {
      */
     public BrokerClientBuilder clearProcessors() {
         this.processorList.clear();
-        this.connectionEventProcessorMap.clear();
+        this.connectionEventTypeProcessorList.clear();
         return this;
     }
 

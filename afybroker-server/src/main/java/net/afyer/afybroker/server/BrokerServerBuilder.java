@@ -7,6 +7,7 @@ import com.alipay.remoting.rpc.protocol.UserProcessor;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.interceptor.Interceptor;
 import net.afyer.afybroker.core.observability.*;
+import net.afyer.afybroker.core.util.ConnectionEventTypeProcessor;
 import net.afyer.afybroker.server.processor.*;
 import net.afyer.afybroker.server.processor.connection.CloseEventBrokerProcessor;
 import net.afyer.afybroker.server.processor.connection.ConnectEventBrokerProcessor;
@@ -42,7 +43,7 @@ public class BrokerServerBuilder {
     /**
      * bolt 连接器
      */
-    private final Map<ConnectionEventType, ConnectionEventProcessor> connectionEventProcessorMap = new HashMap<>();
+    private final List<ConnectionEventTypeProcessor> connectionEventTypeProcessorList = new ArrayList<>();
 
     /**
      * 指标收集器
@@ -95,7 +96,7 @@ public class BrokerServerBuilder {
         brokerServer.initServer();
 
         processorList.forEach(brokerServer::registerUserProcessor);
-        connectionEventProcessorMap.forEach(brokerServer::addConnectionEventProcessor);
+        connectionEventTypeProcessorList.forEach(processor -> brokerServer.addConnectionEventProcessor(processor.getType(), processor));
 
         return brokerServer;
     }
@@ -122,7 +123,18 @@ public class BrokerServerBuilder {
     public BrokerServerBuilder addConnectionEventProcessor(ConnectionEventType type, ConnectionEventProcessor processor) {
         Objects.requireNonNull(type);
         Objects.requireNonNull(processor);
-        this.connectionEventProcessorMap.put(type, processor);
+        return this.addConnectionEventProcessor(ConnectionEventTypeProcessor.wrap(type, processor));
+    }
+
+    /**
+     * 注册连接器
+     *
+     * @param processor processor
+     * @return this
+     */
+    public BrokerServerBuilder addConnectionEventProcessor(ConnectionEventTypeProcessor processor) {
+        Objects.requireNonNull(processor);
+        this.connectionEventTypeProcessorList.add(processor);
         return this;
     }
 
@@ -133,7 +145,7 @@ public class BrokerServerBuilder {
      */
     public BrokerServerBuilder clearProcessors() {
         this.processorList.clear();
-        this.connectionEventProcessorMap.clear();
+        this.connectionEventTypeProcessorList.clear();
         return this;
     }
 
