@@ -23,6 +23,11 @@ public class PlayerProxyConnectMessage implements Serializable {
      */
     private String name;
 
+    /**
+     * 初始连接的 bukkit 服务器名
+     */
+    private String serverName;
+
     public UUID getUniqueId() {
         return uniqueId;
     }
@@ -41,11 +46,21 @@ public class PlayerProxyConnectMessage implements Serializable {
         return this;
     }
 
+    public String getServerName() {
+        return serverName;
+    }
+
+    public PlayerProxyConnectMessage setServerName(String serverName) {
+        this.serverName = serverName;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "PlayerProxyConnectMessage{" +
                 "uniqueId=" + uniqueId +
                 ", name='" + name + '\'' +
+                ", serverName='" + serverName + '\'' +
                 '}';
     }
 }

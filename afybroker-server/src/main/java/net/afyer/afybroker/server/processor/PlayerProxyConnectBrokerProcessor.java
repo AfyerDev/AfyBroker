@@ -4,6 +4,7 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.message.PlayerProxyConnectMessage;
+import net.afyer.afybroker.core.message.PlayerProxyConnectResult;
 import net.afyer.afybroker.core.observability.PlayerEventType;
 import net.afyer.afybroker.core.observability.PlayerObservation;
 import net.afyer.afybroker.server.BrokerServer;
@@ -34,11 +35,8 @@ public class PlayerProxyConnectBrokerProcessor extends SyncUserProcessor<PlayerP
     @Override
     public Object handleRequest(BizContext bizCtx, PlayerProxyConnectMessage request) {
         BrokerClientItem playerBungee = brokerServer.getClient(bizCtx);
-        if (playerBungee == null) {
-            return false;
-        }
-        if (!Objects.equals(playerBungee.getType(), BrokerClientType.PROXY)) {
-            return false;
+        if (playerBungee == null || !Objects.equals(playerBungee.getType(), BrokerClientType.PROXY)) {
+            return new PlayerProxyConnectResult().setSuccess(false);
         }
 
         if (LOGGER.isDebugEnabled()) {
@@ -47,18 +45,26 @@ public class PlayerProxyConnectBrokerProcessor extends SyncUserProcessor<PlayerP
         }
 
         BrokerPlayer brokerPlayer = new BrokerPlayer(request.getUniqueId(), request.getName(), playerBungee);
-        return handlePlayerAdd(brokerServer, brokerPlayer);
+        return handlePlayerAdd(brokerServer, brokerPlayer, request.getServerName());
     }
 
     public static boolean handlePlayerAdd(BrokerServer brokerServer, BrokerPlayer brokerPlayer) {
+        return handlePlayerAdd(brokerServer, brokerPlayer, null).isSuccess();
+    }
+
+    private static PlayerProxyConnectResult handlePlayerAdd(BrokerServer brokerServer, BrokerPlayer brokerPlayer, String serverName) {
         BrokerPlayerManager playerManager = brokerServer.getPlayerManager();
         BrokerPlayer player = playerManager.addPlayer(brokerPlayer);
         boolean success = player == null;
         if (success) {
             brokerServer.getObservability().onPlayer(new PlayerObservation(PlayerEventType.JOIN, playerManager.size()));
-            brokerServer.getPluginManager().callEvent(new PlayerProxyLoginEvent(brokerPlayer));
+            PlayerProxyLoginEvent event = new PlayerProxyLoginEvent(brokerPlayer, serverName);
+            brokerServer.getPluginManager().callEvent(event);
+            serverName = event.getServerName();
         }
-        return success;
+        return new PlayerProxyConnectResult()
+                .setSuccess(success)
+                .setServerName(serverName);
     }
 
     @Override
