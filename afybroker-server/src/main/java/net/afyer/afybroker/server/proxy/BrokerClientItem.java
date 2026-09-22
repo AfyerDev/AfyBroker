@@ -1,6 +1,7 @@
 package net.afyer.afybroker.server.proxy;
 
 import com.alipay.remoting.InvokeCallback;
+import com.alipay.remoting.Connection;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcResponseFuture;
 import com.alipay.remoting.rpc.RpcServer;
@@ -31,6 +32,7 @@ public class BrokerClientItem {
     private final BrokerClientInfo clientInfo;
 
     private final RpcServer rpcServer;
+    private final Connection connection;
 
     private final List<Interceptor> interceptors;
 
@@ -39,14 +41,15 @@ public class BrokerClientItem {
      */
     private final int defaultTimeoutMillis = BrokerGlobalConfig.DEFAULT_TIMEOUT_MILLIS;
 
-    public BrokerClientItem(BrokerClientInfoMessage clientInfo, RpcServer rpcServer) {
-        this(clientInfo, rpcServer, Collections.emptyList());
-    }
-
-    public BrokerClientItem(BrokerClientInfoMessage clientInfo, RpcServer rpcServer, List<Interceptor> interceptors) {
+    public BrokerClientItem(BrokerClientInfoMessage clientInfo, Connection connection, RpcServer rpcServer, List<Interceptor> interceptors) {
+        this.connection = java.util.Objects.requireNonNull(connection, "connection");
         this.clientInfo = clientInfo.build();
         this.rpcServer = rpcServer;
         this.interceptors = interceptors == null ? Collections.emptyList() : interceptors;
+    }
+
+    public Connection getConnection() {
+        return connection;
     }
 
     public BrokerClientInfo getClientInfo() {
@@ -112,7 +115,7 @@ public class BrokerClientItem {
         return (T) invokeWithInterceptors(context, new Invoker() {
             @Override
             public Object invoke(InvocationContext invocationContext) throws Throwable {
-                return rpcServer.invokeSync(clientInfo.getAddress(),
+                return rpcServer.invokeSync(connection,
                         invocationContext.getRequest(), invocationContext.getTimeoutMillis());
             }
         });
@@ -123,7 +126,7 @@ public class BrokerClientItem {
         invokeWithInterceptors(context, new Invoker() {
             @Override
             public Object invoke(InvocationContext invocationContext) throws Throwable {
-                rpcServer.oneway(invocationContext.getAddress(), invocationContext.getRequest());
+                rpcServer.oneway(connection, invocationContext.getRequest());
                 return null;
             }
         });
@@ -139,7 +142,7 @@ public class BrokerClientItem {
         invokeWithInterceptors(context, new Invoker() {
             @Override
             public Object invoke(InvocationContext invocationContext) throws Throwable {
-                rpcServer.invokeWithCallback(invocationContext.getAddress(), invocationContext.getRequest(),
+                rpcServer.invokeWithCallback(connection, invocationContext.getRequest(),
                         (InvokeCallback) invocationContext.getCallback(), invocationContext.getTimeoutMillis());
                 return null;
             }
@@ -155,7 +158,7 @@ public class BrokerClientItem {
         return (RpcResponseFuture) invokeWithInterceptors(context, new Invoker() {
             @Override
             public Object invoke(InvocationContext invocationContext) throws Throwable {
-                return rpcServer.invokeWithFuture(invocationContext.getAddress(),
+                return rpcServer.invokeWithFuture(connection,
                         invocationContext.getRequest(), invocationContext.getTimeoutMillis());
             }
         });

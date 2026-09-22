@@ -10,6 +10,7 @@ import net.afyer.afybroker.bukkit.processor.SendPlayerChatBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.SendPlayerTitleBukkitProcessor;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
+import net.afyer.afybroker.client.exception.ClientRegistrationException;
 import net.afyer.afybroker.client.BrokerClientBuilder;
 import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
 import net.afyer.afybroker.client.util.PersistentUniqueIdUtils;
@@ -83,6 +84,8 @@ public class AfyBroker extends JavaPlugin {
         } catch (LifeCycleException e) {
             getLogger().log(Level.SEVERE, "Broker client startup failed!", e);
             Bukkit.shutdown();
+        } catch (ClientRegistrationException e) {
+            getLogger().log(Level.SEVERE, "Broker registration rejected; will retry after reconnect: " + e.getMessage());
         } catch (RemotingException | InterruptedException e) {
             getLogger().log(Level.SEVERE, "Ping to the broker server failed!", e);
         }

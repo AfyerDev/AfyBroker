@@ -1,7 +1,9 @@
 package net.afyer.afybroker.client;
 
 import com.alipay.remoting.InvokeCallback;
+import com.alipay.remoting.Connection;
 import com.alipay.remoting.LifeCycleException;
+import com.alipay.remoting.config.BoltClientOption;
 import com.alipay.remoting.config.ConfigManager;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
@@ -9,19 +11,25 @@ import com.alipay.remoting.rpc.RpcResponseFuture;
 import com.alipay.remoting.serialization.Serializer;
 import com.alipay.remoting.serialization.SerializerManager;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
+import net.afyer.afybroker.client.exception.ClientRegistrationException;
 import net.afyer.afybroker.client.service.BrokerServiceProxyFactory;
 import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.interceptor.*;
 import net.afyer.afybroker.core.message.AttributeMessage;
+import net.afyer.afybroker.core.message.BrokerClientRegistrationResult;
 import net.afyer.afybroker.core.observability.Observability;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import net.afyer.afybroker.core.util.ThrowableUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +38,9 @@ import java.util.UUID;
  * @since 2022/7/30 19:15
  */
 public class BrokerClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrokerClient.class);
+    private static final String REGISTRATION = BrokerClient.class.getName() + ".registration";
+
     /**
      * 客户端信息
      */
@@ -139,7 +150,7 @@ public class BrokerClient {
         return (T) invokeWithInterceptors(context, new Invoker() {
             @Override
             public Object invoke(InvocationContext invocationContext) throws Throwable {
-                return rpcClient.invokeSync(invocationContext.getAddress(),
+                return rpcClient.invokeSync(registeredConnection(invocationContext.getAddress()),
                         invocationContext.getRequest(), invocationContext.getTimeoutMillis());
             }
         });
@@ -150,7 +161,7 @@ public class BrokerClient {
         invokeWithInterceptors(context, new Invoker() {
             @Override
             public Object invoke(InvocationContext invocationContext) throws Throwable {
-                rpcClient.oneway(invocationContext.getAddress(), invocationContext.getRequest());
+                rpcClient.oneway(registeredConnection(invocationContext.getAddress()), invocationContext.getRequest());
                 return null;
             }
         });
@@ -166,7 +177,7 @@ public class BrokerClient {
         invokeWithInterceptors(context, new Invoker() {
             @Override
             public Object invoke(InvocationContext invocationContext) throws Throwable {
-                rpcClient.invokeWithCallback(invocationContext.getAddress(), invocationContext.getRequest(),
+                rpcClient.invokeWithCallback(registeredConnection(invocationContext.getAddress()), invocationContext.getRequest(),
                         (InvokeCallback) invocationContext.getCallback(), invocationContext.getTimeoutMillis());
                 return null;
             }
@@ -182,7 +193,7 @@ public class BrokerClient {
         return (RpcResponseFuture) invokeWithInterceptors(context, new Invoker() {
             @Override
             public Object invoke(InvocationContext invocationContext) throws RemotingException, InterruptedException {
-                return rpcClient.invokeWithFuture(invocationContext.getAddress(), invocationContext.getRequest(), invocationContext.getTimeoutMillis());
+                return rpcClient.invokeWithFuture(registeredConnection(invocationContext.getAddress()), invocationContext.getRequest(), invocationContext.getTimeoutMillis());
             }
         });
     }
@@ -191,14 +202,64 @@ public class BrokerClient {
         rpcClient.startup();
     }
 
-    public void shutdown() {
-        rpcClient.shutdown();
+    public synchronized void shutdown() {
+        if (rpcClient.isStarted()) {
+            rpcClient.option(BoltClientOption.CONN_RECONNECT_SWITCH, false);
+            rpcClient.option(BoltClientOption.CONN_MONITOR_SWITCH, false);
+            rpcClient.shutdown();
+        }
     }
 
+    /**
+     * 建立连接，并等待该连接的客户端名称及全部服务注册完成。
+     */
     public void ping() throws RemotingException, InterruptedException {
-        String address = clientInfo.getAddress();
+        registeredConnection(clientInfo.getAddress());
+    }
 
-        rpcClient.getConnection(address, defaultTimeoutMillis);
+    private Connection registeredConnection(String address) throws RemotingException, InterruptedException {
+        Connection connection = rpcClient.getConnection(address, defaultTimeoutMillis);
+        registerConnection(connection);
+        return connection;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void registerConnection(Connection connection) throws RemotingException, InterruptedException {
+        CompletableFuture<Void> created = new CompletableFuture<>();
+        CompletableFuture<Void> registration = (CompletableFuture<Void>) connection.setAttributeIfAbsent(REGISTRATION, created);
+        if (registration == null) {
+            registration = created;
+            try {
+                BrokerClientRegistrationResult response =
+                        (BrokerClientRegistrationResult) rpcClient.invokeSync(connection, clientInfo.toMessage(), defaultTimeoutMillis);
+                String error = response.getError();
+                if (error != null) {
+                    LOGGER.error("Broker registration rejected: {}", error);
+                    throw new ClientRegistrationException(error);
+                } else {
+                    registration.complete(null);
+                }
+            } catch (Throwable e) {
+                registration.completeExceptionally(e);
+                connection.close();
+                if (e instanceof InterruptedException) Thread.currentThread().interrupt();
+            }
+        }
+        try {
+            registration.get(defaultTimeoutMillis, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof RemotingException) throw (RemotingException) cause;
+            if (cause instanceof InterruptedException) throw (InterruptedException) cause;
+            if (cause instanceof Error) throw (Error) cause;
+            throw new RemotingException("Client registration failed", cause);
+        } catch (TimeoutException e) {
+            connection.close();
+            throw new RemotingException("Client registration timed out", e);
+        } catch (InterruptedException e) {
+            connection.close();
+            throw e;
+        }
     }
 
     public void aware(Object object) {
@@ -211,8 +272,8 @@ public class BrokerClient {
         return serviceProxyFactory.createProxy(serviceInterface);
     }
 
-    public <T> T getService(Class<T> serviceInterface, String... tags) {
-        return serviceProxyFactory.createProxy(serviceInterface, new HashSet<>(Arrays.asList(tags)));
+    public <T> T getService(Class<T> serviceInterface, String tag) {
+        return serviceProxyFactory.createProxy(serviceInterface, tag);
     }
 
     public Serializer getSerializer() {

@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Collections;
-import java.util.Set;
+import net.afyer.afybroker.core.BrokerServiceKey;
+import java.util.Objects;
 
 /**
  * 服务代理工厂
@@ -35,18 +35,21 @@ public class BrokerServiceProxyFactory {
      * 创建服务代理
      */
     public <T> T createProxy(Class<T> serviceInterface) {
-        return createProxy(serviceInterface, Collections.emptySet());
+        return createProxy(serviceInterface, null);
     }
 
     /**
      * 创建服务代理（带标签选择）
      */
     @SuppressWarnings("unchecked")
-    public <T> T createProxy(Class<T> serviceInterface, Set<String> tags) {
+    public <T> T createProxy(Class<T> serviceInterface, String tag) {
+        Objects.requireNonNull(serviceInterface, "serviceInterface");
+        if (!serviceInterface.isInterface()) throw new IllegalArgumentException("Service type must be an interface");
+        new BrokerServiceKey(serviceInterface.getName(), tag);
         return (T) Proxy.newProxyInstance(
                 serviceInterface.getClassLoader(),
                 new Class[]{serviceInterface},
-                new ServiceInvocationHandler(brokerClient, serviceInterface.getName(), tags)
+                new ServiceInvocationHandler(brokerClient, serviceInterface.getName(), tag)
         );
     }
 
@@ -56,12 +59,12 @@ public class BrokerServiceProxyFactory {
     private static class ServiceInvocationHandler implements InvocationHandler {
         private final BrokerClient brokerClient;
         private final String serviceInterface;
-        private final Set<String> serviceTags;
+        private final String serviceTag;
 
-        public ServiceInvocationHandler(BrokerClient brokerClient, String serviceInterface, Set<String> serviceTags) {
+        public ServiceInvocationHandler(BrokerClient brokerClient, String serviceInterface, String serviceTag) {
             this.brokerClient = brokerClient;
             this.serviceInterface = serviceInterface;
-            this.serviceTags = serviceTags;
+            this.serviceTag = serviceTag;
         }
 
         @Override
@@ -80,7 +83,7 @@ public class BrokerServiceProxyFactory {
                     .setMethodName(method.getName())
                     .setParameterTypes(getParameterTypeNames(method.getParameterTypes()))
                     .setParameters(parameters)
-                    .setServiceTags(serviceTags);
+                    .setServiceTag(serviceTag);
 
             long startNanos = System.nanoTime();
             boolean success = false;

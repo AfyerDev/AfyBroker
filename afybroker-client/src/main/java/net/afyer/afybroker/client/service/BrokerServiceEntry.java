@@ -12,13 +12,13 @@ import java.util.*;
 public class BrokerServiceEntry {
     private final Class<?> serviceInterface;
     private final Object serviceImpl;
-    private final Set<String> tags;
+    private final String tag;
     private final Map<MethodKey, Method> methodCache;
 
-    public BrokerServiceEntry(Class<?> serviceInterface, Object serviceImpl, Set<String> tags) {
+    public BrokerServiceEntry(Class<?> serviceInterface, Object serviceImpl, String tag) {
         this.serviceInterface = serviceInterface;
         this.serviceImpl = serviceImpl;
-        this.tags = tags;
+        this.tag = tag;
         this.methodCache = new HashMap<>();
 
         // 预先缓存所有方法
@@ -33,8 +33,8 @@ public class BrokerServiceEntry {
         return serviceImpl;
     }
 
-    public Set<String> getTags() {
-        return tags;
+    public String getTag() {
+        return tag;
     }
 
     public Map<MethodKey, Method> getMethodCache() {
@@ -49,7 +49,7 @@ public class BrokerServiceEntry {
     public BrokerServiceDescriptor getDescriptor() {
         return new BrokerServiceDescriptor()
                 .setServiceInterface(serviceInterface.getName())
-                .setTags(tags);
+                .setTag(tag);
     }
 
     private void cacheAllMethods() {

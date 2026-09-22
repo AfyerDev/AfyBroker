@@ -35,14 +35,14 @@ public class BukkitServerThreadInterceptor implements Interceptor {
             RpcInvocationMessage request = context.getRpcRequest();
             return String.format(
                     "Remote RPC blocked: cannot invoke remote service from Bukkit main thread. " +
-                            "Thread: %s (ID: %d), Mode: %s, Service: %s, Method: %s, ParameterTypes: %s, Tags: %s",
+                            "Thread: %s (ID: %d), Mode: %s, Service: %s, Method: %s, ParameterTypes: %s, Tag: %s",
                     context.getThread().getName(),
                     context.getThread().getId(),
                     context.getType(),
                     request.getServiceInterface(),
                     request.getMethodName(),
                     Arrays.toString(request.getParameterTypes()),
-                    request.getServiceTags()
+                    request.getServiceTag()
             );
         } else {
             return String.format(

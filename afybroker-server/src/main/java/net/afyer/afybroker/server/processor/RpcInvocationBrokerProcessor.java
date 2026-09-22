@@ -40,15 +40,14 @@ public class RpcInvocationBrokerProcessor extends AsyncUserProcessor<RpcInvocati
             LOGGER.debug("Handling RPC invocation: {}.{}", request.getServiceInterface(), request.getMethodName());
 
             // 根据服务接口和标签选择合适的服务提供者
-            BrokerClientItem serviceProvider = brokerServer.getServiceRegistry().selectServiceProvider(
+            BrokerClientItem serviceProvider = brokerServer.getServiceRegistry().getServiceProvider(
                     request.getServiceInterface(),
-                    request.getServiceTags(),
-                    brokerServer.getClientManager()
+                    request.getServiceTag()
             );
 
             if (serviceProvider == null) {
-                String errorMsg = String.format("No service provider found for: %s with tags: %s",
-                        request.getServiceInterface(), request.getServiceTags());
+                String errorMsg = String.format("No service provider found for: %s with tag: %s",
+                        request.getServiceInterface(), request.getServiceTag());
                 record(request, startNanos, false);
                 LOGGER.warn(errorMsg);
                 asyncCtx.sendException(new InvokeException(errorMsg));

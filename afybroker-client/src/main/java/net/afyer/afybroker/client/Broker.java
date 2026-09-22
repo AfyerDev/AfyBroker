@@ -162,8 +162,8 @@ public final class Broker {
     /**
      * 获取远程服务代理（带标签选择）
      */
-    public static <T> T getService(Class<T> serviceInterface, String... tags) {
-        return client.getService(serviceInterface, tags);
+    public static <T> T getService(Class<T> serviceInterface, String tag) {
+        return client.getService(serviceInterface, tag);
     }
 
     /**

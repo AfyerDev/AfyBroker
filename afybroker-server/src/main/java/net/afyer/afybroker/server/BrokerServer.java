@@ -101,9 +101,9 @@ public class BrokerServer implements Attributable {
         this.pluginManager = new PluginManager(this);
         this.scheduler = new BrokerScheduler(this);
         this.pluginsFolder = new File("plugins");
-        this.clientManager = new BrokerClientManager();
-        this.playerManager = new BrokerPlayerManager();
         this.serviceRegistry = new BrokerServiceRegistry();
+        this.clientManager = new BrokerClientManager(serviceRegistry);
+        this.playerManager = new BrokerPlayerManager();
         this.playerHeartbeatValidateTask = new PlayerHeartbeatValidateTask(this);
         this.pluginManager.registerCommand(null, new CommandStop());
         this.pluginManager.registerCommand(null, new CommandList());

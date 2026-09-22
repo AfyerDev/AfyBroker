@@ -1,7 +1,6 @@
 package net.afyer.afybroker.core;
 
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * 服务描述符
@@ -20,7 +19,7 @@ public class BrokerServiceDescriptor implements Serializable {
     /**
      * 服务标签
      */
-    private Set<String> tags;
+    private String tag;
 
     public String getServiceInterface() {
         return serviceInterface;
@@ -31,12 +30,12 @@ public class BrokerServiceDescriptor implements Serializable {
         return this;
     }
 
-    public Set<String> getTags() {
-        return tags;
+    public String getTag() {
+        return tag;
     }
 
-    public BrokerServiceDescriptor setTags(Set<String> tags) {
-        this.tags = tags;
+    public BrokerServiceDescriptor setTag(String tag) {
+        this.tag = tag;
         return this;
     }
 
@@ -44,7 +43,7 @@ public class BrokerServiceDescriptor implements Serializable {
     public String toString() {
         return "BrokerServiceDescriptor{" +
                 "serviceInterface='" + serviceInterface + '\'' +
-                ", tags=" + tags +
+                ", tag=" + tag +
                 '}';
     }
 } 

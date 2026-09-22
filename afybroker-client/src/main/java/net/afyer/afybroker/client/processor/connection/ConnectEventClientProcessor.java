@@ -1,6 +1,7 @@
 package net.afyer.afybroker.client.processor.connection;
 
 import com.alipay.remoting.Connection;
+import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import net.afyer.afybroker.client.BrokerClient;
@@ -26,6 +27,14 @@ public class ConnectEventClientProcessor implements ConnectionEventProcessor, Br
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
         brokerClient.getObservability().onConnection(ConnectionEventType.CONNECT);
+        try {
+            brokerClient.registerConnection(connection);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.warn("Broker registration interrupted: {}", remoteAddress);
+        } catch (RemotingException e) {
+            LOGGER.warn("Broker registration failed: {}", e.getMessage());
+        }
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Connection establish! remoteAddress {}", remoteAddress);
         }

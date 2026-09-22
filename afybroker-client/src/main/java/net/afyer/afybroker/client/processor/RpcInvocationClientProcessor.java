@@ -42,6 +42,7 @@ public class RpcInvocationClientProcessor extends AsyncUserProcessor<RpcInvocati
             // 调用本地服务
             Object result = brokerClient.getServiceRegistry().invoke(
                     request.getServiceInterface(),
+                    request.getServiceTag(),
                     request.getMethodName(),
                     request.getParameterTypes(),
                     serializer.deserialize(request.getParameters(), Object[].class.getName())

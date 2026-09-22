@@ -1,7 +1,6 @@
 package net.afyer.afybroker.core.message;
 
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * RPC调用消息
@@ -35,7 +34,7 @@ public class RpcInvocationMessage implements Serializable {
     /**
      * 服务标签，用于服务选择
      */
-    private Set<String> serviceTags;
+    private String serviceTag;
 
     public String getServiceInterface() {
         return serviceInterface;
@@ -73,12 +72,12 @@ public class RpcInvocationMessage implements Serializable {
         return this;
     }
 
-    public Set<String> getServiceTags() {
-        return serviceTags;
+    public String getServiceTag() {
+        return serviceTag;
     }
 
-    public RpcInvocationMessage setServiceTags(Set<String> serviceTags) {
-        this.serviceTags = serviceTags;
+    public RpcInvocationMessage setServiceTag(String serviceTag) {
+        this.serviceTag = serviceTag;
         return this;
     }
 
@@ -89,7 +88,7 @@ public class RpcInvocationMessage implements Serializable {
                 ", methodName='" + methodName + '\'' +
                 ", parameterTypes=" + java.util.Arrays.toString(parameterTypes) +
                 ", parameters=" + java.util.Arrays.toString(parameters) +
-                ", serviceTags=" + serviceTags +
+                ", serviceTag=" + serviceTag +
                 '}';
     }
 } 

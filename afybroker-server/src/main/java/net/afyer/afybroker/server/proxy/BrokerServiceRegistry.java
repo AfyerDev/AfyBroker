@@ -1,151 +1,51 @@
 package net.afyer.afybroker.server.proxy;
 
 import net.afyer.afybroker.core.BrokerServiceDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.afyer.afybroker.core.BrokerServiceKey;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-/**
- * 服务注册表 - 服务器端
- *
- * @author Nipuru
- * @since 2025/7/11 17:07
- */
+/** 维护服务与唯一提供者的映射，整批注册信息校验通过后才发布。 */
 public class BrokerServiceRegistry {
+    private final Map<BrokerServiceKey, BrokerClientItem> providers = new HashMap<>();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BrokerServiceRegistry.class);
+    public synchronized void registerClientServices(BrokerClientItem client, List<BrokerServiceDescriptor> services) {
+        Set<BrokerServiceKey> keys = keys(services);
+        for (BrokerServiceKey key : keys) {
+            BrokerClientItem owner = providers.get(key);
+            if (owner != null && owner != client) {
+                throw new IllegalArgumentException("Duplicate service " + key + "; owner=" + owner.getName());
+            }
+        }
+        for (BrokerServiceKey key : keys) providers.put(key, client);
+    }
 
-    /**
-     * 服务接口 -> 服务提供者列表
-     */
-    private final Map<String, List<ServiceProvider>> serviceProviders = new ConcurrentHashMap<>();
-
-    /**
-     * 客户端名称 -> 服务列表
-     */
-    private final Map<String, Set<String>> clientServices = new ConcurrentHashMap<>();
-
-    /**
-     * 注册客户端服务
-     */
-    public void registerClientServices(BrokerClientItem client, List<BrokerServiceDescriptor> services) {
-        // 先清理该客户端之前注册的服务
-        unregisterClientServices(client);
-
-        Set<String> registeredServices = new HashSet<>();
-
+    static Set<BrokerServiceKey> keys(List<BrokerServiceDescriptor> services) {
+        if (services == null) throw new IllegalArgumentException("Service list must not be null");
+        Set<BrokerServiceKey> keys = new HashSet<>();
         for (BrokerServiceDescriptor service : services) {
-            String serviceInterface = service.getServiceInterface();
-
-            ServiceProvider provider = new ServiceProvider(client, service.getTags());
-
-            List<ServiceProvider> providers = serviceProviders.get(serviceInterface);
-            if (providers == null) {
-                serviceProviders.putIfAbsent(serviceInterface, new CopyOnWriteArrayList<>());
-                providers = serviceProviders.get(serviceInterface);
-            }
-            providers.add(provider);
-            registeredServices.add(serviceInterface);
-
-            LOGGER.info("Service registered: {} -> {} with tags: {}", serviceInterface, client.getName(), service.getTags());
+            if (service == null) throw new IllegalArgumentException("Service descriptor must not be null");
+            BrokerServiceKey key = new BrokerServiceKey(service.getServiceInterface(), service.getTag());
+            if (!keys.add(key)) throw new IllegalArgumentException("Duplicate service in registration: " + key);
         }
-
-        clientServices.put(client.getName(), registeredServices);
+        return keys;
     }
 
-    /**
-     * 取消注册客户端服务
-     */
-    public void unregisterClientServices(BrokerClientItem client) {
-        Set<String> services = clientServices.remove(client.getName());
-        if (services != null) {
-            for (String serviceInterface : services) {
-                List<ServiceProvider> providers = serviceProviders.get(serviceInterface);
-                if (providers != null) {
-                    providers.removeIf(provider -> provider.client.getName().equals(client.getName()));
-                    if (providers.isEmpty()) {
-                        serviceProviders.remove(serviceInterface);
-                    }
-                }
-            }
-            LOGGER.info("Unregistered {} services for client: {}", services.size(), client.getName());
-        }
+    public synchronized void unregisterClientServices(BrokerClientItem client) {
+        providers.values().removeIf(owner -> owner == client);
     }
 
-    /**
-     * 获取服务提供者
-     */
-    public List<BrokerClientItem> getServiceProviders(String serviceInterface, Set<String> tags,
-                                                      BrokerClientManager clientManager) {
-        List<ServiceProvider> providers = serviceProviders.get(serviceInterface);
-        if (providers == null || providers.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        return providers.stream()
-                .filter(provider -> matchesTags(provider.getTags(), tags))
-                .map(provider -> provider.client)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+    public synchronized BrokerClientItem getServiceProvider(String serviceInterface, String tag) {
+        return providers.get(new BrokerServiceKey(serviceInterface, tag));
     }
 
-    /**
-     * 选择服务提供者（负载均衡）
-     */
-    public BrokerClientItem selectServiceProvider(String serviceInterface, Set<String> tags,
-                                                  BrokerClientManager clientManager) {
-        List<BrokerClientItem> providers = getServiceProviders(serviceInterface, tags, clientManager);
-        if (providers.isEmpty()) {
-            return null;
-        }
-
-        // 简单的随机负载均衡
-        return providers.get(ThreadLocalRandom.current().nextInt(providers.size()));
+    public synchronized Set<String> getAllServiceInterfaces() {
+        Set<String> interfaces = new HashSet<>();
+        for (BrokerServiceKey key : providers.keySet()) interfaces.add(key.getServiceInterface());
+        return interfaces;
     }
-
-    /**
-     * 检查标签是否匹配
-     */
-    private boolean matchesTags(Set<String> providerTags, Set<String> requestTags) {
-        if (requestTags == null || requestTags.isEmpty()) {
-            return true; // 没有标签要求，匹配所有
-        }
-
-        if (providerTags == null || providerTags.isEmpty()) {
-            return false; // 提供者没有标签，但请求有标签要求
-        }
-
-        // 提供者必须包含所有请求的标签
-        return providerTags.containsAll(requestTags);
-    }
-
-    /**
-     * 获取所有已注册的服务接口
-     */
-    public Set<String> getAllServiceInterfaces() {
-        return new HashSet<>(serviceProviders.keySet());
-    }
-
-    private static class ServiceProvider {
-        private final BrokerClientItem client;
-        private final Set<String> tags;
-
-        public ServiceProvider(BrokerClientItem client, Set<String> tags) {
-            this.client = client;
-            this.tags = tags;
-        }
-
-        public BrokerClientItem getClient() {
-            return client;
-        }
-
-        public Set<String> getTags() {
-            return tags;
-        }
-    }
-} 
+}

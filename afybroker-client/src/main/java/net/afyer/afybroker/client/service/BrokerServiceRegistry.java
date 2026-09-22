@@ -2,6 +2,8 @@ package net.afyer.afybroker.client.service;
 
 import com.alipay.remoting.rpc.exception.InvokeException;
 import net.afyer.afybroker.core.BrokerServiceDescriptor;
+import net.afyer.afybroker.core.BrokerServiceKey;
+import java.util.HashMap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,10 +20,10 @@ import java.util.Map;
  */
 public class BrokerServiceRegistry {
 
-    private final Map<String, BrokerServiceEntry> services;
+    private final Map<BrokerServiceKey, BrokerServiceEntry> services;
 
-    public BrokerServiceRegistry(Map<String, BrokerServiceEntry> services) {
-        this.services = services;
+    public BrokerServiceRegistry(Map<BrokerServiceKey, BrokerServiceEntry> services) {
+        this.services = new HashMap<>(services);
     }
 
 
@@ -36,12 +38,13 @@ public class BrokerServiceRegistry {
     /**
      * 调用本地服务
      */
-    public Object invoke(String serviceInterface, String methodName,
+    public Object invoke(String serviceInterface, String tag, String methodName,
                          String[] parameterTypeNames, Object[] parameters)
             throws Throwable {
-        BrokerServiceEntry entry = services.get(serviceInterface);
+        BrokerServiceKey key = new BrokerServiceKey(serviceInterface, tag);
+        BrokerServiceEntry entry = services.get(key);
         if (entry == null) {
-            throw new InvokeException("Service not found: " + serviceInterface);
+            throw new InvokeException("Service not found: " + key);
         }
 
         // 从缓存中获取Method

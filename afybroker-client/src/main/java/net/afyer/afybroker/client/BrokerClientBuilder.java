@@ -6,7 +6,6 @@ import com.alipay.remoting.config.BoltClientOption;
 import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
-import net.afyer.afybroker.client.processor.RequestBrokerClientInfoClientProcessor;
 import net.afyer.afybroker.client.processor.RpcInvocationClientProcessor;
 import net.afyer.afybroker.client.processor.connection.CloseEventClientProcessor;
 import net.afyer.afybroker.client.processor.connection.ConnectEventClientProcessor;
@@ -15,6 +14,7 @@ import net.afyer.afybroker.client.processor.connection.ExceptionEventClientProce
 import net.afyer.afybroker.client.service.BrokerServiceEntry;
 import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
+import net.afyer.afybroker.core.BrokerServiceKey;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.interceptor.Interceptor;
@@ -81,7 +81,7 @@ public class BrokerClientBuilder {
     /**
      * 服务注册表
      */
-    private final Map<String, BrokerServiceEntry> serviceMap = new HashMap<>();
+    private final Map<BrokerServiceKey, BrokerServiceEntry> serviceMap = new HashMap<>();
 
     private final List<Interceptor> interceptorList = new ArrayList<>();
 
@@ -158,13 +158,14 @@ public class BrokerClientBuilder {
     }
 
     public BrokerClient build() {
+        if (name == null || name.trim().isEmpty()) throw new IllegalArgumentException("client_name must not be blank");
         BrokerAddress address = new BrokerAddress(host, port);
         BrokerServiceRegistry serviceRegistry = new BrokerServiceRegistry(serviceMap);
         BrokerClientInfo clientInfo = new BrokerClientInfoMessage()
                 .setName(name)
                 .setType(type)
-                .setTags(tags)
-                .setMetadata(metadata)
+                .setTags(new HashSet<>(tags))
+                .setMetadata(new HashMap<>(metadata))
                 .setAddress(address.getAddress())
                 .setServices(serviceRegistry.getDescriptors())
                 .build();
@@ -358,10 +359,18 @@ public class BrokerClientBuilder {
     /**
      * 注册服务实现（带标签）
      */
-    public <T> BrokerClientBuilder registerService(Class<T> serviceInterface, T serviceImpl, String... tags) {
-        String interfaceName = serviceInterface.getName();
-        BrokerServiceEntry entry = new BrokerServiceEntry(serviceInterface, serviceImpl, new HashSet<>(Arrays.asList(tags)));
-        serviceMap.put(interfaceName, entry);
+    public <T> BrokerClientBuilder registerService(Class<T> serviceInterface, T serviceImpl) {
+        return registerService(serviceInterface, serviceImpl, null);
+    }
+
+    public <T> BrokerClientBuilder registerService(Class<T> serviceInterface, T serviceImpl, String tag) {
+        Objects.requireNonNull(serviceInterface, "serviceInterface");
+        if (!serviceInterface.isInterface() || !serviceInterface.isInstance(serviceImpl)) {
+            throw new IllegalArgumentException("Service implementation must implement the service interface");
+        }
+        BrokerServiceKey key = new BrokerServiceKey(serviceInterface.getName(), tag);
+        if (serviceMap.containsKey(key)) throw new IllegalArgumentException("Duplicate service: " + key);
+        serviceMap.put(key, new BrokerServiceEntry(serviceInterface, serviceImpl, tag));
         return this;
     }
 
@@ -403,7 +412,6 @@ public class BrokerClientBuilder {
                 .addConnectionEventProcessor(ConnectionEventType.CONNECT_FAILED, new ConnectFailedEventClientProcessor())
                 .addConnectionEventProcessor(ConnectionEventType.EXCEPTION, new ExceptionEventClientProcessor());
 
-        registerUserProcessor(new RequestBrokerClientInfoClientProcessor())
-                .registerUserProcessor(new RpcInvocationClientProcessor());
+        registerUserProcessor(new RpcInvocationClientProcessor());
     }
 }

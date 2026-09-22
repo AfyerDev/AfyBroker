@@ -198,7 +198,8 @@ public class BrokerServerBuilder {
                 .addConnectionEventProcessor(ConnectionEventType.EXCEPTION, new ExceptionEventBrokerProcessor())
                 .addConnectionEventProcessor(ConnectionEventType.CONNECT_FAILED, new ConnectFailedEventBrokerProcessor());
 
-        registerUserProcessor(new PlayerProxyConnectBrokerProcessor())
+        registerUserProcessor(new RegisterClientBrokerProcessor())
+                .registerUserProcessor(new PlayerProxyConnectBrokerProcessor())
                 .registerUserProcessor(new PlayerProxyDisconnectBrokerProcessor())
                 .registerUserProcessor(new SendPlayerChatBrokerProcessor())
                 .registerUserProcessor(new BroadcastChatBrokerProcessor())
