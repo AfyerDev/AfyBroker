@@ -9,6 +9,7 @@ import net.afyer.afybroker.core.observability.RpcPhase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -29,7 +30,8 @@ public class BrokerServiceProxyFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(BrokerServiceProxyFactory.class);
 
     private final BrokerClient brokerClient;
-    private final ConcurrentHashMap<String, SoftReference<Object>> proxies = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ProxyReference> proxies = new ConcurrentHashMap<>();
+    private final ReferenceQueue<Object> referenceQueue = new ReferenceQueue<>();
 
     public BrokerServiceProxyFactory(BrokerClient brokerClient) {
         this.brokerClient = brokerClient;
@@ -49,19 +51,40 @@ public class BrokerServiceProxyFactory {
     public <T> T createProxy(Class<T> serviceInterface, String tag) {
         Objects.requireNonNull(serviceInterface, "serviceInterface");
         if (!serviceInterface.isInterface()) throw new IllegalArgumentException("Service type must be an interface");
+        cleanReference();
         String key = serviceKey(serviceInterface.getName(), tag);
-        SoftReference<Object> reference = proxies.get(key);
+        ProxyReference reference = proxies.get(key);
         Object proxy = reference == null ? null : reference.get();
         if (proxy != null) {
             return (T) proxy;
         }
-        proxy = Proxy.newProxyInstance(
+        return (T) createAndCacheProxy(serviceInterface, key);
+    }
+
+    private void cleanReference() {
+        ProxyReference reference;
+        while ((reference = (ProxyReference) referenceQueue.poll()) != null) {
+            proxies.remove(reference.key, reference);
+        }
+    }
+
+    private Object createAndCacheProxy(Class<?> serviceInterface, String key) {
+        Object proxy = Proxy.newProxyInstance(
                 serviceInterface.getClassLoader(),
                 new Class<?>[]{serviceInterface},
                 new ServiceInvocationHandler(brokerClient, key)
         );
-        proxies.put(key, new SoftReference<>(proxy));
-        return (T) proxy;
+        proxies.put(key, new ProxyReference(key, proxy, referenceQueue));
+        return proxy;
+    }
+
+    private static class ProxyReference extends SoftReference<Object> {
+        private final String key;
+
+        private ProxyReference(String key, Object proxy, ReferenceQueue<Object> queue) {
+            super(proxy, queue);
+            this.key = key;
+        }
     }
 
     /**
