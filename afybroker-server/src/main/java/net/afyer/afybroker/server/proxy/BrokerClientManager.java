@@ -37,7 +37,7 @@ public class BrokerClientManager {
         if (info.getType() == null || info.getTags() == null || info.getMetadata() == null) {
             throw new IllegalArgumentException("Client type, tags and metadata must not be null");
         }
-        BrokerServiceRegistry.keys(info.getServices());
+        BrokerServiceRegistry.keys(info.getServiceKeys());
         // CLOSE 可能先于排队的注册请求执行，防止已关闭的连接重新入表。
         if (!client.getConnection().isFine()) throw new IllegalStateException("Registration connection is closed");
 
@@ -46,7 +46,7 @@ public class BrokerClientManager {
             BrokerClientInfo old = previous.getClientInfo();
             if (!Objects.equals(old.getName(), info.getName()) || !Objects.equals(old.getType(), info.getType())
                     || !old.getTags().equals(info.getTags()) || !old.getMetadata().equals(info.getMetadata())
-                    || !BrokerServiceRegistry.keys(old.getServices()).equals(BrokerServiceRegistry.keys(info.getServices()))) {
+                    || !BrokerServiceRegistry.keys(old.getServiceKeys()).equals(BrokerServiceRegistry.keys(info.getServiceKeys()))) {
                 throw new IllegalArgumentException("Cannot change registration on an existing connection");
             }
             return false;
@@ -55,7 +55,7 @@ public class BrokerClientManager {
         if (owner != null) {
             throw new IllegalArgumentException("Duplicate client_name: " + client.getName() + "; owner=" + owner.getAddress());
         }
-        serviceRegistry.registerClientServices(client, info.getServices());
+        serviceRegistry.registerClientServices(client, info.getServiceKeys());
         byAddress.put(client.getAddress(), client);
         client.getConnection().setAttribute(CLIENT_ATTRIBUTE, client);
         return true;

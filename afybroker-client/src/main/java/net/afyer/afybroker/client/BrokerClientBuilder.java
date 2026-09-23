@@ -14,7 +14,6 @@ import net.afyer.afybroker.client.processor.connection.ExceptionEventClientProce
 import net.afyer.afybroker.client.service.BrokerServiceEntry;
 import net.afyer.afybroker.client.service.BrokerServiceRegistry;
 import net.afyer.afybroker.core.BrokerClientInfo;
-import net.afyer.afybroker.core.BrokerServiceKey;
 import net.afyer.afybroker.core.BrokerClientType;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.interceptor.Interceptor;
@@ -26,6 +25,7 @@ import java.util.*;
 
 import static net.afyer.afybroker.core.BrokerGlobalConfig.ENV_CLIENT_TAG;
 import static net.afyer.afybroker.core.util.BoltUtils.checkInterest;
+import static net.afyer.afybroker.core.util.BoltUtils.serviceKey;
 
 /**
  * @author Nipuru
@@ -81,7 +81,7 @@ public class BrokerClientBuilder {
     /**
      * 服务注册表
      */
-    private final Map<BrokerServiceKey, BrokerServiceEntry> serviceMap = new HashMap<>();
+    private final Map<String, BrokerServiceEntry> serviceMap = new HashMap<>();
 
     private final List<Interceptor> interceptorList = new ArrayList<>();
 
@@ -167,7 +167,7 @@ public class BrokerClientBuilder {
                 .setTags(new HashSet<>(tags))
                 .setMetadata(new HashMap<>(metadata))
                 .setAddress(address.getAddress())
-                .setServices(serviceRegistry.getDescriptors())
+                .setServiceKeys(serviceRegistry.getServiceKeys())
                 .build();
 
         RpcClient rpcClient = new RpcClient();
@@ -368,9 +368,9 @@ public class BrokerClientBuilder {
         if (!serviceInterface.isInterface() || !serviceInterface.isInstance(serviceImpl)) {
             throw new IllegalArgumentException("Service implementation must implement the service interface");
         }
-        BrokerServiceKey key = new BrokerServiceKey(serviceInterface.getName(), tag);
+        String key = serviceKey(serviceInterface.getName(), tag);
         if (serviceMap.containsKey(key)) throw new IllegalArgumentException("Duplicate service: " + key);
-        serviceMap.put(key, new BrokerServiceEntry(serviceInterface, serviceImpl, tag));
+        serviceMap.put(key, new BrokerServiceEntry(serviceInterface, serviceImpl));
         return this;
     }
 

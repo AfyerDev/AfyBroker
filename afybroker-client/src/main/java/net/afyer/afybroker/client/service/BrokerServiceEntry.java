@@ -1,7 +1,6 @@
 package net.afyer.afybroker.client.service;
 
-import net.afyer.afybroker.core.BrokerServiceDescriptor;
-
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -12,44 +11,28 @@ import java.util.*;
 public class BrokerServiceEntry {
     private final Class<?> serviceInterface;
     private final Object serviceImpl;
-    private final String tag;
     private final Map<MethodKey, Method> methodCache;
 
-    public BrokerServiceEntry(Class<?> serviceInterface, Object serviceImpl, String tag) {
+    public BrokerServiceEntry(Class<?> serviceInterface, Object serviceImpl) {
         this.serviceInterface = serviceInterface;
         this.serviceImpl = serviceImpl;
-        this.tag = tag;
         this.methodCache = new HashMap<>();
 
         // 预先缓存所有方法
         cacheAllMethods();
     }
 
-    public Class<?> getServiceInterface() {
-        return serviceInterface;
-    }
-
-    public Object getServiceImpl() {
-        return serviceImpl;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public Map<MethodKey, Method> getMethodCache() {
-        return methodCache;
-    }
-
-    public Method getMethod(String methodName, String[] parameterTypeNames) {
-        MethodKey key = new MethodKey(methodName, parameterTypeNames);
-        return methodCache.get(key);
-    }
-
-    public BrokerServiceDescriptor getDescriptor() {
-        return new BrokerServiceDescriptor()
-                .setServiceInterface(serviceInterface.getName())
-                .setTag(tag);
+    public Object invoke(String methodName, String[] parameterTypeNames, Object[] parameters) throws Throwable {
+        Method method = methodCache.get(new MethodKey(methodName, parameterTypeNames));
+        if (method == null) {
+            throw new NoSuchMethodException(serviceInterface.getName() + "." + methodName
+                    + Arrays.toString(parameterTypeNames));
+        }
+        try {
+            return method.invoke(serviceImpl, parameters);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
     }
 
     private void cacheAllMethods() {
@@ -70,14 +53,6 @@ public class BrokerServiceEntry {
         public MethodKey(String methodName, String[] parameterTypeNames) {
             this.methodName = methodName;
             this.parameterTypeNames = parameterTypeNames;
-        }
-
-        public String getMethodName() {
-            return methodName;
-        }
-
-        public String[] getParameterTypeNames() {
-            return parameterTypeNames;
         }
 
         @Override

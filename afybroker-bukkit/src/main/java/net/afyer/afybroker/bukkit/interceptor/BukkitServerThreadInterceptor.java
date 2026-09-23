@@ -9,6 +9,9 @@ import org.bukkit.Bukkit;
 
 import java.util.Arrays;
 
+import static net.afyer.afybroker.core.util.BoltUtils.serviceInterface;
+import static net.afyer.afybroker.core.util.BoltUtils.serviceTag;
+
 public class BukkitServerThreadInterceptor implements Interceptor {
 
     private final boolean enabled;
@@ -39,10 +42,10 @@ public class BukkitServerThreadInterceptor implements Interceptor {
                     context.getThread().getName(),
                     context.getThread().getId(),
                     context.getType(),
-                    request.getServiceInterface(),
+                    serviceInterface(request.getServiceKey()),
                     request.getMethodName(),
                     Arrays.toString(request.getParameterTypes()),
-                    request.getServiceTag()
+                    serviceTag(request.getServiceKey())
             );
         } else {
             return String.format(

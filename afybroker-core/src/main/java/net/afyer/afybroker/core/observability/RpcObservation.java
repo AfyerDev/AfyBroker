@@ -1,15 +1,17 @@
 package net.afyer.afybroker.core.observability;
 
+import net.afyer.afybroker.core.util.BoltUtils;
+
 public class RpcObservation {
     private final RpcPhase phase;
-    private final String serviceInterface;
+    private final String serviceKey;
     private final String methodName;
     private final boolean success;
     private final long durationNanos;
 
-    public RpcObservation(RpcPhase phase, String serviceInterface, String methodName, boolean success, long durationNanos) {
+    public RpcObservation(RpcPhase phase, String serviceKey, String methodName, boolean success, long durationNanos) {
         this.phase = phase;
-        this.serviceInterface = serviceInterface;
+        this.serviceKey = serviceKey;
         this.methodName = methodName;
         this.success = success;
         this.durationNanos = durationNanos;
@@ -20,8 +22,16 @@ public class RpcObservation {
     }
 
 
+    public String getServiceKey() {
+        return serviceKey;
+    }
+
     public String getServiceInterface() {
-        return serviceInterface;
+        return BoltUtils.serviceInterface(serviceKey);
+    }
+
+    public String getServiceTag() {
+        return BoltUtils.serviceTag(serviceKey);
     }
 
     public String getMethodName() {

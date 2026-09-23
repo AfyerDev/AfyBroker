@@ -37,15 +37,15 @@ public class BrokerClientInfo {
     /**
      * 客户端服务列表
      */
-    private final List<BrokerServiceDescriptor> services;
+    private final List<String> serviceKeys;
 
-    public BrokerClientInfo(String name, Set<String> tags, String type, String address, Map<String, String> metadata, List<BrokerServiceDescriptor> services) {
+    public BrokerClientInfo(String name, Set<String> tags, String type, String address, Map<String, String> metadata, List<String> serviceKeys) {
         this.name = name;
         this.tags = tags;
         this.type = type;
         this.address = address;
         this.metadata = metadata;
-        this.services = services;
+        this.serviceKeys = serviceKeys;
     }
 
     public String getName() {
@@ -68,8 +68,8 @@ public class BrokerClientInfo {
         return Collections.unmodifiableMap(metadata);
     }
 
-    public List<BrokerServiceDescriptor> getServices() {
-        return services;
+    public List<String> getServiceKeys() {
+        return serviceKeys;
     }
 
     public boolean hasMetadata(String key) {
@@ -128,6 +128,6 @@ public class BrokerClientInfo {
                 .setType(type)
                 .setAddress(address)
                 .setMetadata(metadata)
-                .setServices(services);
+                .setServiceKeys(serviceKeys);
     }
 }

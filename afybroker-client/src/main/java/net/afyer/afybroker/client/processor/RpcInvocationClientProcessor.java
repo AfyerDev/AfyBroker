@@ -14,6 +14,9 @@ import net.afyer.afybroker.core.observability.RpcPhase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static net.afyer.afybroker.core.util.BoltUtils.serviceInterface;
+import static net.afyer.afybroker.core.util.BoltUtils.serviceTag;
+
 /**
  * 客户端RPC调用处理器
  *
@@ -36,13 +39,13 @@ public class RpcInvocationClientProcessor extends AsyncUserProcessor<RpcInvocati
         long startNanos = System.nanoTime();
         boolean success = false;
         try {
-            LOGGER.debug("Handling RPC invocation: {}.{}", request.getServiceInterface(), request.getMethodName());
+            LOGGER.debug("Handling RPC invocation: {}.{} [tag={}]",
+                    serviceInterface(request.getServiceKey()), request.getMethodName(), serviceTag(request.getServiceKey()));
 
             Serializer serializer = SerializerManager.getSerializer(ConfigManager.serializer());
             // 调用本地服务
             Object result = brokerClient.getServiceRegistry().invoke(
-                    request.getServiceInterface(),
-                    request.getServiceTag(),
+                    request.getServiceKey(),
                     request.getMethodName(),
                     request.getParameterTypes(),
                     serializer.deserialize(request.getParameters(), Object[].class.getName())
@@ -56,12 +59,13 @@ public class RpcInvocationClientProcessor extends AsyncUserProcessor<RpcInvocati
             success = true;
             asyncCtx.sendResponse(response);
         } catch (Throwable e) {
-            LOGGER.error("Handling RPC invocation failed: {}.{}", request.getServiceInterface(), request.getMethodName(), e);
+            LOGGER.error("Handling RPC invocation failed: {}.{} [tag={}]",
+                    serviceInterface(request.getServiceKey()), request.getMethodName(), serviceTag(request.getServiceKey()), e);
             asyncCtx.sendException(e);
         } finally {
             brokerClient.getObservability().onRpc(new RpcObservation(
                     RpcPhase.SERVICE,
-                    request.getServiceInterface(),
+                    request.getServiceKey(),
                     request.getMethodName(),
                     success,
                     System.nanoTime() - startNanos

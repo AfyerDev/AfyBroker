@@ -18,6 +18,7 @@ public class PrometheusObservability implements Observability {
     private static final String LABEL_STATE = "state";
     private static final String LABEL_PHASE = "phase";
     private static final String LABEL_SERVICE = "service";
+    private static final String LABEL_TAG = "tag";
     private static final String LABEL_METHOD = "method";
     private static final String LABEL_RESULT = "result";
     private static final String LABEL_EVENT = "event";
@@ -51,13 +52,13 @@ public class PrometheusObservability implements Observability {
                 .name("afybroker_rpc_requests_total")
                 .help("AfyBroker RPC request count.")
                 .constLabels(constLabels)
-                .labelNames(LABEL_PHASE, LABEL_SERVICE, LABEL_METHOD, LABEL_RESULT)
+                .labelNames(LABEL_PHASE, LABEL_SERVICE, LABEL_TAG, LABEL_METHOD, LABEL_RESULT)
                 .register(registry);
         this.rpcDuration = Histogram.builder()
                 .name("afybroker_rpc_duration_seconds")
                 .help("AfyBroker RPC request duration.")
                 .constLabels(constLabels)
-                .labelNames(LABEL_PHASE, LABEL_SERVICE, LABEL_METHOD, LABEL_RESULT)
+                .labelNames(LABEL_PHASE, LABEL_SERVICE, LABEL_TAG, LABEL_METHOD, LABEL_RESULT)
                 .register(registry);
         this.playerCounter = Counter.builder()
                 .name("afybroker_player_events_total")
@@ -91,10 +92,11 @@ public class PrometheusObservability implements Observability {
     public void onRpc(RpcObservation observation) {
         String phase = observation.getPhase().name().toLowerCase();
         String service = ObservabilitySupport.labelValue(observation.getServiceInterface());
+        String tag = observation.getServiceTag();
         String method = ObservabilitySupport.labelValue(observation.getMethodName());
         String result = observation.isSuccess() ? RESULT_SUCCESS : RESULT_FAILURE;
-        rpcCounter.labelValues(phase, service, method, result).inc();
-        rpcDuration.labelValues(phase, service, method, result)
+        rpcCounter.labelValues(phase, service, tag, method, result).inc();
+        rpcDuration.labelValues(phase, service, tag, method, result)
                 .observe(observation.getDurationNanos() / 1_000_000_000D);
     }
 

@@ -1,14 +1,9 @@
 package net.afyer.afybroker.client.service;
 
 import com.alipay.remoting.rpc.exception.InvokeException;
-import net.afyer.afybroker.core.BrokerServiceDescriptor;
-import net.afyer.afybroker.core.BrokerServiceKey;
-import java.util.HashMap;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,46 +15,26 @@ import java.util.Map;
  */
 public class BrokerServiceRegistry {
 
-    private final Map<BrokerServiceKey, BrokerServiceEntry> services;
+    private final Map<String, BrokerServiceEntry> services;
 
-    public BrokerServiceRegistry(Map<BrokerServiceKey, BrokerServiceEntry> services) {
+    public BrokerServiceRegistry(Map<String, BrokerServiceEntry> services) {
         this.services = new HashMap<>(services);
     }
 
 
-    public List<BrokerServiceDescriptor> getDescriptors() {
-        List<BrokerServiceDescriptor> descriptors = new ArrayList<>(services.size());
-        for (BrokerServiceEntry entry : services.values()) {
-            descriptors.add(entry.getDescriptor());
-        }
-        return descriptors;
+    public List<String> getServiceKeys() {
+        return new ArrayList<>(services.keySet());
     }
 
-    /**
-     * 调用本地服务
-     */
-    public Object invoke(String serviceInterface, String tag, String methodName,
+    /** 调用本地服务  */
+    public Object invoke(String serviceKey, String methodName,
                          String[] parameterTypeNames, Object[] parameters)
             throws Throwable {
-        BrokerServiceKey key = new BrokerServiceKey(serviceInterface, tag);
-        BrokerServiceEntry entry = services.get(key);
+        BrokerServiceEntry entry = services.get(serviceKey);
         if (entry == null) {
-            throw new InvokeException("Service not found: " + key);
+            throw new InvokeException("Service not found: " + serviceKey);
         }
 
-        // 从缓存中获取Method
-        Method method = entry.getMethod(methodName, parameterTypeNames);
-        if (method == null) {
-            throw new InvokeException("Method not found: " + methodName +
-                    " with parameters: " + Arrays.toString(parameterTypeNames));
-        }
-        try {
-            return method.invoke(entry.getServiceImpl(), parameters);
-        } catch (InvocationTargetException e) {
-            Throwable targetException = e.getTargetException();
-            throw targetException != null ? targetException : e;
-        }
+        return entry.invoke(methodName, parameterTypeNames, parameters);
     }
-
-
 }

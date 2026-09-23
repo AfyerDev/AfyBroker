@@ -19,6 +19,22 @@ import java.util.concurrent.TimeUnit;
  */
 public class BoltUtils {
 
+    public static String serviceKey(String serviceInterface, String tag) {
+        return tag == null ? serviceInterface : serviceInterface + "#" + tag;
+    }
+
+    public static String serviceInterface(String serviceKey) {
+        if (serviceKey == null) return null;
+        int separator = serviceKey.indexOf('#');
+        return separator < 0 ? serviceKey : serviceKey.substring(0, separator);
+    }
+
+    public static String serviceTag(String serviceKey) {
+        if (serviceKey == null) return "";
+        int separator = serviceKey.indexOf('#');
+        return separator < 0 ? "" : serviceKey.substring(separator + 1);
+    }
+
     private static final ProtocolCode[] PROTOCOL_CODES = new ProtocolCode[]{
             ProtocolCode.fromBytes(RpcProtocol.PROTOCOL_CODE),
             ProtocolCode.fromBytes(RpcProtocolV2.PROTOCOL_CODE)

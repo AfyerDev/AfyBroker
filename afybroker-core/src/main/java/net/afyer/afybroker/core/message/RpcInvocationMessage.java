@@ -12,9 +12,9 @@ public class RpcInvocationMessage implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 服务接口名
+     * 服务标识：接口名或接口名#标签
      */
-    private String serviceInterface;
+    private String serviceKey;
 
     /**
      * 方法名
@@ -31,17 +31,12 @@ public class RpcInvocationMessage implements Serializable {
      */
     private byte[] parameters;
 
-    /**
-     * 服务标签，用于服务选择
-     */
-    private String serviceTag;
-
-    public String getServiceInterface() {
-        return serviceInterface;
+    public String getServiceKey() {
+        return serviceKey;
     }
 
-    public RpcInvocationMessage setServiceInterface(String serviceInterface) {
-        this.serviceInterface = serviceInterface;
+    public RpcInvocationMessage setServiceKey(String serviceKey) {
+        this.serviceKey = serviceKey;
         return this;
     }
 
@@ -72,23 +67,13 @@ public class RpcInvocationMessage implements Serializable {
         return this;
     }
 
-    public String getServiceTag() {
-        return serviceTag;
-    }
-
-    public RpcInvocationMessage setServiceTag(String serviceTag) {
-        this.serviceTag = serviceTag;
-        return this;
-    }
-
     @Override
     public String toString() {
         return "RpcInvocationMessage{" +
-                "serviceInterface='" + serviceInterface + '\'' +
+                "serviceKey='" + serviceKey + '\'' +
                 ", methodName='" + methodName + '\'' +
                 ", parameterTypes=" + java.util.Arrays.toString(parameterTypes) +
                 ", parameters=" + java.util.Arrays.toString(parameters) +
-                ", serviceTag=" + serviceTag +
                 '}';
     }
-} 
+}

@@ -1,7 +1,6 @@
 package net.afyer.afybroker.core.message;
 
 import net.afyer.afybroker.core.BrokerClientInfo;
-import net.afyer.afybroker.core.BrokerServiceDescriptor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -38,7 +37,7 @@ public class BrokerClientInfoMessage implements Serializable {
     /**
      * 客户端服务列表
      */
-    private List<BrokerServiceDescriptor> services;
+    private List<String> serviceKeys;
 
     public String getName() {
         return name;
@@ -85,17 +84,17 @@ public class BrokerClientInfoMessage implements Serializable {
         return this;
     }
 
-    public List<BrokerServiceDescriptor> getServices() {
-        return services;
+    public List<String> getServiceKeys() {
+        return serviceKeys;
     }
 
-    public BrokerClientInfoMessage setServices(List<BrokerServiceDescriptor> services) {
-        this.services = services;
+    public BrokerClientInfoMessage setServiceKeys(List<String> serviceKeys) {
+        this.serviceKeys = serviceKeys;
         return this;
     }
 
     public BrokerClientInfo build() {
-        return new BrokerClientInfo(name, tags, type, address, metadata, services);
+        return new BrokerClientInfo(name, tags, type, address, metadata, serviceKeys);
     }
 
     @Override
@@ -106,7 +105,7 @@ public class BrokerClientInfoMessage implements Serializable {
                 ", type='" + type + '\'' +
                 ", address='" + address + '\'' +
                 ", metadata=" + metadata +
-                ", services=" + services +
+                ", serviceKeys=" + serviceKeys +
                 '}';
     }
 }

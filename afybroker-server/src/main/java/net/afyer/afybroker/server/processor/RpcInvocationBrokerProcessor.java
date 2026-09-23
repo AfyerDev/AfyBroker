@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static net.afyer.afybroker.core.util.BoltUtils.unwrapRemoteException;
+import static net.afyer.afybroker.core.util.BoltUtils.serviceInterface;
+import static net.afyer.afybroker.core.util.BoltUtils.serviceTag;
 
 /**
  * 服务器端RPC调用处理器
@@ -37,25 +39,25 @@ public class RpcInvocationBrokerProcessor extends AsyncUserProcessor<RpcInvocati
     public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, RpcInvocationMessage request) {
         long startNanos = System.nanoTime();
         try {
-            LOGGER.debug("Handling RPC invocation: {}.{}", request.getServiceInterface(), request.getMethodName());
+            LOGGER.debug("Handling RPC invocation: {}.{} [tag={}]",
+                    serviceInterface(request.getServiceKey()), request.getMethodName(), serviceTag(request.getServiceKey()));
 
-            // 根据服务接口和标签选择合适的服务提供者
+            // 根据服务标识查找提供者
             BrokerClientItem serviceProvider = brokerServer.getServiceRegistry().getServiceProvider(
-                    request.getServiceInterface(),
-                    request.getServiceTag()
+                    request.getServiceKey()
             );
 
             if (serviceProvider == null) {
-                String errorMsg = String.format("No service provider found for: %s with tag: %s",
-                        request.getServiceInterface(), request.getServiceTag());
+                String errorMsg = String.format("No service provider found for: %s [tag=%s]",
+                        serviceInterface(request.getServiceKey()), serviceTag(request.getServiceKey()));
                 record(request, startNanos, false);
                 LOGGER.warn(errorMsg);
                 asyncCtx.sendException(new InvokeException(errorMsg));
                 return;
             }
 
-            LOGGER.debug("Selected service provider: {} for service: {}",
-                    serviceProvider.getName(), request.getServiceInterface());
+            LOGGER.debug("Selected service provider: {} for service: {} [tag={}]",
+                    serviceProvider.getName(), serviceInterface(request.getServiceKey()), serviceTag(request.getServiceKey()));
 
             // 转发RPC调用到服务提供者
             serviceProvider.invokeWithCallback(request, new AbstractInvokeCallback() {
@@ -74,8 +76,8 @@ public class RpcInvocationBrokerProcessor extends AsyncUserProcessor<RpcInvocati
 
         } catch (Exception e) {
             record(request, startNanos, false);
-            LOGGER.error("Failed to handle RPC invocation: {}.{}",
-                    request.getServiceInterface(), request.getMethodName(), e);
+            LOGGER.error("Failed to handle RPC invocation: {}.{} [tag={}]",
+                    serviceInterface(request.getServiceKey()), request.getMethodName(), serviceTag(request.getServiceKey()), e);
             asyncCtx.sendException(unwrapRemoteException(e));
         }
     }
@@ -88,7 +90,7 @@ public class RpcInvocationBrokerProcessor extends AsyncUserProcessor<RpcInvocati
     private void record(RpcInvocationMessage request, long startNanos, boolean success) {
         brokerServer.getObservability().onRpc(new RpcObservation(
                 RpcPhase.ROUTER,
-                request.getServiceInterface(),
+                request.getServiceKey(),
                 request.getMethodName(),
                 success,
                 System.nanoTime() - startNanos
