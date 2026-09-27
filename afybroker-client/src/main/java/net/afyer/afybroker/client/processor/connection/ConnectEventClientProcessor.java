@@ -1,9 +1,9 @@
 package net.afyer.afybroker.client.processor.connection;
 
 import com.alipay.remoting.Connection;
-import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
+import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.aware.BrokerClientAware;
 import org.slf4j.Logger;

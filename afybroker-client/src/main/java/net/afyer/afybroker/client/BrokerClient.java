@@ -1,7 +1,7 @@
 package net.afyer.afybroker.client;
 
-import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.Connection;
+import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.LifeCycleException;
 import com.alipay.remoting.config.BoltClientOption;
 import com.alipay.remoting.config.ConfigManager;
@@ -24,14 +24,13 @@ import net.afyer.afybroker.core.util.ThrowableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Nipuru
@@ -218,7 +217,12 @@ public class BrokerClient {
     }
 
     private Connection registeredConnection(String address) throws RemotingException, InterruptedException {
-        Connection connection = rpcClient.getConnection(address, defaultTimeoutMillis);
+        Connection connection;
+        try {
+            connection = rpcClient.getConnection(address, defaultTimeoutMillis);
+        } catch (RemotingException e) {
+            throw new ClientRegistrationException("Failed to connect to broker", e);
+        }
         registerConnection(connection);
         return connection;
     }
@@ -234,7 +238,6 @@ public class BrokerClient {
                         (BrokerClientRegistrationResult) rpcClient.invokeSync(connection, clientInfo.toMessage(), defaultTimeoutMillis);
                 String error = response.getError();
                 if (error != null) {
-                    LOGGER.error("Broker registration rejected: {}", error);
                     throw new ClientRegistrationException(error);
                 } else {
                     registration.complete(null);
@@ -249,13 +252,13 @@ public class BrokerClient {
             registration.get(defaultTimeoutMillis, TimeUnit.MILLISECONDS);
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
-            if (cause instanceof RemotingException) throw (RemotingException) cause;
+            if (cause instanceof ClientRegistrationException) throw (ClientRegistrationException) cause;
             if (cause instanceof InterruptedException) throw (InterruptedException) cause;
             if (cause instanceof Error) throw (Error) cause;
-            throw new RemotingException("Client registration failed", cause);
+            throw new ClientRegistrationException("Client registration failed", cause);
         } catch (TimeoutException e) {
             connection.close();
-            throw new RemotingException("Client registration timed out", e);
+            throw new ClientRegistrationException("Client registration timed out", e);
         } catch (InterruptedException e) {
             connection.close();
             throw e;

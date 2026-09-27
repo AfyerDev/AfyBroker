@@ -1,7 +1,6 @@
 package net.afyer.afybroker.bukkit;
 
 import com.alipay.remoting.LifeCycleException;
-import com.alipay.remoting.exception.RemotingException;
 import net.afyer.afybroker.bukkit.interceptor.BukkitServerThreadInterceptor;
 import net.afyer.afybroker.bukkit.listener.PlayerListener;
 import net.afyer.afybroker.bukkit.processor.BroadcastChatBukkitProcessor;
@@ -10,8 +9,8 @@ import net.afyer.afybroker.bukkit.processor.SendPlayerChatBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.SendPlayerTitleBukkitProcessor;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
-import net.afyer.afybroker.client.exception.ClientRegistrationException;
 import net.afyer.afybroker.client.BrokerClientBuilder;
+import net.afyer.afybroker.client.exception.ClientRegistrationException;
 import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
 import net.afyer.afybroker.client.util.PersistentUniqueIdUtils;
 import net.afyer.afybroker.core.BrokerClientType;
@@ -85,8 +84,8 @@ public class AfyBroker extends JavaPlugin {
             getLogger().log(Level.SEVERE, "Broker client startup failed!", e);
             Bukkit.shutdown();
         } catch (ClientRegistrationException e) {
-            getLogger().log(Level.SEVERE, "Broker registration rejected; will retry after reconnect: " + e.getMessage());
-        } catch (RemotingException | InterruptedException e) {
+            getLogger().log(Level.WARNING, "Broker registration failed; will retry after reconnect: " + e.getMessage());
+        } catch (Exception e) {
             getLogger().log(Level.SEVERE, "Ping to the broker server failed!", e);
         }
         registerListeners();
