@@ -3,7 +3,6 @@ package net.afyer.afybroker.client;
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.config.BoltClientOption;
-import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import net.afyer.afybroker.client.processor.RpcInvocationClientProcessor;
@@ -105,11 +104,6 @@ public class BrokerClientBuilder {
                 }
             }
         }
-
-        // 通过系统属性来开和关，如果一个进程有多个 RpcClient，则同时生效
-        // 开启 bolt 重连
-        System.setProperty(Configs.CONN_MONITOR_SWITCH, "true");
-        System.setProperty(Configs.CONN_RECONNECT_SWITCH, "true");
     }
 
     public String name() {
@@ -172,7 +166,6 @@ public class BrokerClientBuilder {
 
         RpcClient rpcClient = new RpcClient();
         rpcClient.option(BoltClientOption.CONN_RECONNECT_SWITCH, true);
-        rpcClient.option(BoltClientOption.CONN_MONITOR_SWITCH, true);
 
         BrokerClient brokerClient = new BrokerClient();
         brokerClient.setClientInfo(clientInfo);

@@ -2,7 +2,6 @@ package net.afyer.afybroker.server;
 
 import com.alipay.remoting.ConnectionEventProcessor;
 import com.alipay.remoting.ConnectionEventType;
-import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import net.afyer.afybroker.core.BrokerGlobalConfig;
 import net.afyer.afybroker.core.interceptor.Interceptor;
@@ -57,11 +56,6 @@ public class BrokerServerBuilder {
 
         // 初始化一些处理器
         defaultProcessor();
-
-        // 通过系统属性来开和关，如果一个进程有多个 RpcServer，则同时生效
-        // 开启 bolt 重连
-        System.setProperty(Configs.CONN_MONITOR_SWITCH, "true");
-        System.setProperty(Configs.CONN_RECONNECT_SWITCH, "true");
     }
 
     private void applyEnvironmentOverrides() {

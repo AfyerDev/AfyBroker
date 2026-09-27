@@ -3,7 +3,6 @@ package net.afyer.afybroker.client;
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.LifeCycleException;
-import com.alipay.remoting.config.BoltClientOption;
 import com.alipay.remoting.config.ConfigManager;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
@@ -203,8 +202,6 @@ public class BrokerClient {
 
     public synchronized void shutdown() {
         if (rpcClient.isStarted()) {
-            rpcClient.option(BoltClientOption.CONN_RECONNECT_SWITCH, false);
-            rpcClient.option(BoltClientOption.CONN_MONITOR_SWITCH, false);
             rpcClient.shutdown();
         }
     }
