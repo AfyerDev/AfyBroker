@@ -13,6 +13,7 @@ import net.afyer.afybroker.client.aware.BrokerClientAware;
 import net.afyer.afybroker.client.exception.ClientRegistrationException;
 import net.afyer.afybroker.client.service.BrokerServiceProxyFactory;
 import net.afyer.afybroker.client.service.BrokerServiceRegistry;
+import net.afyer.afybroker.client.util.BrokerClientPingThread;
 import net.afyer.afybroker.core.BrokerClientInfo;
 import net.afyer.afybroker.core.interceptor.*;
 import net.afyer.afybroker.core.message.AttributeMessage;
@@ -21,7 +22,6 @@ import net.afyer.afybroker.core.observability.Observability;
 import net.afyer.afybroker.core.serializer.HessianSerializer;
 import net.afyer.afybroker.core.util.ThrowableUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +36,6 @@ import java.util.concurrent.TimeoutException;
  * @since 2022/7/30 19:15
  */
 public class BrokerClient {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BrokerClient.class);
     private static final String REGISTRATION = BrokerClient.class.getName() + ".registration";
 
     /**
@@ -48,6 +47,7 @@ public class BrokerClient {
      * rpc 客户端
      */
     private RpcClient rpcClient;
+    private BrokerClientPingThread pingThread = new BrokerClientPingThread(this);
 
     /**
      * 消息发送超时时间
@@ -196,13 +196,17 @@ public class BrokerClient {
         });
     }
 
-    public void startup() throws LifeCycleException {
+    public synchronized void startup() throws LifeCycleException {
         rpcClient.startup();
+        pingThread.startup();
     }
 
     public synchronized void shutdown() {
         if (rpcClient.isStarted()) {
             rpcClient.shutdown();
+        }
+        if (pingThread.isStarted()) {
+            pingThread.shutdown();
         }
     }
 

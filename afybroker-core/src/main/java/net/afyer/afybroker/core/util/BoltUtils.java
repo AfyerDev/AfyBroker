@@ -35,11 +35,6 @@ public class BoltUtils {
         return separator < 0 ? "" : serviceKey.substring(separator + 1);
     }
 
-    private static final ProtocolCode[] PROTOCOL_CODES = new ProtocolCode[]{
-            ProtocolCode.fromBytes(RpcProtocol.PROTOCOL_CODE),
-            ProtocolCode.fromBytes(RpcProtocolV2.PROTOCOL_CODE)
-    };
-
     public static void checkInterest(UserProcessor<?> userProcessor) {
         List<String> messageClassNameList = new ArrayList<>();
         if (userProcessor instanceof MultiInterestUserProcessor) {
@@ -54,40 +49,6 @@ public class BoltUtils {
             } catch (ClassNotFoundException e) {
                 String message = String.format("Interest class [%s] not found from processor [%s]", messageClassName, userProcessor.getClass().getName());
                 throw new IllegalArgumentException(message, e);
-            }
-        }
-    }
-
-    public static void initProtocols() {
-        try {
-            // 确保调用了静态代码块方法
-            Class.forName("com.alipay.remoting.rpc.RpcRemoting");
-            boolean needRegister = false;
-            for (ProtocolCode protocolCode : PROTOCOL_CODES) {
-                if (needRegister) break;
-                needRegister = Objects.isNull(ProtocolManager.getProtocol(protocolCode));
-            }
-            if (!needRegister) return;
-            clearProtocols();
-            RpcProtocolManager.initProtocols();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void clearProtocols() {
-        for (ProtocolCode protocolCode : PROTOCOL_CODES) {
-            Protocol protocol = ProtocolManager.unRegisterProtocol(protocolCode.getFirstByte());
-            if (protocol == null) continue;
-            ExecutorService executor = protocol.getCommandHandler().getDefaultExecutor();
-            executor.shutdown();
-
-            try {
-                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                executor.shutdownNow();
             }
         }
     }

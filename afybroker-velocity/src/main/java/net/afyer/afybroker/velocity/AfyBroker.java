@@ -11,7 +11,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.BrokerClientBuilder;
-import net.afyer.afybroker.client.exception.ClientRegistrationException;
 import net.afyer.afybroker.client.processor.CloseBrokerClientProcessor;
 import net.afyer.afybroker.client.util.PersistentUniqueIdUtils;
 import net.afyer.afybroker.core.BrokerClientType;
@@ -130,13 +129,9 @@ public class AfyBroker {
             }
             brokerClient = builder.build();
             Broker.setClient(brokerClient);
-            BoltUtils.initProtocols();
-            brokerClient.startup();
             brokerClient.printInformation(logger);
-            brokerClient.ping();
+            brokerClient.startup();
             brokerClient.getObservability().onPlayer(new PlayerObservation(server.getPlayerCount()));
-        } catch (ClientRegistrationException e) {
-            logger.warn("Broker registration failed; will retry after reconnect: {}", e.getMessage());
         } catch (Exception e) {
             logger.error("Broker client initialization failed!", e);
         }
@@ -153,7 +148,6 @@ public class AfyBroker {
         if (brokerClient != null) {
             brokerClient.shutdown();
         }
-        BoltUtils.clearProtocols();
         if (metrics != null) {
             metrics.shutdown();
         }
