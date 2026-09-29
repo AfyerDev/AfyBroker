@@ -47,7 +47,11 @@ public class BrokerClient {
      * rpc 客户端
      */
     private RpcClient rpcClient;
-    private BrokerClientPingThread pingThread = new BrokerClientPingThread(this);
+
+    /**
+     * ping 连接线程
+     */
+    private final BrokerClientPingThread pingThread = new BrokerClientPingThread(this);
 
     /**
      * 消息发送超时时间

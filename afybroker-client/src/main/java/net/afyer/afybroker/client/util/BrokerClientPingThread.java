@@ -5,23 +5,37 @@ import net.afyer.afybroker.client.exception.ClientRegistrationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class BrokerClientPingThread extends Thread {
+public final class BrokerClientPingThread {
     private static final Logger LOGGER = LoggerFactory.getLogger(BrokerClientPingThread.class);
 
     private final BrokerClient brokerClient;
     private volatile boolean stopped;
+    private final Thread thread;
 
     public BrokerClientPingThread(BrokerClient brokerClient) {
-        super("afybroker-ping");
         this.brokerClient = brokerClient;
-        setDaemon(true);
+        Thread thread = new Thread(this::run, "afybroker-ping");
+        thread.setDaemon(false);
+        this.thread = thread;
     }
 
-    @Override
-    public void run() {
+    public void startup() {
+        thread.start();
+    }
+
+    public boolean isStarted() {
+        return thread.isAlive();
+    }
+
+    public void shutdown() {
+        stopped = true;
+        thread.interrupt();
+    }
+
+    private void run() {
         boolean warned = false;
         try {
-            while (!stopped && !isInterrupted()) {
+            while (!stopped && !Thread.currentThread().isInterrupted()) {
                 try {
                     brokerClient.ping();
                     return;
@@ -46,18 +60,5 @@ public final class BrokerClientPingThread extends Thread {
                 LOGGER.error("Ping to the broker server interrupted!", e);
             }
         }
-    }
-
-    public void startup() {
-        start();
-    }
-
-    public boolean isStarted() {
-        return isAlive();
-    }
-
-    public void shutdown() {
-        stopped = true;
-        interrupt();
     }
 }
