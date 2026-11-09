@@ -9,7 +9,7 @@ import org.bukkit.plugin.Plugin;
  * 兼容 Bukkit 与 Folia 的任务调度。
  * <p>
  * Folia 没有主线程，{@code Bukkit.getScheduler()} 不可用：异步任务改用 AsyncScheduler，实体相关任务改用该实体的 EntityScheduler。
- * Folia 实现在 afybroker-bukkit-folia 模块（{@link FoliaSchedulers}），直接调用 folia-api，没有反射；
+ * Folia 实现在 folia-support 子模块（{@link FoliaSchedulers}），直接调用 folia-api，没有反射；
  * 非 Folia 服务端只走 BukkitScheduler 分支，不会加载 {@link FoliaSchedulers}。
  */
 public final class Schedulers {

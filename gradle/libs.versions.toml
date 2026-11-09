@@ -2,7 +2,7 @@
 velocity = "3.1.0"
 bungeecord = "1.19-R0.1-SNAPSHOT"
 spigot = "1.12.2-R0.1-SNAPSHOT"
-# 支持 Folia 的最低版本；只用于 afybroker-bukkit-folia 编译
+# 支持 Folia 的最低版本；只用于 folia-support 编译
 folia = "1.19.4-R0.1-SNAPSHOT"
 bstats = "3.0.2"
 # bStats 3.1.0 起支持 Folia（3.0.x 在 Folia 上调用 BukkitScheduler 提交数据会失败）
