@@ -26,14 +26,13 @@ subprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
+        options.release.set(8)
     }
 
     tasks.withType<Test> {
         useJUnitPlatform()
     }
 }
-
-
 
 tasks.withType<Jar> {
     enabled = false

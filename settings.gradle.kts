@@ -11,14 +11,12 @@ pluginManagement {
 }
 
 sequenceOf(
-    "core",
-    "server",
-    "server-bootstrap",
-    "client",
-    "bukkit",
-    "bungee",
-    "velocity"
-).forEach {
-    val project = ":afybroker-$it"
-    include(project)
-}
+    "afybroker-core",
+    "afybroker-server",
+    "afybroker-server-bootstrap",
+    "afybroker-client",
+    "afybroker-bukkit:folia-support",
+    "afybroker-bukkit",
+    "afybroker-bungee",
+    "afybroker-velocity"
+).forEach { include(it) }
