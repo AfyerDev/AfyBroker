@@ -2,6 +2,8 @@
 velocity = "3.1.0"
 bungeecord = "1.19-R0.1-SNAPSHOT"
 spigot = "1.12.2-R0.1-SNAPSHOT"
+# 支持 Folia 的最低版本；只用于 afybroker-bukkit-folia 编译
+folia = "1.19.4-R0.1-SNAPSHOT"
 bstats = "3.0.2"
 # bStats 3.1.0 起支持 Folia（3.0.x 在 Folia 上调用 BukkitScheduler 提交数据会失败）
 bstats-bukkit = "3.2.1"
@@ -31,6 +33,7 @@ prometheus-core = "io.prometheus:prometheus-metrics-core:1.5.1"
 prometheus-httpserver = "io.prometheus:prometheus-metrics-exporter-httpserver:1.5.1"
 prometheus-jvm = "io.prometheus:prometheus-metrics-instrumentation-jvm:1.5.1"
 spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
+folia-api = { module = "dev.folia:folia-api", version.ref = "folia" }
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
 bungeecord-api = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord" }
 bungeecord-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord" }

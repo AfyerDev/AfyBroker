@@ -6,6 +6,7 @@ dependencies {
     compileOnly(libs.spigot.api)
     implementation(libs.bstats.bukkit)
     implementation(project(":afybroker-client"))
+    implementation(project(":afybroker-bukkit-folia"))
 }
 
 tasks.assemble {

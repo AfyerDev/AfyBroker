@@ -26,6 +26,8 @@ subprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
+        // 用 JDK 17 构建（afybroker-bukkit-folia 依赖的 folia-api 是 Java 17 字节码），产物仍为 Java 8 字节码
+        options.release.set(8)
     }
 
     tasks.withType<Test> {

@@ -16,6 +16,7 @@ sequenceOf(
     "server-bootstrap",
     "client",
     "bukkit",
+    "bukkit-folia",
     "bungee",
     "velocity"
 ).forEach {
