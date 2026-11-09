@@ -7,6 +7,7 @@ import net.afyer.afybroker.bukkit.processor.BroadcastChatBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.RequestPlayerInfoBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.SendPlayerChatBukkitProcessor;
 import net.afyer.afybroker.bukkit.processor.SendPlayerTitleBukkitProcessor;
+import net.afyer.afybroker.bukkit.util.Schedulers;
 import net.afyer.afybroker.client.Broker;
 import net.afyer.afybroker.client.BrokerClient;
 import net.afyer.afybroker.client.BrokerClientBuilder;
@@ -42,6 +43,9 @@ public class AfyBroker extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        getLogger().info(Schedulers.isFolia()
+                ? "Folia detected, scheduling with AsyncScheduler / EntityScheduler"
+                : "Scheduling with BukkitScheduler");
         metrics = new Metrics(this, Bstats.BUKKIT);
         try {
             String serverAddress = String.format("%s:%s",

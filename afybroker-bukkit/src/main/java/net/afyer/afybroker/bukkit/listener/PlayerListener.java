@@ -5,7 +5,9 @@ import net.afyer.afybroker.bukkit.AfyBroker;
 import net.afyer.afybroker.core.message.PlayerServerJoinMessage;
 import net.afyer.afybroker.core.observability.PlayerEventType;
 import net.afyer.afybroker.core.observability.PlayerObservation;
+import net.afyer.afybroker.bukkit.util.Schedulers;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,15 +31,16 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent event) {
         plugin.getBrokerClient().getObservability().onPlayer(new PlayerObservation(PlayerEventType.JOIN, Bukkit.getOnlinePlayers().size()));
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            PlayerServerJoinMessage message = new PlayerServerJoinMessage()
-                    .setName(event.getPlayer().getName())
-                    .setUniqueId(event.getPlayer().getUniqueId());
+        Player player = event.getPlayer();
+        PlayerServerJoinMessage message = new PlayerServerJoinMessage()
+                .setName(player.getName())
+                .setUniqueId(player.getUniqueId());
+        Schedulers.runAsync(plugin, () -> {
             try {
                 plugin.getBrokerClient().oneway(message);
             } catch (RemotingException | InterruptedException e) {
                 plugin.getLogger().log(Level.SEVERE, e.getMessage(), e);
-                Bukkit.getScheduler().runTask(plugin, () -> event.getPlayer().kickPlayer(null));
+                Schedulers.runForEntity(plugin, player, () -> player.kickPlayer(null));
             }
         });
     }

@@ -3,3 +3,5 @@ version: '${version}'
 main: net.afyer.afybroker.bukkit.AfyBroker
 authors: [ Nipuru ]
 load: STARTUP
+# Folia 上调度改走 AsyncScheduler / EntityScheduler（见 Schedulers）；其他服务端忽略此项
+folia-supported: true

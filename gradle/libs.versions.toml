@@ -3,6 +3,8 @@ velocity = "3.1.0"
 bungeecord = "1.19-R0.1-SNAPSHOT"
 spigot = "1.12.2-R0.1-SNAPSHOT"
 bstats = "3.0.2"
+# bStats 3.1.0 起支持 Folia（3.0.x 在 Folia 上调用 BukkitScheduler 提交数据会失败）
+bstats-bukkit = "3.2.1"
 jline3 = "3.21.0"
 
 
@@ -32,6 +34,6 @@ spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot" }
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
 bungeecord-api = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord" }
 bungeecord-proxy = { module = "net.md-5:bungeecord-proxy", version.ref = "bungeecord" }
-bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
+bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats-bukkit" }
 bstats-velocity = { module = "org.bstats:bstats-velocity", version.ref = "bstats" }
 bstats-bungeecord = { module = "org.bstats:bstats-bungeecord", version.ref = "bstats" }
